@@ -1,0 +1,86 @@
+.container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  background: #fff;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-form h2 {
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-bottom: 2px solid #ddd;
+  font-size: 18px;
+  color: #333;
+  background: transparent;
+  transition: border-color 0.5s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #fcdb05;
+}
+
+.form-group label {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  font-size: 18px;
+  color: #999;
+  pointer-events: none;
+  transition: top 0.5s, font-size 0.5s;
+}
+
+.form-group input:focus ~ label,
+.form-group input:valid ~ label {
+  top: -20px;
+  font-size: 14px;
+  color: #fcdb05;
+}
+
+button[type='submit'] {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background: #fcdb05;
+  font-size: 18px;
+  color: #333;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.5s;
+}
+
+button[type='submit']:hover {
+  background: #f3c200;
+}
