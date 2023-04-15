@@ -1,0 +1,62 @@
+/* Table styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  background-color: #ccc;
+  color: #333;
+  font-weight: bold;
+  text-align: center;
+  border: 5px solid #999;
+  padding: 5rem;
+  margin: 0 auto; /* centers the h1 element */
+}
+
+
+tbody td {
+  border: 1px solid #999;
+  padding: 0.5rem;
+}
+
+tbody td:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+
+/* Link styles */
+a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Form styles */
+input[type="text"],
+input[type="date"] {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid #ccc;
+}
+
+button[type="submit"] {
+  background-color: #333;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #555;
+}
+
