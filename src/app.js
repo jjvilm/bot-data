@@ -13,6 +13,17 @@ var loginRouter = require('./routes/login');
 
 var app = express();
 
+// database connection
+require('dotenv').config({ path: __dirname + '/.env' });
+const mongoose = require('mongoose');
+
+try {
+  mongoose.connect(process.env['databaselink'], { useNewUrlParser: true, useUnifiedTopology: true });
+  console.log('Connected to the database.');
+} catch (error) {
+  console.error('Unable to connect to the database:', error);
+}
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
