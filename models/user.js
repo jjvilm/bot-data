@@ -24,12 +24,9 @@ const userSchema = new mongoose.Schema({
     required: true,
     enum: ['DataEntry', 'Admin','QualityControl'] // Set the allowed roles
   }
-  registerDate:{
-  type:Date,
-    default:Date.now
-  }
+  
 }
-{strict:false}
+
 );
 //generating a hash
 userSchema.methods.generateHash = function(password) {
