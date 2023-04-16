@@ -7,6 +7,7 @@ router.get('/', function (req, res) {
     res.render('accounts');
 });
 
+
 // THIS STILL NEEDS TO BE IMPLEMENTED
 // router.get('/signup', function (req, res) {
 //     res.render('../views/account/signup',
