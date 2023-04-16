@@ -1,0 +1,66 @@
+
+<!doctype html>
+<html lang="en">
+<%- include('./partials/headfile'); %>
+  
+  <body>
+    <%- include('./partials/navbar'); %>
+
+<div class="container">
+  <a href="/dashboard/create" class="btn btn-primary">Create</a>
+  <table class="table table-bordered" id="patientTable">
+    <thead>
+      <tr>
+        <th>Creator Id</th>
+        <th>Creator Name</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Birthdate</th>
+        <th>Zipcode</th>
+        <th>State</th>
+        <th>Phone Number</th>
+        <th>Create Date</th>
+        <th>Insurance Type</th>
+        <th>Test Type</th>
+        <th>Doctor Service</th>
+        <th>Lab Name</th>
+        <th>Sample Status</th>
+      </tr>
+    </thead>
+    <% for (var i=0; i<patients.length; i++)  {%>
+      <tr>
+        <td><%=patients[i].creatorId%></td>
+        <td><%=patients[i].creatorName%></td>
+        <td><%=patients[i].firstName%></td>
+        <td><%=patients[i].lastName%></td>
+        <td><%=patients[i].birthdate%></td>
+        <td><%=patients[i].zipcode%></td>
+        <td><%=patients[i].state%></td>
+        <td><%=patients[i].phoneNumber%></td>
+        <td><%=patients[i].createDate%></td>
+        <td><%=patients[i].insuranceType%></td>
+        <td><%=patients[i].doctorService%></td>
+        <td><%=patients[i].labName%></td>
+        <td><%=patients[i].sampleStatus%></td>
+        <td>
+          <a href="/update?id=<%=patients[i]._id%>">Update</a> | 
+          <a href="/delete?id=<%=patients[i]._id%>">Delete</a>
+        </td>
+      </tr>
+    <% } %>
+  </table>
+</div>
+
+
+    <%- include('./partials/scripts'); %>
+
+
+
+      <script type="text/javascript">
+        $(document).ready(function() {
+          $('#patientTable').DataTable();
+        })
+      </script>
+
+  </body>
+</html>

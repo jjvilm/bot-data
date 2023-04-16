@@ -64,7 +64,7 @@ exports.getall = async function(req, res) {
   try {
     var returnedPatients = await Patient.find({});
     console.log(returnedPatients);
-    res.render('index', { patients: returnedPatients });
+    res.render('patientList', { patients: returnedPatients });
   } catch (err) {
     console.log(err);
   }
