@@ -14,11 +14,13 @@ var loginRouter = require('./routes/login');
 var app = express();
 
 // database connection
-require('dotenv').config({ path: __dirname + '/.env' });
+// require('dotenv').config({ path: __dirname + '/.env' });
 const mongoose = require('mongoose');
 
 try {
-  mongoose.connect(process.env['databaselink'], { useNewUrlParser: true, useUnifiedTopology: true });
+  
+const SECRET = process.env['DATABASE']
+  mongoose.connect(SECRET, { useNewUrlParser: true, useUnifiedTopology: true });
   console.log('Connected to the database.');
 } catch (error) {
   console.error('Unable to connect to the database:', error);
