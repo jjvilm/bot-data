@@ -3,31 +3,51 @@
   <link rel="stylesheet" href="/stylesheets/usercreate.css">
   <head>
     <%- include('./partials/headfile') %>
+     
+<!--     THE FOLLOWING LINE OF CODE IS FOR TESTING PURPOSES, WILL BE REMOVED LATER -->
+   
   </head>
-  <h1> Create a New User</h1>
+          <%- include('./partials/navbar') %>
+ 
   <body>
-    <form>
-      <label for="firstName">First Name:</label>
-      <input type="text" id="firstName" name="firstName" required><br>
+     <div class="container">
+      <h1>Create a New User</h1>
+      <form id="user-create-form" action="/usercreate" method="POST">
+        <div class="form-group">
+          <label for="firstName">First Name:</label>
+          <input type="text" id="firstName" name="firstName" required>
+        </div>
 
-      <label for="lastName">Last Name:</label>
-      <input type="text" id="lastName" name="lastName" required><br>
+        <div class="form-group">
+          <label for="lastName">Last Name:</label>
+          <input type="text" id="lastName" name="lastName" required>
+        </div>
 
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required><br>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required>
+        </div>
 
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required><br>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" required>
+        </div>
 
-      <label for="role">Role:</label>
-      <select id="role" name="role" required>
-        <option value="" disabled selected>Select a role</option>
-        <option value="admin">Admin</option>
-        <option value="user">User</option>
-      </select><br>
+        <div class="form-group">
+          <label for="role">Role:</label>
+          <select id="role" name="role" required>
+            <option value="" disabled selected>Select a role</option>
+            <option value="DataEntry">Data Entry</option>
+            <option value="Admin">Admin</option>
+            <option value="QualityControl">Quality Control</option>
+          </select>
+        </div>
 
-      <button type="submit">Create User</button>
-    </form>
+        <input type="submit" value="Create User">
+      </form>
+
+      <div id="error-message-container"></div>
+    </div>
 
     <script>
     </script>
