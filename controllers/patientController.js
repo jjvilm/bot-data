@@ -1,6 +1,7 @@
-const Person = require('../models/patient');
+const Patient = require('../models/patient');
 
 exports.create = async function(req, res) {
+  console.log("get into the create method");
   let patient = new Patient({
     creatorId: req.body.creatorId,
     creatorName: req.body.creatorName,
@@ -9,6 +10,7 @@ exports.create = async function(req, res) {
     birthdate: req.body.birthdate,
     zipcode: req.body.zipcode,
     state: req.body.state,
+    testType:req.body.testType,
     phoneNumber: req.body.phoneNumber,
     createDate: req.body.createDate,
     insuranceType: req.body.insuranceType,
@@ -16,6 +18,7 @@ exports.create = async function(req, res) {
     labName: req.body.labName,
     sampleStatus: req.body.sampleStatus,
   });
+
 
   try {
     await patient.save();

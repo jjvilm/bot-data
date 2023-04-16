@@ -66,6 +66,6 @@ const patientSchema = new Schema({
 // const Appointment = mongoose.model('Appointment', appointmentSchema);
 // module.exports = Appointment;
 
-const Patient = mongoose.model('patients', patientShema);
+const Patient = mongoose.model('patients', patientSchema);
 
 module.exports = Patient;
