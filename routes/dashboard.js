@@ -12,20 +12,20 @@ router.get('/patientList', function (req, res, next) {
   // res.render('patientcreate');
 });
 // Used to create a patient and added to the database
-router.get('/create', function (req, res, next) {
+router.get('/patientCreate', function (req, res, next) {
   res.render('patientcreate', { title: 'Express' });
 });
-router.post('/patientcreate', function(req,res,next){
+router.post('/patientCreate', function(req,res,next){
   console.log("get into the /patientcreate post");
   patientController.create(req,res);
   
 });
 
-
-
-router.get('/update', function (req, res, next) {
-  res.render('patientedit');
-  // res.render('patientcreate');
+router.get('/patientUpdate', function(req, res, next) {
+  personController.update_get(req, res);
+});
+router.post('/patientUpdate', function(req, res, next) {
+  personController.update(req, res);
 });
 
 
