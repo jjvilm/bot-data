@@ -13,6 +13,9 @@ router.get('/patientList', function (req, res, next) {
 });
 
 router.get('/userList', userController.getAll);
+router.get('/userCreate',function (req, res, next) {
+  res.render('usercreate');
+});
 
 router.get('/userUpdate', userController.updateUser);
 router.post('/userUpdate', userController.update)

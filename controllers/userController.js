@@ -63,7 +63,7 @@ exports.update = async function(req, res) {
     await user.save();
 
     const users = await User.find({});
-    res.render('userList', { users });
+    res.render('userList', { users: users });
   } catch (err) {
     console.log(err);
     res.status(500).send('Internal server error');
