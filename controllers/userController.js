@@ -1,6 +1,6 @@
 const User = require('../models/user');
 
-exports.createUser = (req, res, next) => {
+exports.createUser = async (req, res, next) => {
   const user = new User({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -9,20 +9,15 @@ exports.createUser = (req, res, next) => {
     role: req.body.role
   });
 
-  user.save()
-    .then(result => {
-      res.status(201).json({
-        message: 'User created successfully',
-        user: result
-      });
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({
-        error: err
-      });
-    });
+  
+    
+    const result = await user.save();
+    const users = await User.find({});
+    
+    res.render('userList', { users: users });
+  
 };
+
 
 
 exports.getAll = async function(req, res) {

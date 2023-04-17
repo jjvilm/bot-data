@@ -12,8 +12,13 @@ router.get('/patientList', function (req, res, next) {
   patientController.getall(req, res);
 });
 
+router.get('/usercreate', function (req, res, next) {
+  res.render('usercreate', { title: 'Express' });
+});
+router.post('/usercreate', userController.createUser);
+
 router.get('/userList', userController.getAll);
-router.get('/userCreate',function (req, res, next) {
+router.get('/usercreate',function (req, res, next) {
   res.render('usercreate');
 });
 
