@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<!-- <%- include('./partials/headfile'); %> -->
+  
+  <body>
+<!--     <%- include('./partials/navbar'); %> -->
+
+<div class="container">
+<div class="row">
+  <div class="col-4">
+    <form method="post" action="/dashboard/patientUpdate">
+      <input type="hidden" value="<%=_id%>" name="id" />
+      <div class="form-group">
+        <label for="firstName">Creator ID:</label>
+        <input type="text" class="form-control" name="creatorId" id="creatorId" placeholder="Enter First Name" required maxLength="20" value="<%=creatorId %>">
+      </div>
+      <div class="form-group">
+        <label for="lastName">Creator Name:</label>
+        <input type="text" class="form-control" name="creatorName" id="creatorName" placeholder="Enter Last Name" required maxLength="20" value="<%=creatorName %>">
+      </div>
+      <div class="form-group">
+        <label for="dateOfBirth">First Name:</label>
+        <input type="text" class="form-control" name="firstName" id="firstName" required value="<%=firstName%>">
+      </div>
+      <div class="form-group">
+        <label for="firstName">Last Name:</label>
+        <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Enter First Name" required maxLength="20" value="<%=lastName %>">
+      </div>
+      <div class="form-group">
+        <label for="lastName">Birthdate:</label>
+        <input type="date" class="form-control" name="birthdate" id="birthdate" placeholder="Enter Last Name" required maxLength="20" value="<%=birthdate %>">
+      </div>
+      <div class="form-group">
+        <label for="dateOfBirth">Zipcode:</label>
+        <input type="text" class="form-control" name="zipcode" id="zipcode" required value="<%=zipcode%>">
+      </div>
+      <div class="form-group">
+        <label for="firstName">State:</label>
+        <input type="text" class="form-control" name="state" id="state" placeholder="Enter First Name" required maxLength="20" value="<%=state %>">
+      </div>
+      <div class="form-group">
+        <label for="lastName">Phone Number:</label>
+        <input type="text" class="form-control" name="phoneNumber" id="phoneNumber" placeholder="Enter Last Name" required maxLength="20" value="<%=phoneNumber %>">
+      </div>
+      <div class="form-group">
+        <label for="dateOfBirth">Date of Birth:</label>
+        <input type="date" class="form-control" name="createDate" id="createDate" required value="<%=createDate%>">
+      </div>
+      <div class="form-group">
+        <label for="firstName">Create Date:</label>
+        <input type="date" class="form-control" name="insuranceType" id="insuranceType" placeholder="Enter First Name" required maxLength="20" value="<%=insuranceType %>">
+      </div>
+      <div class="form-group">
+        <label for="lastName">Insurance Type:</label>
+        <input type="text" class="form-control" name="doctorService" id="doctorService" placeholder="Enter Last Name" required maxLength="20" value="<%=doctorService %>">
+      </div>
+      <div class="form-group">
+        <label for="dateOfBirth">Doctor Service:</label>
+        <input type="text" class="form-control" name="labName" id="labName" required value="<%=labName%>">
+      </div>
+      <div class="form-group">
+        <label for="dateOfBirth">Lab Name:</label>
+        <input type="text" class="form-control" name="sampleStatus" id="sampleStatus" required value="<%=sampleStatus%>">
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    </div>
+  </div>
+
+</div>
+
+<!--     <%- include('./partials/scripts'); %> -->
+
+
+  </body>
+</html>

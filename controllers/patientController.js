@@ -22,7 +22,7 @@ exports.create = async function(req, res) {
 
   try {
     await patient.save();
-    res.redirect('/');
+    res.redirect('/dashboard');
   } catch (err) {
     console.log(err);
   }
@@ -30,7 +30,8 @@ exports.create = async function(req, res) {
 
 exports.update_get = async function(req, res) {
   var patient = await Patient.findOne({ _id: req.query.id });
-  res.render('update', patient);
+  console.log("This is from update_get: " + patient);
+  res.render('patientUpdate', patient);
 }
 
 exports.update = async function(req, res) {
@@ -63,7 +64,6 @@ exports.delete = async function(req, res) {
 exports.getall = async function(req, res) {
   try {
     var returnedPatients = await Patient.find({});
-    console.log(returnedPatients);
     res.render('patientList', { patients: returnedPatients });
   } catch (err) {
     console.log(err);
