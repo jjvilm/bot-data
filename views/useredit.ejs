@@ -4,28 +4,34 @@
   <head>
     <%- include('./partials/headfile') %>
   </head>
+  <%- include('./partials/navbar') %>
   <h1> Update User</h1>
   <body>
-    <form>
+    <form action="/dashboard/userUpdate?id=<%=user._id%>" method="POST">
       <label for="firstName">First Name:</label>
-      <input type="text" id="firstName" name="firstName" required><br>
+      <input type="text" id="firstName" name="firstName" value="<%= user.firstName %>" required><br>
 
       <label for="lastName">Last Name:</label>
-      <input type="text" id="lastName" name="lastName" required><br>
+      <input type="text" id="lastName" name="lastName" value="<%= user.lastName %>" required><br>
 
       <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required><br>
+      <input type="email" id="email" name="email" value="<%= user.email %>" required><br>
 
       <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required><br>
+      <input type="password" id="password" name="password" value="<%= user.password %>" required><br>
 
       <label for="role">Role:</label>
       <select id="role" name="role" required>
-        <option value="" disabled selected>Select a role</option>
-        <option value="admin">Admin</option>
-        <option value="user">User</option>
+         <option value="" disabled selected>Select a role</option>
+            <option value="DataEntry">Data Entry</option>
+            <option value="Admin">Admin</option>
+            <option value="QualityControl">Quality Control</option>
+<!--         <option value="" disabled selected>Select a role</option>
+        <option value="admin" <%= user.role === 'admin' ? 'selected' : '' %>>Admin</option>
+        <option value="user" <%= user.role === 'user' ? 'selected' : '' %>>User</option> -->
       </select><br>
 
+      <input type="hidden" name="id" value="<%= user._id %>">
       <button type="submit">Update User</button>
     </form>
 
