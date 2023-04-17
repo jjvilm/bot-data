@@ -10,10 +10,10 @@ exports.create = async function(req, res) {
     birthdate: req.body.birthdate,
     zipcode: req.body.zipcode,
     state: req.body.state,
-    testType:req.body.testType,
     phoneNumber: req.body.phoneNumber,
     createDate: req.body.createDate,
     insuranceType: req.body.insuranceType,
+    testType: req.body.testType,
     doctorService: req.body.doctorService,
     labName: req.body.labName,
     sampleStatus: req.body.sampleStatus,
@@ -46,19 +46,20 @@ exports.update = async function(req, res) {
     phoneNumber: req.body.phoneNumber,
     createDate: req.body.createDate,
     insuranceType: req.body.insuranceType,
+    testType: req.body.testType,
     doctorService: req.body.doctorService,
     labName: req.body.labName,
     sampleStatus: req.body.sampleStatus,
   };
 
   var result = await Patient.findOneAndUpdate({ _id: req.body.id }, updateData)
-  res.redirect('/');
+  res.redirect('/dashboard/patientList');
 }
 
 exports.delete = async function(req, res) {
   console.log(req.query);
   await Patient.findOneAndDelete({ _id: req.query.id });
-  res.redirect('/');
+  res.redirect('/dashboard/patientList');
 }
 
 exports.getall = async function(req, res) {
