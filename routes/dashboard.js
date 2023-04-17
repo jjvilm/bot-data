@@ -22,12 +22,15 @@ router.post('/patientCreate', function(req,res,next){
 });
 
 router.get('/patientUpdate', function(req, res, next) {
-  personController.update_get(req, res);
+  patientController.update_get(req, res);
 });
 router.post('/patientUpdate', function(req, res, next) {
-  personController.update(req, res);
+  patientController.update(req, res);
 });
 
+router.get('/patientDelete', function(req, res, next) {
+  patientController.delete(req, res);
+});
 
 
 module.exports = router;

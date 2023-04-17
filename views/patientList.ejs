@@ -7,7 +7,7 @@
     <%- include('./partials/navbar'); %>
 
 <div class="container">
-  <a href="/dashboard/create" class="btn btn-primary">Create</a>
+  <a href="/dashboard/patientCreate" class="btn btn-primary">Create</a>
   <table class="table table-bordered" id="patientTable">
     <thead>
       <tr>
@@ -43,8 +43,8 @@
         <td><%=patients[i].labName%></td>
         <td><%=patients[i].sampleStatus%></td>
         <td>
-          <a href="/update?id=<%=patients[i]._id%>">Update</a> | 
-          <a href="/delete?id=<%=patients[i]._id%>">Delete</a>
+          <a href="/dashboard/patientUpdate?id=<%=patients[i]._id%>">Update</a> | 
+          <a href="/dashboard/patientDelete?id=<%=patients[i]._id%>">Delete</a>
         </td>
       </tr>
     <% } %>
