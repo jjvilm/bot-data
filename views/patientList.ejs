@@ -2,6 +2,8 @@
 <!doctype html>
 <html lang="en">
 <%- include('./partials/headfile'); %>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
   
   <body>
     <%- include('./partials/navbar'); %>
@@ -53,14 +55,11 @@
 
 
     <%- include('./partials/scripts'); %>
-
-
-
       <script type="text/javascript">
         $(document).ready(function() {
           $('#patientTable').DataTable();
         })
       </script>
-
+      
   </body>
 </html>
