@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-// const appointmentSchema = new mongoose.Schema({
 const patientSchema = new Schema({
   creatorId: {
     type: String,

@@ -3,14 +3,14 @@ var router = express.Router();
 var patientController = require('../controllers/patientController'); 
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
+router.get('/dashboard', function (req, res, next) {
   res.render('dashboard');
 });
 // Displays the list of customers in the database
 router.get('/patientList', function (req, res, next) {
   patientController.getall(req, res);
-  // res.render('patientcreate');
 });
+
 // Used to create a patient and added to the database
 router.get('/patientCreate', function (req, res, next) {
   res.render('patientcreate', { title: 'Express' });

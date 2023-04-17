@@ -53,13 +53,17 @@ exports.update = async function(req, res) {
   };
 
   var result = await Patient.findOneAndUpdate({ _id: req.body.id }, updateData)
-  res.redirect('/dashboard/patientList');
+  console.log("In update method" + result)
+  // res.redirect('/');
+  res.render('patientList', { patients: returnedPatients });
 }
 
 exports.delete = async function(req, res) {
   console.log(req.query);
   await Patient.findOneAndDelete({ _id: req.query.id });
-  res.redirect('/dashboard/patientList');
+  // res.redirect('/');
+  res.render('patientList', { patients: returnedPatients });
+
 }
 
 exports.getall = async function(req, res) {
