@@ -3,7 +3,7 @@ var router = express.Router();
 var patientController = require('../controllers/patientController'); 
 
 /* GET home page. */
-router.get('/dashboard', function (req, res, next) {
+router.get('/', function (req, res, next) {
   res.render('dashboard');
 });
 // Displays the list of customers in the database
