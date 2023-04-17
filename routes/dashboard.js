@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var patientController = require('../controllers/patientController'); 
+var userController = require('../controllers/userController'); 
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -9,6 +10,15 @@ router.get('/', function (req, res, next) {
 // Displays the list of customers in the database
 router.get('/patientList', function (req, res, next) {
   patientController.getall(req, res);
+});
+
+router.get('/userList', userController.getAll);
+
+router.get('/userUpdate', userController.updateUser);
+router.post('/userUpdate', userController.update)
+
+router.get('/userDelete', function (req, res, next) {
+  userController.userDelete(req,res)
 });
 
 // Used to create a patient and added to the database
@@ -27,6 +37,7 @@ router.get('/patientUpdate', function(req, res, next) {
 router.post('/patientUpdate', function(req, res, next) {
   patientController.update(req, res);
 });
+
 
 router.get('/patientDelete', function(req, res, next) {
   patientController.delete(req, res);
