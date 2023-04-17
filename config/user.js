@@ -22,7 +22,6 @@ module.exports = function (passport) {
         // allows us to pass back the entire request to the callback
     },
         function (req, email, password, done) {
-          console.log("req");
             // User.findOne won't fire unless data is sent back
             process.nextTick(function () {
 
@@ -67,15 +66,11 @@ module.exports = function (passport) {
         function (req, email, password, done) {
             // find a user whose email is the same as the forms email
             User.findOne({ 'email': email }, function (err, user) {
-                console.log("get into the emailfind")
                 if (err)
-                   console.log("get into err")
                     return done(err);
                 if (!user)
-                   console.log("no user found")
                     return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
                 if (!user.validPassword(password))
-                  console.log("wrong password")
                     return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
                 // all is well, return successful user
                 return done(null, user);
