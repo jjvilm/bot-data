@@ -22,7 +22,7 @@ exports.create = async function(req, res) {
 
   try {
     await patient.save();
-    res.redirect('/dashboard');
+    res.redirect('/dashboard/patientList');
   } catch (err) {
     console.log(err);
   }
@@ -54,15 +54,13 @@ exports.update = async function(req, res) {
 
   var result = await Patient.findOneAndUpdate({ _id: req.body.id }, updateData)
   console.log("In update method" + result)
-  // res.redirect('/');
-  res.render('patientList', { patients: returnedPatients });
+  res.redirect('/dashboard/patientList');
 }
 
 exports.delete = async function(req, res) {
   console.log(req.query);
   await Patient.findOneAndDelete({ _id: req.query.id });
-  // res.redirect('/');
-  res.render('patientList', { patients: returnedPatients });
+  res.redirect('/dashboard/patientList');
 
 }
 
