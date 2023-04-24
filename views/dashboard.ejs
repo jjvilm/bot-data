@@ -5,12 +5,19 @@
   </head>
   <body>
     <%- include('./partials/navbar') %>
-    <h1>this is dashboard page</h1>
-<!--     THESE BUTTON ARE FOR TESTING PURPOSES, WILL BE MOVED TO A DIFFERENT PLACE LATER ON -->
-    <h2> These buttons are for Testing Purposes</h2>
-    <a href="/dashboard/patientCreate"><button>Create Patient</button></a>
+    <h1>Lab Managment</h1>
+    <a href="/dashboard/patientCreate"><button>Add New Patient</button></a>
     <a href="/dashboard/patientList"><button>Patient List</button></a>
-    <a href="/dashboard/userList"><button>User List</button></a>
+      <!-- Needs to be worked on still -->
+    <a href="#"><button>Import Patient</button></a>
+
+    <form action="/search" method="GET">
+  <input type="text" name="query" placeholder="Search...">
+  <button type="submit">Search</button>
+</form>
+
+    <!-- this needs to go in the admin dashboard  -->
+    <!-- <a href="/dashboard/userList"><button>User List</button></a> -->
 
   </body>
 </html>
