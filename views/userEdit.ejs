@@ -7,7 +7,7 @@
   <%- include('./partials/navbar') %>
   <h1> Update User</h1>
   <body>
-    <form action="/dashboard/userUpdate?id=<%=user._id%>" method="POST">
+    <form action="/adminDashboard/userUpdate?id=<%=user._id%>" method="POST">
       <label for="firstName">First Name:</label>
       <input type="text" id="firstName" name="firstName" value="<%= user.firstName %>" required><br>
 

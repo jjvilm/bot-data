@@ -3,28 +3,55 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+// packages for passport
+var passport = require('passport');
+var flash = require('connect-flash');
+var bodyParser = require('body-parser');
 
-var indexRouter = require('./routes/index');
+
 // our routes
+var indexRouter = require('./routes/index');
 var accountsRouter = require('./routes/accounts');
 var dashboardRouter = require('./routes/dashboard');
-var detailsRouter = require('./routes/details');
+var adminDashboardRouter = require('./routes/adminDashboard');
 var loginRouter = require('./routes/login');
 
 var app = express();
 
 // database connection
-// require('dotenv').config({ path: __dirname + '/.env' });
 const mongoose = require('mongoose');
 
 try {
-  
-const SECRET = process.env['DATABASE']
+  const SECRET = process.env['DATABASE']
   mongoose.connect(SECRET, { useNewUrlParser: true, useUnifiedTopology: true });
   console.log('Connected to the database.');
 } catch (error) {
   console.error('Unable to connect to the database:', error);
 }
+
+// Passport needed code
+app.use(bodyParser.urlencoded({
+  extended: true,
+}));
+app.use(bodyParser.json());
+var session = require('express-session');
+require('./config/passport')(passport);
+app.use(cookieParser()); // read cookies (needed for auth)
+
+app.use(session({
+  secret: 'devkey',
+  resave: true,
+  saveUninitialized: true,
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+
+app.use(function(req, res, next) {
+  res.locals.user = req.user;
+  next();
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -40,7 +67,7 @@ app.use('/', indexRouter);
 // our map routing
 app.use('/accounts', accountsRouter);
 app.use('/dashboard', dashboardRouter);
-app.use('/details', detailsRouter);
+app.use('/adminDashboard', adminDashboardRouter);
 app.use('/login', loginRouter);
 
 // catch 404 and forward to error handler

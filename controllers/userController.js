@@ -33,7 +33,7 @@ exports.updateUser = async function(req, res) {
   try {
     const userId = req.query.id;
     const user = await User.findById(userId);
-    res.render('useredit', { user: user });
+    res.render('userEdit', { user: user });
   } catch (err) {
     console.log(err);
     res.status(500).send('Internal server error');
@@ -69,7 +69,8 @@ exports.userDelete = async function(req, res) {
   try {
     const userId = req.query.id;
     await User.findByIdAndDelete(userId);
-    res.redirect('/dashboard/userList');
+    // res.redirect('/dashboard/userList');
+    res.redirect('/adminDashboard/userList');
   } catch (err) {
     console.log(err);
     res.status(500).send('Internal server error');
