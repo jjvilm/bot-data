@@ -1,23 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <%- include('./partials/headfile') %>
-  </head>
-  <body>
-    <%- include('./partials/navbar') %>
-    <h1>Lab Managment</h1>
-    <a href="/dashboard/patientCreate"><button>Add New Patient</button></a>
-    <a href="/dashboard/patientList"><button>Patient List</button></a>
-      <!-- Needs to be worked on still -->
-    <a href="#"><button>Import Patient</button></a>
+<html>
+<head>
+  <title>Genetics LLC</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
-    <form action="/search" method="GET">
-  <input type="text" name="query" placeholder="Search...">
-  <button type="submit">Search</button>
-</form>
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    <!-- this needs to go in the admin dashboard  -->
-    <!-- <a href="/dashboard/userList"><button>User List</button></a> -->
+  <!-- Popper JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 
-  </body>
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+  <%- include('./partials/navbar'); %>
+  <div class="container">
+    <h1>Data Entry Dashboard</h1>
+    <div class="row">
+      <div class="col-md-4">
+        <a href="/dashboard/patientCreate">
+          <div class="card">
+            <div class="card-body">
+              <i class="fas fa-user-plus fa-5x"></i>
+              <h5 class="card-title">Add New Patient</h5>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="/dashboard/patientList">
+          <div class="card">
+            <div class="card-body">
+              <i class="fas fa-user-edit fa-5x"></i>
+              <h5 class="card-title">Edit Existing Patient</h5>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="#">
+          <div class="card">
+            <div class="card-body">
+              <i class="fas fa-file-import fa-5x"></i>
+              <h5 class="card-title">Import Patient Data</h5>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
 </html>

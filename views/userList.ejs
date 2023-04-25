@@ -6,7 +6,7 @@
     <%- include('./partials/navbar'); %>
 
     <div class="container">
-        <a href="/dashboard/userCreate" class="btn btn-primary">Create</a>
+        <a href="/adminDashboard/userCreate" class="btn btn-primary">Create</a>
         <table class="table table-bordered" id="userTable">
             <thead>
                 <tr>
@@ -24,8 +24,8 @@
                     <td><%=users[i].email%></td>
                     <td><%=users[i].role%></td>
                     <td>
-                        <a href="/dashboard/userUpdate?id=<%=users[i]._id%>" class="btn btn-primary">Update</a>
-                        <a href="/dashboard/userDelete?id=<%=users[i]._id%>" class="btn btn-danger">Delete</a>
+                        <a href="/adminDashboard/userUpdate?id=<%=users[i]._id%>" class="btn btn-primary">Update</a>
+                        <a href="/adminDashboard/userDelete?id=<%=users[i]._id%>" class="btn btn-danger">Delete</a>
                     </td>
                 </tr>
             <% } %>

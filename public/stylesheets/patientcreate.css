@@ -2,48 +2,27 @@
 body {
 	font-family: Arial, sans-serif;
 	background-color: #f2f2f2;
+	margin: 0;
+	padding: 0;
 }
 
 /* Form styles */
-form {
-	max-width: 500px;
+.form-container {
+	max-width: 800px;
 	margin: 0 auto;
 	padding: 20px;
 	background-color: #fff;
 	border-radius: 5px;
 	box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+  background-color: #fff8dc; /* light yellow color */
+	background-image: url('https://cdn.pixabay.com/photo/2016/11/19/01/44/folder-1837607_960_720.png'); /* folder image */
 }
 
 h1 {
-	text-align: center;
-	font-weight: bold;
-}
-
+	text-align:
+    }
 label {
 	display: block;
 	margin-bottom: 10px;
-}
-
-input[type="text"], input[type="date"], input[type="tel"], select {
-	width: 100%;
-	padding: 10px;
-	border-radius: 5px;
-	border: 1px solid #ccc;
-	margin-bottom: 20px;
-	box-sizing: border-box;
-	font-size: 16px;
-}
-
-input[type="submit"] {
-	background-color: #f3c200;
-	color: #fff;
-	border: none;
-	padding: 10px 20px;
-	border-radius: 5px;
-	cursor: pointer;
-	font-size: 16px;
-}
-
-input[type="submit"]:hover {
-	background-color: #f3c200;
+	font-weight: bold;
 }

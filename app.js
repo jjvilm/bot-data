@@ -13,7 +13,7 @@ var bodyParser = require('body-parser');
 var indexRouter = require('./routes/index');
 var accountsRouter = require('./routes/accounts');
 var dashboardRouter = require('./routes/dashboard');
-var detailsRouter = require('./routes/details');
+var adminDashboardRouter = require('./routes/adminDashboard');
 var loginRouter = require('./routes/login');
 
 var app = express();
@@ -67,7 +67,7 @@ app.use('/', indexRouter);
 // our map routing
 app.use('/accounts', accountsRouter);
 app.use('/dashboard', dashboardRouter);
-app.use('/details', detailsRouter);
+app.use('/adminDashboard', adminDashboardRouter);
 app.use('/login', loginRouter);
 
 // catch 404 and forward to error handler
