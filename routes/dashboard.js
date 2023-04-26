@@ -36,7 +36,7 @@ router.get('/patientList', function (req, res, next) {
 
 // Used to create a patient and added to the database
 router.get('/patientCreate', function (req, res, next) {
-  res.render('patientCreate', { title: 'Express' });
+  res.render('patientCreate');
 });
 
 router.post('/patientCreate', function(req,res,next){

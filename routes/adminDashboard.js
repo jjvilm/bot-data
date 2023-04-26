@@ -20,9 +20,15 @@ router.post('/userCreate', userController.createUser);
 
 
 
-router.get('/userUpdate', userController.updateUser);
+// router.get('/userUpdate', userController.update_get);
+router.get('/userUpdate', function(req, res, next) {
+  userController.update_get(req, res);
+});
 
-router.post('/userUpdate', userController.update)
+// router.post('/userUpdate', userController.update)
+router.post('/userUpdate', function(req, res, next) {
+  userController.update(req, res);
+});
 
 router.get('/userDelete', function (req, res, next) {
   userController.userDelete(req,res)
