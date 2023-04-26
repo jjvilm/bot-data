@@ -1,7 +1,6 @@
 const Patient = require('../models/patient');
 
 exports.create = async function(req, res) {
-  console.log("get into the create method");
   let patient = new Patient({
     creatorId: req.body.creatorId,
     creatorName: req.body.creatorName,
@@ -22,7 +21,7 @@ exports.create = async function(req, res) {
 
   try {
     await patient.save();
-    res.redirect('/dashboard/patientList');
+    res.redirect('/deDashboard/patientList');
   } catch (err) {
     console.log(err);
   }
@@ -30,8 +29,7 @@ exports.create = async function(req, res) {
 
 exports.update_get = async function(req, res) {
   var patient = await Patient.findOne({ _id: req.query.id });
-  console.log("This is from update_get: " + patient);
-  res.render('patientUpdate', patient);
+  res.render('../views/dataEntry/patientUpdate', patient);
 }
 
 exports.update = async function(req, res) {
@@ -55,7 +53,7 @@ exports.update = async function(req, res) {
 
   var result = await Patient.findOneAndUpdate({ _id: req.body.id }, updateData)
   console.log("In update method" + result)
-  res.redirect('/dashboard/patientList');
+  res.redirect('/deDashboard/patientList');
 }
 
 
@@ -63,14 +61,14 @@ exports.delete = async function(req, res) {
   
   await Patient.findOneAndDelete({ _id: req.query.id });
 
-  res.redirect('/dashboard/patientList');
+  res.redirect('/deDashboard/patientList');
 
 }
 
 exports.getall = async function(req, res) {
   try {
     var returnedPatients = await Patient.find({});
-    res.render('patientList', { patients: returnedPatients });
+    res.render('../views/dataEntry/patientList', { patients: returnedPatients });
   } catch (err) {
     console.log(err);
   }

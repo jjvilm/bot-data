@@ -12,8 +12,9 @@ var bodyParser = require('body-parser');
 // our routes
 var indexRouter = require('./routes/index');
 var accountRouter = require('./routes/account');
-var dashboardRouter = require('./routes/dashboard');
 var adminDashboardRouter = require('./routes/adminDashboard');
+var deDashboardRouter = require('./routes/deDashboard');
+var qcDashboardRouter = require('./routes/qcDashboard');
 
 var app = express();
 
@@ -65,8 +66,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 // our map routing
 app.use('/account', accountRouter);
-app.use('/dashboard', dashboardRouter);
 app.use('/adminDashboard', adminDashboardRouter);
+app.use('/deDashboard', deDashboardRouter);
+app.use('/qcDashboard', qcDashboardRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

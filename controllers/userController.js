@@ -14,7 +14,7 @@ exports.createUser = async (req, res, next) => {
     const result = await user.save();
     const users = await User.find({});
     
-    res.render('userList', { users: users });
+    res.render('../views/admin/userList', { users: users });
   
 };
 
@@ -23,7 +23,8 @@ exports.createUser = async (req, res, next) => {
 exports.getAll = async function(req, res) {
   try {
     const users = await User.find({});
-    res.render('userList', { users: users });
+    res.render('../views/admin/userList', { users: users });
+    // res.render('userList', { users: users });
   } catch (err) {
     console.log(err);
     res.status(500).send('Internal server error');
@@ -33,7 +34,7 @@ exports.update_get = async function(req, res) {
   try {
     const userId = req.query.id;
     const user = await User.findById(userId);
-    res.render('userEdit', { user: user });
+    res.render('../views/admin/userEdit', { user: user });
   } catch (err) {
     console.log(err);
     res.status(500).send('Internal server error');
@@ -67,7 +68,7 @@ exports.update = async function(req, res) {
     await user.save();
 
     const users = await User.find({});
-    res.render('userList', { users: users });
+    res.render('../views/admin/userList', { users: users });
   } catch (err) {
     console.log(err);
     res.status(500).send('Internal server error');
@@ -80,6 +81,7 @@ exports.userDelete = async function(req, res) {
     const userId = req.query.id;
     await User.findByIdAndDelete(userId);
     // res.redirect('/dashboard/userList');
+    // res.redirect('/adminDashboard/userList');
     res.redirect('/adminDashboard/userList');
   } catch (err) {
     console.log(err);

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Genetics LLC</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <!-- Popper JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+  <%- include('../partials/navbar'); %>
+  <div class="container">
+    <h1>Data Entry Dashboard</h1>
+    <div class="row">
+      <div class="col-md-4">
+        <a href="/deDashboard/patientCreate">
+          <div class="card">
+            <div class="card-body">
+              <i class="fas fa-user-plus fa-5x"></i>
+              <h5 class="card-title">Add New Patient</h5>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="/deDashboard/patientList">
+          <div class="card">
+            <div class="card-body">
+              <i class="fas fa-user-edit fa-5x"></i>
+              <h5 class="card-title">Edit Existing Patient</h5>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="#">
+          <div class="card">
+            <div class="card-body">
+              <i class="fas fa-file-import fa-5x"></i>
+              <h5 class="card-title">Import Patient Data</h5>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
