@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <link rel="stylesheet" href="/stylesheets/usercreate.css">
+  <head>
+    <%- include('../partials/headfile') %>   
+  </head>
+ 
+  <body>
+     <div class="container">
+      <h1>Create a New User</h1>
+      <form id="user-create-form" action="/account/signup" method="POST">
+        <div class="form-group">
+          <label for="firstName">First Name:</label>
+          <input type="text" id="firstName" name="firstName" required>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Last Name:</label>
+          <input type="text" id="lastName" name="lastName" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+
+        <div class="form-group">
+          <label for="role">Role:</label>
+          <select id="role" name="role" required>
+            <option value="" disabled selected>Select a role</option>
+            <option value="DataEntry">Data Entry</option>
+            <option value="Admin">Admin</option>
+            <option value="QualityControl">Quality Control</option>
+          </select>
+        </div>
+
+        <input type="submit" value="Create User">
+      </form>
+
+      <div id="error-message-container"></div>
+    </div>
+
+    <script>
+    </script>
+  </body>
+</html>

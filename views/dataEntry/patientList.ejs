@@ -1,15 +1,15 @@
 
 <!doctype html>
 <html lang="en">
-<%- include('./partials/headfile'); %>
+<%- include('../partials/headfile'); %>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
   
   <body>
-    <%- include('./partials/navbar'); %>
+    <%- include('../partials/navbar'); %>
 
 <div class="container">
-  <a href="/dashboard/patientCreate" class="btn btn-primary">Create</a>
+  <a href="/deDashboard/patientCreate" class="btn btn-primary">Create</a>
   <table class="table table-bordered" id="patientTable">
     <thead>
       <tr>
@@ -45,8 +45,8 @@
         <td><%=patients[i].labName%></td>
         <td><%=patients[i].sampleStatus%></td>
         <td>
-          <a href="/dashboard/patientUpdate?id=<%=patients[i]._id%>">Update</a> | 
-          <a href="/dashboard/patientDelete?id=<%=patients[i]._id%>">Delete</a>
+          <a href="/deDashboard/patientUpdate?id=<%=patients[i]._id%>">Update</a> | 
+          <a href="/deDashboard/patientDelete?id=<%=patients[i]._id%>">Delete</a>
         </td>
       </tr>
     <% } %>
@@ -54,7 +54,7 @@
 </div>
 
 
-    <%- include('./partials/scripts'); %>
+    <%- include('../partials/scripts'); %>
       <script type="text/javascript">
         $(document).ready(function() {
           $('#patientTable').DataTable();

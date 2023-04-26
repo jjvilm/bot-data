@@ -4,34 +4,33 @@
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-        <i class="bi bi-search"></i>
-  
+    <i class="bi bi-search"></i>
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-   
-
       <ul class="navbar-nav">
-        
+        <% if (locals.user && locals.user.role === 'DataEntry') { %>
         <li class="nav-item">
-          <a class="nav-link  text-uppercase" aria-current="page" href="/dashboard">Dashboard</a>
+          <a class="nav-link text-uppercase" aria-current="page" href="/deDashboard">DE-Dashboard</a>
         </li>
-        
+        <% } %>
+        <% if (locals.user && locals.user.role === 'QualityControl') { %>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase" aria-current="page" href="/qcDashboard">QC-Dashboard</a>
+        </li>
+        <% } %>
+        <% if (locals.user && locals.user.role === 'Admin') { %>
         <li class="nav-item">
           <a class="nav-link text-uppercase" href="/adminDashboard">Admin Dashboard</a>
         </li>
-      
-        <!-- <li class="nav-item">
-          <a class="nav-link text-uppercase" href="/account/login">Logout</a>
-        </li> -->
-        
-          <% if (locals.user) { %>
+        <% } %>
+        <% if (locals.user) { %>
         <li class="nav-item">
           <a class="nav-link text-uppercase" href="/account/logout">Logout</a>
         </li>
-        <%} else { %>
+        <% } else { %>
         <li class="nav-item">
           <a class="nav-link text-uppercase" href="/account/login">Log in</a>
         </li>
-      <% } %>
+        <% } %>
       </ul>
     </div>
   </div>

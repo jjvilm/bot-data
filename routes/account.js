@@ -7,11 +7,20 @@ router.get('/login', function (req, res) {
     res.render('../views/account/login', { message: req.flash('loginMessage') });
 });
 
+// After log on, Roles will determine the landing page
 router.post('/login', passport.authenticate('local-login', {
-    successRedirect: '/dashboard/patientList', //redirect to the home page
-    failureRedirect: '/adminDashboard/userList', // redirect back to the signup page if there is an error
-    failureFlash: true // allow flash messages
-}));
+    failureRedirect: '/account/login',
+    failureFlash: true
+}), (req, res) => {
+    if (req.user.role === 'Admin') {
+        res.redirect('/adminDashboard');
+    } else if (req.user.role === 'DataEntry') {
+        res.redirect('/deDashboard');
+    } else {
+      res.redirect('/qcDashboard');
+    }
+});
+
 
 router.get('/logout', function (req, res) {
     req.logout();
@@ -19,7 +28,8 @@ router.get('/logout', function (req, res) {
 });
 
 router.get('/signup', function (req, res) {
-    res.render('../views/userCreate',
+    // res.render('../views/userCreate',
+    res.render('../views/account/signup',
         { message: req.flash('signupMessage') });
 });
 
@@ -28,6 +38,18 @@ router.post('/signup', passport.authenticate('local-signup', {
     failureRedirect: '/account/signup', // redirect back to the signup page if there is an error
     failureFlash: true // allow flash messages
 }));
+
+// router.post('/signup', passport.authenticate('local-signup', {
+//     failureRedirect: '/account/signup', // redirect back to the signup page if there is an error
+//     failureFlash: true // allow flash messages
+// }), (req, res) => {
+//   /// if already logged in and creating user, do not redirct to login screen
+//     if (req.user) {
+//         res.redirect('/adminDashboard/userList');
+//     } else {
+//         res.redirect('/account/login');
+//     }
+// });
 
 
 
