@@ -26,3 +26,7 @@ label {
 	margin-bottom: 10px;
 	font-weight: bold;
 }
+.tab1 {
+            tab-size: 4;
+        }
+  

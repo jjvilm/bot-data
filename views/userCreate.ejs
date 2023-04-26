@@ -2,17 +2,14 @@
 <html lang="en">
   <link rel="stylesheet" href="/stylesheets/usercreate.css">
   <head>
-    <%- include('./partials/headfile') %>
-     
-<!--     THE FOLLOWING LINE OF CODE IS FOR TESTING PURPOSES, WILL BE REMOVED LATER -->
-   
+    <%- include('./partials/headfile') %>   
   </head>
  
   <body>
     <%- include('./partials/navbar') %>
      <div class="container">
       <h1>Create a New User</h1>
-      <form id="user-create-form" action="/adminDashboard/userCreate" method="POST">
+      <form id="user-create-form" action="/account/signup" method="POST">
         <div class="form-group">
           <label for="firstName">First Name:</label>
           <input type="text" id="firstName" name="firstName" required>

@@ -9,25 +9,26 @@
 	<%- include('./partials/navbar'); %>
 	<div class="form-container">
 		<form action="/dashboard/patientCreate" method="POST">
-			<h1>Create Patient</h1>
+			<h1>New Patient</h1>
 			<div class="form-row">
 				<div class="form-column">
 					<label for="creatorId">Creator Id:</label>
 					<input type="text" id="creatorId" name="creatorId" required>
-
-					<label for="creatorName">Creator Name:</label>
+          
+					<label for="creatorName">&emsp;Creator Name:</label>
 					<input type="text" id="creatorName" name="creatorName" required>
-
+          <br>
+          <br>
 					<label for="firstName">First Name:</label>
 					<input type="text" id="firstName" name="firstName" required>
 
-					<label for="lastName">Last Name:</label>
+					<label for="lastName">&emsp;Last Name:</label>
 					<input type="text" id="lastName" name="lastName" required>
-
+          <br>
 					<label for="birthdate">Birthdate:</label>
 					<input type="date" id="birthdate" name="birthdate" required>
 
-					<label for="zipcode">Zipcode:</label>
+					<label for="zipcode">&emsp;Zipcode:</label>
 					<input type="text" id="zipcode" name="zipcode" required>
 				</div>
 
@@ -35,25 +36,26 @@
 					<label for="state">State:</label>
 					<input type="text" id="state" name="state" required>
 
-					<label for="phoneNumber">Phone Number:</label>
+					<label for="phoneNumber">&emsp;Phone Number:</label>
 					<input type="tel" id="phoneNumber" name="phoneNumber" required>
-
+          <br>
+          <br>
 					<label for="createDate">Create Date:</label>
 					<input type="date" id="createDate" name="createDate" required>
 
-					<label for="insuranceType">Insurance Type:</label>
+					<label for="insuranceType">&emsp;Insurance Type:</label>
 					<input type="text" id="insuranceType" name="insuranceType" required>
-
+          <br>
 					<label for="testType">Test Type:</label>
 					<input type="text" id="testType" name="testType" required>
 
-					<label for="doctorService">Doctor Service:</label>
+					<label for="doctorService">&emsp;Doctor Service:</label>
 					<input type="text" id="doctorService" name="doctorService" required>
-
+          <br>
 					<label for="labName">Lab Name:</label>
 					<input type="text" id="labName" name="labName" required>
-
-					<label for="sampleStatus">Sample Status:</label>
+          
+					<label for="sampleStatus">&emsp;Sample Status:</label>
 					<input type="text" id="sampleStatus" name="sampleStatus" required>
 				</div>
 			</div>
@@ -63,4 +65,16 @@
 		</form>
 	</div>
 </body>
+<script>
+  // this code block gives a default value to create date attribute
+  const createDateInput = document.getElementById('createDate');
+  const currentDate = new Date(Date.now());
+  const year = currentDate.getFullYear();
+  let month = currentDate.getMonth() + 1;
+  month = month < 10 ? '0' + month : month;
+  let day = currentDate.getDate();
+  day = day < 10 ? '0' + day : day;
+  const currentDateFormatted = `${year}-${month}-${day}`;
+  createDateInput.value = currentDateFormatted;
+</script>
 </html>
