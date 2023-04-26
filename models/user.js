@@ -25,7 +25,8 @@ const userSchema = new mongoose.Schema({
     enum: ['DataEntry', 'Admin','QualityControl'] // Set the allowed roles
   }
   
-}
+},
+   { strict: false }
 
 );
 //generating a hash

@@ -11,7 +11,7 @@ var bodyParser = require('body-parser');
 
 // our routes
 var indexRouter = require('./routes/index');
-var accountsRouter = require('./routes/accounts');
+var accountRouter = require('./routes/account');
 var dashboardRouter = require('./routes/dashboard');
 var adminDashboardRouter = require('./routes/adminDashboard');
 var loginRouter = require('./routes/login');
@@ -65,7 +65,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 // our map routing
-app.use('/accounts', accountsRouter);
+app.use('/account', accountRouter);
 app.use('/dashboard', dashboardRouter);
 app.use('/adminDashboard', adminDashboardRouter);
 app.use('/login', loginRouter);
