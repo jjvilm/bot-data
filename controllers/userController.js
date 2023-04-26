@@ -29,7 +29,7 @@ exports.getAll = async function(req, res) {
     res.status(500).send('Internal server error');
   }
 }
-exports.updateUser = async function(req, res) {
+exports.update_get = async function(req, res) {
   try {
     const userId = req.query.id;
     const user = await User.findById(userId);
@@ -52,8 +52,17 @@ exports.update = async function(req, res) {
     user.firstName = req.body.firstName;
     user.lastName = req.body.lastName;
     user.email = req.body.email;
-    user.password = req.body.password;
     user.role = req.body.role;
+
+    if (req.body.updatePassword) {
+      user.password = user.generateHash(req.body.password);
+    }
+    else {
+      user.password = req.body.password;
+    }
+
+    
+  
 
     await user.save();
 
@@ -64,6 +73,7 @@ exports.update = async function(req, res) {
     res.status(500).send('Internal server error');
   }
 };
+
 
 exports.userDelete = async function(req, res) {
   try {
