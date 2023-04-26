@@ -8,9 +8,9 @@ router.get('/login', function (req, res) {
 });
 
 router.post('/login', passport.authenticate('local-login', {
-    successRedirect: '/dashboard/patientList', //redirect to the home page
-    failureRedirect: '/adminDashboard/userList', // redirect back to the signup page if there is an error
-    failureFlash: true // allow flash messages
+    successRedirect: '/dashboard', //redirect to the home page
+    failureRedirect: '/account/login', // redirect back to the signup page if there is an error
+    failureFlash: true // allow flash messages, 
 }));
 
 router.get('/logout', function (req, res) {
