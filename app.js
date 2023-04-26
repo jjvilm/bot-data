@@ -15,7 +15,6 @@ var accountRouter = require('./routes/account');
 var adminDashboardRouter = require('./routes/adminDashboard');
 var deDashboardRouter = require('./routes/deDashboard');
 var qcDashboardRouter = require('./routes/qcDashboard');
-// var loginRouter = require('./routes/login');
 
 var app = express();
 
@@ -71,7 +70,6 @@ app.use('/adminDashboard', adminDashboardRouter);
 app.use('/deDashboard', deDashboardRouter);
 app.use('/qcDashboard', qcDashboardRouter);
 
-// app.use('/login', loginRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
