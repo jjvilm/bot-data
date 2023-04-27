@@ -42,17 +42,37 @@
           </div>
         </a>
       </div>
-      <div class="col-md-4">
-        <a href="#">
-          <div class="card">
-            <div class="card-body">
-              <i class="fas fa-file-import fa-5x"></i>
-              <h5 class="card-title">Import Patient Data</h5>
-            </div>
-          </div>
-        </a>
+      <!-- <div class="col-md-4">
+  <a href="#" onclick="showImportForm()">
+    <div class="card">
+      <div class="card-body">
+        <i class="fas fa-file-import fa-5x"></i>
+        <h5 class="card-title">Import Patient Data</h5>
       </div>
+    </div>
+  </a>
+</div>
+
+<div id="import-form" style="display: none;">
+  <form method="post" action="/deDashboard/importCsv" enctype="multipart/form-data">
+  <input type="file" name="file" />
+  <button type="submit">Submit</button>
+</form>
+
+</div>
+
+
+      
     </div>
   </div>
 </body>
+<script>
+function showImportForm() {
+  // Hide the "Import Patient Data" link
+  document.querySelector('.col-md-4').style.display = 'none';
+  
+  // Show the file upload form
+  document.querySelector('#import-form').style.display = 'block';
+}
+</script> -->
 </html>
