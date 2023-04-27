@@ -1,10 +1,15 @@
 var express = require('express');
 var router = express.Router();
+// packages used for file uploading
+const multer = require('multer');
+const upload = multer().single('csvFile'); // specify the field name of the file upload
+
+
 var patientController = require('../controllers/patientController'); 
 const authMiddleware = require('../middleware/auth');
 // var userController = require('../controllers/userController'); 
 
-/* GET home page. */
+// Data entry Dashboard
 router.get('/', authMiddleware.ensureAuthenticated,function (req, res, next) {
   res.render('../views/dataEntry/dashboard');
 });
@@ -30,9 +35,25 @@ router.get('/patientUpdate',authMiddleware.ensureAuthenticated, function(req, re
 router.post('/patientUpdate',authMiddleware.ensureAuthenticated, function(req, res, next) {
   patientController.update(req, res);
 });
-
+// delete
 router.get('/patientDelete',authMiddleware.ensureAuthenticated,function(req, res, next) {
   patientController.delete(req, res);
+});
+// file exports 
+router.get('/exportCsv',authMiddleware.ensureAuthenticated,function(req, res, next) {
+  patientController.exportCsv(req, res);
+});
+router.get('/exportExcel',authMiddleware.ensureAuthenticated,function(req, res, next) {
+  patientController.exportExcel(req, res);
+});
+// file imports
+router.post('/importCsv', authMiddleware.ensureAuthenticated, function(req, res, next) {
+  upload(req, res, function(err) {
+    if (err) {
+      return res.status(400).send({ message: 'Error uploading file' });
+    }
+    patientController.importCsv(req, res);
+  });
 });
 
 
