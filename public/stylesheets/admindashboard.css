@@ -1,0 +1,37 @@
+body {
+    background: linear-gradient(to bottom right, #f7f7f7, #3192d6, #182536);
+
+}
+/* Styles for the container */
+.container {
+  margin-top: 50px;
+  margin-bottom: 500px
+}
+
+/* Styles for the cards */
+.card {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+/* Styles for the icons */
+.fa-5x {
+  font-size: 5em;
+  margin-bottom: 10px;
+}
+
+/* Styles for the headings */
+h1 {
+  font-size: 36px;
+  text-align: center;
+  margin-bottom: 50px;
+}
