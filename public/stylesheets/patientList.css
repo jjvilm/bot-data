@@ -3,7 +3,8 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 1rem;
-  background: linear-gradient(to bottom right, #f7f7f7, #3192d6, #182536);
+    background: linear-gradient(to bottom right, #f7f7f7, #3192d6, #182536);
+
 }
 
 tbody td {
