@@ -1,17 +1,21 @@
+body{
+      background: linear-gradient(to bottom right, #f7f7f7, #3192d6, #182536);
+  margin-bottom: 600px;
+}
+
 /* Table styles */
 table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 1rem;
-    background: linear-gradient(to bottom right, #f7f7f7, #3192d6, #182536);
-
+background: #ffffff
 }
 
 tbody td {
   border: 1px solid #999;
   padding: 0.5rem;
+  font-weight: bold;
 }
-
 
 /* Link styles */
 a {
