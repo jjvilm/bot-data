@@ -29,7 +29,7 @@
         <th>Test Type</th>
         <th>Doctor Service</th>
         <th>Lab Name</th>
-        <th>Sample Status</th>
+        <th></th>
       </tr>
     </thead>
     <% for (var i=0; i<patients.length; i++)  {%>
@@ -48,7 +48,7 @@
         <td><%=patients[i].labName%></td>
         <td><%=patients[i].sampleStatus%></td>
         <td>
-          <a href="/deDashboard/patientUpdate?id=<%=patients[i]._id%>">Update</a> | 
+          <a href="/deDashboard/patientUpdate?id=<%=patients[i]._id%>">Update</a>  
           <a href="/deDashboard/patientDelete?id=<%=patients[i]._id%>">Delete</a>
         </td>
       </tr>
