@@ -2,13 +2,16 @@
 body {
   font-family: Arial, sans-serif;
   font-size: 16px;
+  font-weight: bold;
   line-height: 1.5;
   margin: 0;
   padding: 0;
+    background: linear-gradient(to bottom right, #f7f7f7, #3192d6, #182536);
+
 }
 h1 {
   text-align: center;
-  margin-top: 50px; /* adjust this value to change the distance from the top */
+  margin-top: 60px; /* adjust this value to change the distance from the top */
 }
 
 form {
@@ -20,6 +23,7 @@ label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
+ 
 }
 
 input[type="text"],

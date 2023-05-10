@@ -1,12 +1,13 @@
+body{
+  background: linear-gradient(to bottom right, #f7f7f7, #3192d6, #182536);
+}
 .container {
   max-width: 400px;
-  margin: 0 auto;
+  margin-bottom: 500px;
   padding: 20px;
-  background-color: #fff;
   border-radius: 5px;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-}
 
+}
 h1 {
   text-align: center;
   font-size: 28px;
@@ -14,7 +15,7 @@ h1 {
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 label {
@@ -37,8 +38,8 @@ select {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 input[type=submit] {
-  background-color: #3192d6;
-  color: #fff;
+  background-color: #003fbd;
+  color: #ffffff;
   font-size: 16px;
   padding: 10px 20px;
   border: none;

@@ -1,0 +1,34 @@
+body {
+  background: linear-gradient(to bottom right, #f7f7f7, #3192d6, #182536);
+}
+
+.container {
+  max-width: 800px;
+  margin-bottom:  500px;
+  padding: 30px;
+  border-radius: 5px;
+  background: #ffffff;
+  font-weight: bold;
+  border-color: #000000
+}
+
+.btn-primary {
+  background-color: #3192d6;
+  color: #ffffff;
+  border-color: #3192d6;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: #ffffff;
+  border-color: #dc3545;
+}
+
+.table {
+  margin-top: 20px;
+}
+
+th, td {
+  text-align: center;
+}
+
