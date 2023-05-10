@@ -1,28 +1,17 @@
 <!DOCTYPE html>
 <html>
-     <link rel="stylesheet" href="/stylesheets/datadashboard.css" />
-
 <head>
   <title>Genetics LLC</title>
   <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-
-  <!-- jQuery library -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-  <!-- Popper JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-
-  <!-- Latest compiled JavaScript -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-  
+  <link rel="stylesheet" href="/stylesheets/datadashboard.css" />
+    <%- include('../partials/headfile') %>
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
   <%- include('../partials/navbar'); %>
   <div class="container">
-    <h1>Data Entry Dashboard</h1>
+    <h1><b>Data Entry Dashboard</b></h1>
     <div class="row">
       <div class="col-md-4">
         <a href="/deDashboard/patientCreate">
@@ -44,37 +33,7 @@
           </div>
         </a>
       </div>
-      <!-- <div class="col-md-4">
-  <a href="#" onclick="showImportForm()">
-    <div class="card">
-      <div class="card-body">
-        <i class="fas fa-file-import fa-5x"></i>
-        <h5 class="card-title">Import Patient Data</h5>
-      </div>
-    </div>
-  </a>
-</div>
-
-<div id="import-form" style="display: none;">
-  <form method="post" action="/deDashboard/importCsv" enctype="multipart/form-data">
-  <input type="file" name="file" />
-  <button type="submit">Submit</button>
-</form>
-
-</div>
-
-
-      
     </div>
   </div>
 </body>
-<script>
-function showImportForm() {
-  // Hide the "Import Patient Data" link
-  document.querySelector('.col-md-4').style.display = 'none';
-  
-  // Show the file upload form
-  document.querySelector('#import-form').style.display = 'block';
-}
-</script> -->
 </html>
