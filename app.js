@@ -24,7 +24,6 @@ const mongoose = require('mongoose');
 
 try {
   const SECRET = process.env['DATABASE']
-  console.log(SECRET)
   mongoose.connect(SECRET, { useNewUrlParser: true, useUnifiedTopology: true });
   console.log('Connected to the database.');
 } catch (error) {
