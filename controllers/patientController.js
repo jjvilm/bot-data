@@ -54,24 +54,13 @@ exports.importCsv = async function(req, res) {
 // Methods for exporting data
 exports.exportExcel = async function(req, res) {
   const workbook = new excel.Workbook();
-  const worksheet = workbook.addWorksheet('Patients');
+  const worksheet = workbook.addWorksheet('Bots');
 
   let patients = await Patient.find({});
   worksheet.columns = [
-    { header: 'creatorId', key: 'creatorId', width: 10 },
-    { header: 'creatorName', key: 'creatorName', width: 10 },
-    { header: 'First Name', key: 'firstName', width: 10 },
-    { header: 'Last Name', key: 'lastName', width: 10 },
-    { header: 'Birth Date', key: 'birthdate', width: 10 },
-    { header: 'zipcode', key: 'zipcode', width: 10 },
-    { header: 'state', key: 'state', width: 10 },
-    { header: 'phoneNumber', key: 'phoneNumber', width: 10 },
-    { header: 'createDate', key: 'createDate', width: 10 },
-    { header: 'insuranceType', key: 'insuranceType', width: 10 },
-    { header: 'testType', key: 'testType', width: 10 },
-    { header: 'doctorService', key: 'doctorService', width: 10 },
-    { header: 'labName', key: 'labName', width: 10 },
-    { header: 'sampleStatus', key: 'sampleStatus', width: 10 },
+    { header: 'Bot Name', key: 'bot_name', width: 10 },
+    { header: 'Combat Level', key: 'combat_lv', width: 10 },
+    { header: 'Comments', key: 'comments', width: 10 },
   ]
   worksheet.addRows(patients);
 
@@ -81,7 +70,7 @@ exports.exportExcel = async function(req, res) {
   );
   res.setHeader(
     'Content-Disposition',
-    'attachment; filename=' + 'patients.xlsx',
+    'attachment; filename=' + 'knownBots.xlsx',
   );
   return workbook.xlsx.write(res).then(function() {
     res.status(200).end();
@@ -91,22 +80,11 @@ exports.exportExcel = async function(req, res) {
 exports.exportCsv = async function(req, res) {
   let patients = await Patient.find({});
 
-  let csv = 'creatorId, creatorName, firstName, lastName, birthdate, zipcode, state, phoneNumber, createDate, insuranceType, testType, doctorService, labName, sampleStatus\r\n';
+  let csv = 'Bot Name, Combat Level, Comments\r\n';
   patients.forEach((patient) => {
-    csv += patient.creatorId + ',';
-    csv += patient.creatorName + ',';
-    csv += patient.firstName + ',';
-    csv += patient.lastName + ',';
-    csv += patient.birthdate + ',';
-    csv += patient.zipcode + ',';
-    csv += patient.state + ',';
-    csv += patient.phoneNumber + ',';
-    csv += patient.createDate + ',';
-    csv += patient.insuranceType + ',';
-    csv += patient.testType + ',';
-    csv += patient.doctorService + ',';
-    csv += patient.labName + ',';
-    csv += patient.sampleStatus + '\r\n';    
+    csv += patient.bot_name + ',';
+    csv += patient.combat_lv + ',';
+    csv += patient.comments + '\r\n';
   })
 
   res.header('Content-Type', 'text/csv');
@@ -118,20 +96,9 @@ exports.exportCsv = async function(req, res) {
 // Patient Model methods
 exports.create = async function(req, res) {
   let patient = new Patient({
-    creatorId: req.body.creatorId,
-    creatorName: req.body.creatorName,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    birthdate: req.body.birthdate,
-    zipcode: req.body.zipcode,
-    state: req.body.state,
-    phoneNumber: req.body.phoneNumber,
-    createDate: req.body.createDate,
-    insuranceType: req.body.insuranceType,
-    testType: req.body.testType,
-    doctorService: req.body.doctorService,
-    labName: req.body.labName,
-    sampleStatus: req.body.sampleStatus,
+    bot_name: req.body.bot_name,
+    combat_lv: req.body.combat_lv,
+    comments: req.body.comments,
   });
 
 

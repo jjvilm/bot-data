@@ -1,6 +1,7 @@
 let passport = require('passport');
 var express = require('express');
 var router = express.Router();
+const authMiddleware = require('../middleware/auth');
 
 
 router.get('/login', function (req, res) {
@@ -27,7 +28,7 @@ router.get('/logout', function (req, res) {
     res.redirect('/');
 });
 
-router.get('/signup', function (req, res) {
+router.get('/signup', authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), function (req, res) {
     // res.render('../views/userCreate',
     res.render('../views/account/signup',
         { message: req.flash('signupMessage') });
