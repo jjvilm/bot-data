@@ -5,62 +5,19 @@
   <body>
     <%- include('../partials/navbar'); %>
 
+<h1>Updating: <bold><%=bot_name %></bold></h1>
 <div class="container">
 <div class="row">
   <div class="col-4">
     <form method="post" action="/deDashboard/patientUpdate">
       <input type="hidden" value="<%=_id%>" name="id" />
       <div class="form-group">
-        <label for="firstName">Creator ID:</label>
-        <input type="text" class="form-control" name="creatorId" id="creatorId" placeholder="Enter First Name" required maxLength="20" value="<%=creatorId %>">
+        <label for="combat_lv">Combat Level:</label>
+        <input type="text" class="form-control" name="combat_lv" id="combat_lv" placeholder="Enter Combat Level" required maxLength="3" value="<%=combat_lv %>">
       </div>
       <div class="form-group">
-        <label for="lastName">Creator Name:</label>
-        <input type="text" class="form-control" name="creatorName" id="creatorName" placeholder="Enter Last Name" required maxLength="20" value="<%=creatorName %>">
-      </div>
-      <div class="form-group">
-        <label for="dateOfBirth">First Name:</label>
-        <input type="text" class="form-control" name="firstName" id="firstName" required value="<%=firstName%>">
-      </div>
-      <div class="form-group">
-        <label for="firstName">Last Name:</label>
-        <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Enter First Name" required maxLength="20" value="<%=lastName %>">
-      </div>
-      <div class="form-group">
-        <label for="lastName">Birthdate:</label>
-        <input type="date" class="form-control" name="birthdate" id="birthdate" placeholder="Enter Last Name" required maxLength="20" value="<%=birthdate %>">
-      </div>
-      <div class="form-group">
-        <label for="dateOfBirth">Zipcode:</label>
-        <input type="text" class="form-control" name="zipcode" id="zipcode" required value="<%=zipcode%>">
-      </div>
-      <div class="form-group">
-        <label for="firstName">State:</label>
-        <input type="text" class="form-control" name="state" id="state" placeholder="Enter First Name" required maxLength="20" value="<%=state %>">
-      </div>
-      <div class="form-group">
-        <label for="lastName">Phone Number:</label>
-        <input type="text" class="form-control" name="phoneNumber" id="phoneNumber" placeholder="Enter Last Name" required maxLength="20" value="<%=phoneNumber %>">
-      </div>
-      <div class="form-group">
-        <label for="dateOfBirth">Create Date:</label>
-        <input type="date" class="form-control" name="createDate" id="createDate" required value="<%=createDate%>">
-      </div>
-      <div class="form-group">
-        <label for="firstName">Insurance Type:</label>
-        <input type="text" class="form-control" name="insuranceType" id="insuranceType" placeholder="Enter First Name" required maxLength="20" value="<%=insuranceType %>">
-      </div>
-      <div class="form-group">
-        <label for="lastName">Doctor Service:</label>
-        <input type="text" class="form-control" name="doctorService" id="doctorService" placeholder="Enter Last Name" required maxLength="20" value="<%=doctorService %>">
-      </div>
-      <div class="form-group">
-        <label for="dateOfBirth">Lab Namee:</label>
-        <input type="text" class="form-control" name="labName" id="labName" required value="<%=labName%>">
-      </div>
-      <div class="form-group">
-        <label for="dateOfBirth">Sample Status:</label>
-        <input type="text" class="form-control" name="sampleStatus" id="sampleStatus" required value="<%=sampleStatus%>">
+        <label for="comments">Comments:</label>
+        <input type="text" class="form-control" name="comments" id="comments" placeholder="Enter Any Comments"  maxLength="20" value="<%=comments %>">
       </div>
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>

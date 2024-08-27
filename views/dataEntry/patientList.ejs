@@ -9,49 +9,32 @@
   <a href="/deDashboard/patientCreate" class="btn btn-primary">Create</a>
   <a href="/deDashboard/exportCsv" class="btn btn-primary">Export CSV</a>
   <a href="/deDashboard/exportExcel" class="btn btn-primary">Export Excel</a>
-  <table class="table table-bordered" id="patientTable">
-    <thead>
-      <tr>
-        <th>Creator Id</th>
-        <th>Creator Name</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Birthdate</th>
-        <th>Zipcode</th>
-        <th>State</th>
-        <th>Phone Number</th>
-        <th>Create Date</th>
-        <th>Insurance Type</th>
-        <th>Test Type</th>
-        <th>Doctor Service</th>
-        <th>Lab Name</th>
-        <th>Sample Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <% for (var i=0; i<patients.length; i++)  {%>
-      <tr>
-        <td><%=patients[i].creatorId%></td>
-        <td><%=patients[i].creatorName%></td>
-        <td><%=patients[i].firstName%></td>
-        <td><%=patients[i].lastName%></td>
-        <td><%= new Date(patients[i].birthdate).toLocaleDateString() %></td>
-        <td><%=patients[i].zipcode%></td>
-        <td><%=patients[i].state%></td>
-        <td><%=patients[i].phoneNumber%></td>
-        <td><%= new Date(patients[i].createDate).toLocaleDateString() %></td>
-        <td><%=patients[i].insuranceType%></td>
-        <td><%=patients[i].testType%></td>
-        <td><%=patients[i].doctorService%></td>
-        <td><%=patients[i].labName%></td>
-        <td><%=patients[i].sampleStatus%></td>
-        <td>
-          <a href="/deDashboard/patientUpdate?id=<%=patients[i]._id%>" class="btn btn-primary">Update</a>  
-          <a href="/deDashboard/patientDelete?id=<%=patients[i]._id%>" class="btn btn-danger">Delete</a>
-        </td>
-      </tr>
-    <% } %>
-  </table>
+        <table class="table table-bordered" id="patientTable">
+          <thead>
+            <tr>
+              <th>Bot Name</th>
+              <th>Combat Level</th>
+              <th>Comments</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (var i = 0; i < patients.length; i++) { %>
+              <tr>
+                <td><%= patients[i].bot_name %></td>
+                <td><%= patients[i].combat_lv %></td>
+                <td><%= patients[i].comments %></td>
+                <td>
+                  <a href="/deDashboard/patientUpdate?id=<%= patients[i]._id %>" class="btn btn-primary">Update</a>
+                  <!-- <a href="/deDashboard/patientDelete?id=<%= patients[i]._id %>" class="btn btn-danger">Delete</a> -->
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+
+
+
 </div>
 
 

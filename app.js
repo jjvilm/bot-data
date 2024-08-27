@@ -7,6 +7,7 @@ var logger = require('morgan');
 var passport = require('passport');
 var flash = require('connect-flash');
 var bodyParser = require('body-parser');
+require('dotenv').config()
 
 
 // our routes
@@ -23,6 +24,7 @@ const mongoose = require('mongoose');
 
 try {
   const SECRET = process.env['DATABASE']
+  console.log(SECRET)
   mongoose.connect(SECRET, { useNewUrlParser: true, useUnifiedTopology: true });
   console.log('Connected to the database.');
 } catch (error) {

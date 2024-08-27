@@ -2,9 +2,7 @@ const User = require('../models/user');
 
 exports.createUser = async (req, res, next) => {
   const user = new User({
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
+    usernmae: req.body.username,
     password: req.body.password,
     role: req.body.role
   });
@@ -50,9 +48,7 @@ exports.update = async function(req, res) {
       return res.status(404).send('User not found');
     }
 
-    user.firstName = req.body.firstName;
-    user.lastName = req.body.lastName;
-    user.email = req.body.email;
+    user.username = req.body.username;
     user.role = req.body.role;
 
     if (req.body.updatePassword) {

@@ -17,33 +17,31 @@ module.exports = function (passport) {
     passport.use('local-signup', new LocalStrategy({
       
         // by default, local strategy uses username and password, we will override with email
-        usernameField: 'email',
+        usernameField: 'username',
         passwordField: 'password',
         passReqToCallback: true
         // allows us to pass back the entire request to the callback
     },
-        function (req, email, password, done) {
+        function (req, username, password, done) {
             // User.findOne won't fire unless data is sent back
             process.nextTick(function () {
 
-                // find a user whose email is the same as the forms email
-                User.findOne({ 'email': email }, function (err, user) {
+                // find a user whose username is the same as the forms email
+                User.findOne({ 'username': username }, function (err, user) {
                     if (err)
                         return done(err);
 
                     if (user) {
-                        console.log("Email taken");
-                        return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
+                        console.log("Username taken");
+                        return done(null, false, req.flash('signupMessage', 'That username is already taken.'));
                     } else {
                         console.log("Creating user");
 
-                        // if there is no user with that email -create the user
+                        // if there is no user with that username -create the user
                         var newUser = new User();
 
                         // set the user's local credentials
-                        newUser.firstName = req.body.firstName;
-                        newUser.lastName = req.body.lastName;
-                        newUser.email = email;
+                        newUser.username = username;
                         newUser.password = newUser.generateHash(password);
                         newUser.role = req.body.role;
                         
@@ -63,13 +61,14 @@ module.exports = function (passport) {
     // =================LOCAL LOGIN ======================================
 
     passport.use('local-login', new LocalStrategy({
-        usernameField: 'email',
+        
+        usernameField: 'username',
         passwordField: 'password',
         passReqToCallback: true
     },
-        function (req, email, password, done) {
+        function (req, username, password, done) {
             // find a user whose email is the same as the forms email
-            User.findOne({ 'email': email }, function (err, user) {
+            User.findOne({ 'username': username }, function (err, user) {
                 if (err)
                     return done(err);
                 if (!user)

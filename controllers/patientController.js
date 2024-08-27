@@ -150,20 +150,8 @@ exports.update_get = async function(req, res) {
 
 exports.update = async function(req, res) {
   const updateData = {
-    creatorId: req.body.creatorId,
-    creatorName: req.body.creatorName,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    birthdate: req.body.birthdate,
-    zipcode: req.body.zipcode,
-    state: req.body.state,
-    phoneNumber: req.body.phoneNumber,
-    createDate: req.body.createDate,
-    insuranceType: req.body.insuranceType,
-    testType: req.body.testType,
-    doctorService: req.body.doctorService,
-    labName: req.body.labName,
-    sampleStatus: req.body.sampleStatus,
+    combat_lv: req.body.combat_lv,
+    comments: req.body.comments,
   };
 
 
