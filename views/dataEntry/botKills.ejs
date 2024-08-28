@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/headfile'); %>
+<link rel="stylesheet" href="/stylesheets/patientList.css" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Hunting Data</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #0d0c0c;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #7d7d7d;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/navbar'); %>
+    <h1>Bot Hunting Data</h1>
+    <h2>Bot Name: <%= patients.bot_name %> (Combat Level: <%= patients.combat_lv %>)</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>World</th>
+                <th>Kill Frequency</th>
+                <th>Kill Date</th>
+                <th>Kill Time</th>
+                <th>Loot Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% 
+            // Convert the 'worlds' Map to an array of entries and iterate over them
+            Array.from(patients.worlds.entries()).forEach(function([world, worldData]) { 
+            %>
+                <% if (worldData.kills && Array.isArray(worldData.kills)) { %>
+                    <% worldData.kills.forEach(function(kill, index) { %>
+                        <tr>
+                            <% if (index === 0) { %>
+                                <!-- Display the World and Kill Frequency only in the first row for each world -->
+                                <td rowspan="<%= worldData.kills.length %>"><%= world %></td>
+                                <td rowspan="<%= worldData.kills.length %>"><%= worldData.kill_frequency %></td>
+                            <% } %>
+                            <!-- Display the Kill Date if it exists, otherwise show a placeholder -->
+                            <td>
+                                <% if (kill && kill.kill_date !== undefined && kill.kill_date !== null) { %>
+                                    <%= kill.kill_date %>
+                                <% } else { %>
+                                    -
+                                <% } %>
+                            </td>
+                            
+                                                        
+                            <td><%= kill.kill_time %></td>
+                            <td><%= kill.loot_amount %></td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td><%= world %></td>
+                        <td><%= worldData.kill_frequency %></td>
+                        <td colspan="3">No kill data available</td>
+                    </tr>
+                <% } %>
+            <% }); %>
+        </tbody>
+    </table>
+</body>
+</html>

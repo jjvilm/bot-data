@@ -123,7 +123,7 @@ exports.update = async function(req, res) {
 
 
   var result = await Patient.findOneAndUpdate({ _id: req.body.id }, updateData)
-  console.log("In update method" + result)
+  // console.log("In update method" + result)
   res.redirect('/deDashboard/patientList');
 }
 
@@ -143,5 +143,11 @@ exports.getall = async function(req, res) {
   } catch (err) {
     console.log(err);
   }
+  
+};
+
+exports.get_world_kills = async function(req, res) {
+  var patients = await Patient.findOne({ _id: req.query.id });
+  res.render('../views/dataEntry/botKills', {patients: patients});
   
 };

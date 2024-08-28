@@ -15,6 +15,7 @@
               <th>Bot Name</th>
               <th>Combat Level</th>
               <th>Comments</th>
+              <th>Worlds</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -25,7 +26,11 @@
                 <td><%= patients[i].combat_lv %></td>
                 <td><%= patients[i].comments %></td>
                 <td>
-                  <a href="/deDashboard/patientUpdate?id=<%= patients[i]._id %>" class="btn btn-primary">Update</a>
+                  <a href="/deDashboard/botKills?id=<%= patients[i]._id %>" class="btn btn-primary">Kills</a>
+                  <!-- <a href="/deDashboard/patientDelete?id=<%= patients[i]._id %>" class="btn btn-danger">Delete</a> -->
+                </td>
+                <td>
+                  <a href="/deDashboard/patientUpdate?id=<%= patients[i]._id %>" class="btn btn-primary">Edit</a>
                   <!-- <a href="/deDashboard/patientDelete?id=<%= patients[i]._id %>" class="btn btn-danger">Delete</a> -->
                 </td>
               </tr>
