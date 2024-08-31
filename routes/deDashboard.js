@@ -25,6 +25,12 @@ router.get('/botKills',authMiddleware.ensureAuthenticated, function (req, res, n
   patientController.get_world_kills(req, res);
 });
 
+// Displays the list of worlds for a specific bot in the database
+router.get('/topWorlds',authMiddleware.ensureAuthenticated, function (req, res, next) {
+  // patientController.getRecentKills(req,res);
+  patientController.getTopWorlds(req, res);
+});
+
 // Used to create a patient and added to the database
 router.get('/patientCreate',authMiddleware.ensureAuthenticated, function (req, res, next) {
   res.render('../views/dataEntry/patientCreate');

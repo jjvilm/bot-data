@@ -263,3 +263,22 @@ exports.getRecentKills = async function (req, res) {
     console.error('Error getting recent kills:', error);
   }
 };
+
+exports.getTopWorlds = async function (req, res) {
+  try {
+    const topWorlds = await Patient.aggregate([
+      { $project: { worlds: { $objectToArray: "$worlds" } } }, // Convert worlds object to array of key-value pairs
+      { $unwind: "$worlds" }, // Unwind the worlds array
+      { $group: { _id: "$worlds.k", totalFrequency: { $sum: "$worlds.v.kill_frequency" } } }, // Group by world_number and sum the kill_frequency
+      { $sort: { totalFrequency: -1 } }, // Sort by totalFrequency in descending order
+      { $limit: 25 } // Limit to top 10 results
+    ]);
+
+    // console.log(topWorlds)
+    // res.json(topWorlds);
+    res.render('../views/qualityControl/topWorlds', {topWorlds: topWorlds});
+  } catch (error) {
+    console.error('Error fetching top worlds:', error);
+    res.status(500).json({ error: 'Failed to fetch top worlds' });
+  }
+};

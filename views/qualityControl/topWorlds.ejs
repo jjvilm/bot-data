@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/headfile'); %>
+<link rel="stylesheet" href="/stylesheets/patientList.css" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Hunting Data</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #0d0c0c;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #7d7d7d;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/navbar'); %>
+    <a href="/deDashboard/patientList" class="btn btn-primary">All Bots</a>
+    <a href="/deDashboard/botKills" class="btn btn-primary">Recently Hunted</a>
+    <h1>Recently Hunted Bots</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>World</th>
+                <th>Hunts in this world</th>
+            </tr>
+        </thead>
+        <tbody id="botTableBody">
+            <% for (var i = 0; i < topWorlds.length; i++) { %>
+                <tr>
+                  <td><%= topWorlds[i]._id %></td>
+                  <td><%= topWorlds[i].totalFrequency %></td>
+                </tr>
+              <% } %>
+        </tbody>
+    </table>
+</body>
+</html>
