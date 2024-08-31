@@ -5,7 +5,8 @@ const authMiddleware = require('../middleware/auth');
 
 // Gets QCs Dashboard menu
 router.get('/', authMiddleware.ensureAuthenticated,function (req, res, next) {
-  patientController.getRecentKills(req,res);
+  res.render('../views/qualityControl/weekKills');
+  // patientController.getRecentKills(req,res);
   // res.render('../views/dataEntry/patientList', { patients: returnedPatients });
   // patientController.getall(req, res);
   // res.render('../views/qualityControl/dashboard');
@@ -36,6 +37,10 @@ router.post('/patientUpdate',authMiddleware.ensureAuthenticated, function(req, r
 
 router.get('/patientDelete',authMiddleware.ensureAuthenticated,function(req, res, next) {
   patientController.delete(req, res);
+});
+
+router.get('/latest-bots',authMiddleware.ensureAuthenticated,function(req, res, next) {
+  patientController.getRecentKills(req,res);
 });
 
 

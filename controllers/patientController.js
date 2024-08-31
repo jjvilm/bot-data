@@ -167,6 +167,7 @@ exports.getRecentKills = async function (req, res) {
       {
         $project: {
           bot_name: 1,
+          combat_lv:1,
           recent_kill_data: {
             $reduce: {
               input: {
@@ -230,12 +231,13 @@ exports.getRecentKills = async function (req, res) {
       {
         $project: {
           bot_name: 1,
+          combat_lv:1,
           most_recent_kill: 1
         }
       }
     ]);
     
-    console.log(recentKills[0]);
+    // console.log(recentKills[0]);
 
     // Sort recentKills array by 'kill_date' and 'kill_time' descending
   recentKills.sort((a, b) => {
@@ -254,7 +256,8 @@ exports.getRecentKills = async function (req, res) {
     
 
     // console.log(recentKills);
-    res.render('../views/qualityControl/weekKills', { bots: recentKills });
+    // res.render('../views/qualityControl/weekKills', { bots: recentKills });
+    res.json(recentKills);
     // return recentKills;
   } catch (error) {
     console.error('Error getting recent kills:', error);

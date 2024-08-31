@@ -23,6 +23,8 @@
 </head>
 <body>
     <%- include('../partials/navbar'); %>
+    <a href="/deDashboard/patientList" class="btn btn-primary">All Bots</a>
+    <h1>Recently Hunted Bots</h1>
     <table>
         <thead>
             <tr>
@@ -34,21 +36,46 @@
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody>
-            <% for (var i = 0; i < bots.length; i++) { %>
-            <tr>
-                <td><%= bots[i].bot_name %></td>
-                <td><%= bots[i].most_recent_kill.world_number %></td>
-                <!-- <td><%= bots[i].most_recent_kill.kill_date %></td> -->
-                <td><%= new Date(bots[i].most_recent_kill.kill_date).toISOString().split('T')[0] %></td>
-                <td><%= bots[i].most_recent_kill.kill_time %></td>
-                <td><%= bots[i].most_recent_kill.loot_amount %></td>
-                <td>
-                    <a href="/deDashboard/botKills?id=<%= bots[i]._id %>" class="btn btn-primary">Kills</a>
-                </td>
-            </tr>
-        <% } %>
+        <tbody id="botTableBody">
+        
         </tbody>
     </table>
+
+    <script>
+        // Function to fetch the latest bot data
+        async function fetchLatestBots() {
+            try {
+                const response = await fetch('/qcDashboard/latest-bots');
+                const bots = await response.json();
+
+                // Update the table
+                const tableBody = document.getElementById('botTableBody');
+                tableBody.innerHTML = ''; // Clear the existing table rows
+
+                bots.forEach(bot => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${bot.bot_name} (${bot.combat_lv})</td>
+                        <td>${bot.most_recent_kill.world_number}</td>
+                        <td>${new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0]}</td>
+                        <td>${bot.most_recent_kill.kill_time}</td>
+                        <td>${bot.most_recent_kill.loot_amount}</td>
+                        <td>
+                            <a href="/deDashboard/botKills?id=${bot._id}" class="btn btn-primary">Kills</a>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching latest bots:', error);
+            }
+        }
+
+        // Fetch the latest bots every 5 minutes
+        setInterval(fetchLatestBots, 300000);
+
+        // Initial fetch
+        fetchLatestBots();
+    </script>
 </body>
 </html>
