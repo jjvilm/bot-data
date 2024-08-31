@@ -5,7 +5,7 @@ const { Schema } = mongoose;
 // Define the schema for a single kill entry
 const KillSchema = new Schema({
   kill_date: {
-    type: String, // Use String if you store dates as strings
+    type: Date, // Use String if you store dates as strings
     required: false, // Set to true if you want to make it a mandatory field
   },
   kill_time: {

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/headfile'); %>
+<link rel="stylesheet" href="/stylesheets/patientList.css" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Hunting Data</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #0d0c0c;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #7d7d7d;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/navbar'); %>
+    <table>
+        <thead>
+            <tr>
+                <th>Bot Name</th>
+                <th>World</th>
+                <th>Kill Date</th>
+                <th>Kill Time</th>
+                <th>Loot Amount</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for (var i = 0; i < bots.length; i++) { %>
+            <tr>
+                <td><%= bots[i].bot_name %></td>
+                <td><%= bots[i].most_recent_kill.world_number %></td>
+                <!-- <td><%= bots[i].most_recent_kill.kill_date %></td> -->
+                <td><%= new Date(bots[i].most_recent_kill.kill_date).toISOString().split('T')[0] %></td>
+                <td><%= bots[i].most_recent_kill.kill_time %></td>
+                <td><%= bots[i].most_recent_kill.loot_amount %></td>
+                <td>
+                    <a href="/deDashboard/botKills?id=<%= bots[i]._id %>" class="btn btn-primary">Kills</a>
+                </td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+</body>
+</html>

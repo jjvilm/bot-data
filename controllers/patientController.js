@@ -3,6 +3,8 @@ const excel = require('exceljs');
 // packages used for importing data
 const csv = require('csv-parser');
 const fs = require('fs');
+const moment = require('moment'); // Import moment for date manipulation
+
 
 
 // methods for importing data
@@ -145,9 +147,116 @@ exports.getall = async function(req, res) {
   }
   
 };
-
+ 
+// shows the data for the selected bot
 exports.get_world_kills = async function(req, res) {
   var patients = await Patient.findOne({ _id: req.query.id });
   res.render('../views/dataEntry/botKills', {patients: patients});
   
+};
+
+exports.getRecentKills = async function (req, res) {
+  try {
+    // Calculate the date 7 days ago from now
+    const sevenDaysAgo = moment().subtract(7, 'days').toDate();
+    // console.log(sevenDaysAgo);
+
+    
+    // Perform aggregation to find recent kills
+    const recentKills = await Patient.aggregate([
+      {
+        $project: {
+          bot_name: 1,
+          recent_kill_data: {
+            $reduce: {
+              input: {
+                $map: {
+                  input: { $objectToArray: "$worlds" },
+                  as: "world",
+                  in: {
+                    world_number: "$$world.k",
+                    kills: {
+                      $filter: {
+                        input: "$$world.v.kills",
+                        as: "kill",
+                        cond: { $gte: ["$$kill.kill_date", sevenDaysAgo] }
+                      }
+                    }
+                  }
+                }
+              },
+              initialValue: [],
+              in: {
+                $concatArrays: ["$$value", {
+                  $map: {
+                    input: "$$this.kills",
+                    as: "kill",
+                    in: {
+                      world_number: "$$this.world_number",
+                      kill_date: "$$kill.kill_date",
+                      kill_time: "$$kill.kill_time",
+                      loot_amount: "$$kill.loot_amount"
+                    }
+                  }
+                }]
+              }
+            }
+          }
+        }
+      },
+      {
+        $addFields: {
+          most_recent_kill: {
+            $arrayElemAt: [
+              {
+                $sortArray: {
+                  input: "$recent_kill_data",
+                  sortBy: {
+                    kill_date: -1,
+                    kill_time: -1
+                  }
+                }
+              },
+              0
+            ]
+          }
+        }
+      },
+      {
+        $match: {
+          most_recent_kill: { $ne: null }
+        }
+      },
+      {
+        $project: {
+          bot_name: 1,
+          most_recent_kill: 1
+        }
+      }
+    ]);
+    
+    console.log(recentKills[0]);
+
+    // Sort recentKills array by 'kill_date' and 'kill_time' descending
+  recentKills.sort((a, b) => {
+    const dateA = new Date(a.most_recent_kill.kill_date);
+    const dateB = new Date(b.most_recent_kill.kill_date);
+    if (dateA > dateB) return -1;
+    if (dateA < dateB) return 1;
+
+    // If the dates are the same, sort by time
+    const timeA = a.most_recent_kill.kill_time;
+    const timeB = b.most_recent_kill.kill_time;
+    return timeA > timeB ? -1 : timeA < timeB ? 1 : 0;
+  });
+    
+    
+    
+
+    // console.log(recentKills);
+    res.render('../views/qualityControl/weekKills', { bots: recentKills });
+    // return recentKills;
+  } catch (error) {
+    console.error('Error getting recent kills:', error);
+  }
 };

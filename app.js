@@ -21,6 +21,8 @@ var app = express();
 
 // database connection
 const mongoose = require('mongoose');
+// Set strictQuery to false to prepare for the Mongoose 7 change
+mongoose.set('strictQuery', false);
 
 try {
   const SECRET = process.env['DATABASE']

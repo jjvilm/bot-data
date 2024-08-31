@@ -23,8 +23,8 @@
 </head>
 <body>
     <%- include('../partials/navbar'); %>
-    <h1>Bot Hunting Data</h1>
-    <h2>Bot Name: <%= patients.bot_name %> (Combat Level: <%= patients.combat_lv %>)</h2>
+    <h1><%= patients.bot_name %></h1>
+    <h4>(Combat Level: <%= patients.combat_lv %>)</h4>
     
     <table>
         <thead>
@@ -52,7 +52,8 @@
                             <!-- Display the Kill Date if it exists, otherwise show a placeholder -->
                             <td>
                                 <% if (kill && kill.kill_date !== undefined && kill.kill_date !== null) { %>
-                                    <%= kill.kill_date %>
+                                    <!-- since the date is store as a date datatype, use the following to exract only YYYY-MM-DD -->
+                                    <%= new Date(kill.kill_date).toISOString().split('T')[0] %>
                                 <% } else { %>
                                     -
                                 <% } %>

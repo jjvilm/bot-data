@@ -5,7 +5,10 @@ const authMiddleware = require('../middleware/auth');
 
 // Gets QCs Dashboard menu
 router.get('/', authMiddleware.ensureAuthenticated,function (req, res, next) {
-  res.render('../views/qualityControl/dashboard');
+  patientController.getRecentKills(req,res);
+  // res.render('../views/dataEntry/patientList', { patients: returnedPatients });
+  // patientController.getall(req, res);
+  // res.render('../views/qualityControl/dashboard');
 });
 
 // Displays the list of customers in the database

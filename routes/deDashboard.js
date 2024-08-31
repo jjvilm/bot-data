@@ -21,6 +21,7 @@ router.get('/patientList',authMiddleware.ensureAuthenticated, function (req, res
 
 // Displays the list of worlds for a specific bot in the database
 router.get('/botKills',authMiddleware.ensureAuthenticated, function (req, res, next) {
+  // patientController.getRecentKills(req,res);
   patientController.get_world_kills(req, res);
 });
 
