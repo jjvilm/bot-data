@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bot Hunting Data</title>
     <style>
+        h1 {
+            text-align: center;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -19,6 +22,16 @@
         th {
             background-color: #7d7d7d;
         }
+        /* Add this CSS to your stylesheet or inline */
+        td {
+            position: relative;
+            padding-right: 10px; /* Adjust this as needed for spacing */
+        }
+
+        td .update-bot-btn {
+            float: right;
+            margin-left: 10px; /* Adds space between the button and comments */
+        }
     </style>
 </head>
 <body>
@@ -26,57 +39,142 @@
     <a href="/deDashboard/patientList" class="btn btn-primary">All Bots</a>
     <a href="/deDashboard/topWorlds" class="btn btn-primary">Top Worlds</a>
     <h1>Recently Hunted Bots</h1>
-    <table>
+    <table class="table table-striped table-dark table-hover">
         <thead>
             <tr>
                 <th>Bot Name</th>
                 <th>World</th>
+                <th>Comments</th>
                 <th>Kill Date</th>
                 <th>Kill Time</th>
                 <th>Loot Amount</th>
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody id="botTableBody">
-        
-        </tbody>
+        <tbody id="botTableBody"></tbody>
     </table>
 
+    <!-- Modal -->
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateModalLabel">Updating: <strong></strong></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="/qcDashboard/botUpdate">
+                        <input type="hidden" name="id" />
+                        <div class="form-group">
+                            <label for="combat_lv">Combat Level:</label>
+                            <input type="text" class="form-control" name="combat_lv" id="combat_lv" placeholder="Enter Combat Level" required maxLength="3">
+                        </div>
+                        <div class="form-group">
+                            <label for="comments">Comments:</label>
+                            <input type="text" class="form-control" name="comments" id="comments" placeholder="Enter Any Comments" maxLength="80">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- script for updating the page with new data -->
     <script>
-        // Function to fetch the latest bot data
-        async function fetchLatestBots() {
-            try {
-                const response = await fetch('/qcDashboard/latest-bots');
-                const bots = await response.json();
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to fetch the latest bot data
+            async function fetchLatestBots() {
+                try {
+                    const response = await fetch('/qcDashboard/latest-bots');
+                    const bots = await response.json();
+        
+                    // Update the table
+                    const tableBody = document.getElementById('botTableBody');
+                    tableBody.innerHTML = ''; // Clear the existing table rows
+        
+                    bots.forEach(bot => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${bot.bot_name} (${bot.combat_lv})</td>
+                            <td>${bot.most_recent_kill.world_number}</td>
+                            <td>${bot.comments}
+                                <button type="button" class="btn btn-primary update-bot-btn" data-toggle="modal" data-target="#updateModal" 
+                                    data-id="${bot._id}"
+                                    data-botname="${bot.bot_name}"
+                                    data-combatlv="${bot.combat_lv}"
+                                    data-comments="${bot.comments}">
+                                    Edit
+                                </button>
+                            </td>
+                            <td>${new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0]}</td>
+                            <td>${bot.most_recent_kill.kill_time}</td>
+                            <td>${formatNumber(bot.most_recent_kill.loot_amount)}</td>
+                            <td>
+                                <a href="/deDashboard/botKills?id=${bot._id}" class="btn btn-primary">Kills</a>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+        
+                    // Attach click event listeners to update bot buttons after table is updated
+                    document.querySelectorAll('.update-bot-btn').forEach(button => {
+                        button.addEventListener('click', function() {
+                            populateModal(this);
+                        });
+                    });
+        
+                } catch (error) {
+                    console.error('Error fetching latest bots:', error);
+                }
+            }
+        
+            // Function to populate the modal with data from the clicked button
+            function populateModal(button) {
+                const botId = button.getAttribute('data-id');
+                const botName = button.getAttribute('data-botname');
+                const combatLv = button.getAttribute('data-combatlv');
+                const comments = button.getAttribute('data-comments');
+    
+                // Get modal elements
+                const idInput = document.querySelector('#updateModal input[name="id"]');
+                const combatLvInput = document.querySelector('#updateModal input[name="combat_lv"]');
+                const commentsInput = document.querySelector('#updateModal input[name="comments"]');
+                const modalTitle = document.querySelector('#updateModalLabel strong');
+    
+                // Check if elements exist before setting values
+                if (idInput && combatLvInput && commentsInput && modalTitle) {
+                    idInput.value = botId;
+                    combatLvInput.value = combatLv;
+                    commentsInput.value = comments;
+                    modalTitle.textContent = botName;
+                } else {
+                    console.error('Modal elements not found. Ensure that the modal structure is correct and elements have the expected names.');
+                }
+            }
+    
+            // Fetch the latest bots every 5 minutes
+            setInterval(fetchLatestBots, 60000);
+        
+            // Initial fetch
+            fetchLatestBots();
+        });
 
-                // Update the table
-                const tableBody = document.getElementById('botTableBody');
-                tableBody.innerHTML = ''; // Clear the existing table rows
-
-                bots.forEach(bot => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${bot.bot_name} (${bot.combat_lv})</td>
-                        <td>${bot.most_recent_kill.world_number}</td>
-                        <td>${new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0]}</td>
-                        <td>${bot.most_recent_kill.kill_time}</td>
-                        <td>${bot.most_recent_kill.loot_amount}</td>
-                        <td>
-                            <a href="/deDashboard/botKills?id=${bot._id}" class="btn btn-primary">Kills</a>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error fetching latest bots:', error);
+        function formatNumber(number) {
+            if (number >= 1000000) {
+                // Display as "1000K" if 1,000,000 or above
+                return (number / 1000).toFixed(0) + 'K';
+            } else if (number >= 100000) {
+                // Display as "100K" if 100,000 or above
+                return (number / 1000).toFixed(0) + 'K';
+            } else {
+                // Display as is for numbers below 100,000
+                return number;
             }
         }
 
-        // Fetch the latest bots every 5 minutes
-        setInterval(fetchLatestBots, 60000);
-
-        // Initial fetch
-        fetchLatestBots();
     </script>
 </body>
 </html>

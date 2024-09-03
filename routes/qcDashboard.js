@@ -31,8 +31,8 @@ router.post('/patientCreate',authMiddleware.ensureAuthenticated, function(req,re
 router.get('/patientUpdate',authMiddleware.ensureAuthenticated, function(req, res, next) {
   patientController.update_get(req, res);
 });
-router.post('/patientUpdate',authMiddleware.ensureAuthenticated, function(req, res, next) {
-  patientController.update(req, res);
+router.post('/botUpdate',authMiddleware.ensureAuthenticated, function(req, res, next) {
+  patientController.update_from_recently_killed(req, res);
 });
 
 router.get('/patientDelete',authMiddleware.ensureAuthenticated,function(req, res, next) {

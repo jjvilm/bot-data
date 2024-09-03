@@ -1,3 +1,6 @@
+h1 {
+  text-align: center;
+}
 body{
       background: linear-gradient(to bottom right, #f7f7f7, #3192d6, #182536);
   margin-bottom: 600px;

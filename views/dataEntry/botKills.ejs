@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bot Hunting Data</title>
     <style>
+        h1,h4 {
+            text-align: center;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -23,16 +26,19 @@
 </head>
 <body>
     <%- include('../partials/navbar'); %>
+    <a href="/deDashboard/patientList" class="btn btn-primary">All Bots</a>
+    <a href="/deDashboard/topWorlds" class="btn btn-primary">Top Worlds</a>
+    <a href="/qcDashboard" class="btn btn-primary">Recent Kills</a>
     <h1><%= patients.bot_name %></h1>
     <h4>(Combat Level: <%= patients.combat_lv %>)</h4>
     
-    <table>
+    <table class="table table-striped table-dark table-hover">
         <thead>
             <tr>
                 <th>World</th>
                 <th>Kill Frequency</th>
-                <th>Kill Date</th>
-                <th>Kill Time</th>
+                <th>Date</th>
+                <th>Time</th>
                 <th>Loot Amount</th>
             </tr>
         </thead>

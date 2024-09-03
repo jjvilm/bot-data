@@ -128,6 +128,17 @@ exports.update = async function(req, res) {
   // console.log("In update method" + result)
   res.redirect('/deDashboard/patientList');
 }
+exports.update_from_recently_killed = async function(req, res) {
+  const updateData = {
+    combat_lv: req.body.combat_lv,
+    comments: req.body.comments,
+  };
+
+
+  var result = await Patient.findOneAndUpdate({ _id: req.body.id }, updateData)
+  // console.log("In update method" + result)
+  res.redirect('/qcDashboard');
+}
 
 
 exports.delete = async function(req, res) {
@@ -168,6 +179,7 @@ exports.getRecentKills = async function (req, res) {
         $project: {
           bot_name: 1,
           combat_lv:1,
+          comments:1,
           recent_kill_data: {
             $reduce: {
               input: {
@@ -232,6 +244,7 @@ exports.getRecentKills = async function (req, res) {
         $project: {
           bot_name: 1,
           combat_lv:1,
+          comments:1,
           most_recent_kill: 1
         }
       }
