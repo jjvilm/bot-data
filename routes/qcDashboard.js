@@ -23,7 +23,6 @@ router.get('/patientCreate',authMiddleware.ensureAuthenticated, function (req, r
 });
 
 router.post('/patientCreate',authMiddleware.ensureAuthenticated, function(req,res,next){
-  console.log("get into the /patientcreate post");
   patientController.create(req,res);
   
 });

@@ -4,12 +4,12 @@ const excel = require('exceljs');
 const csv = require('csv-parser');
 const fs = require('fs');
 const moment = require('moment'); // Import moment for date manipulation
+const { NONAME } = require('dns');
 
 
 
 // methods for importing data
 exports.importCsv = async function(req, res) {
-  console.log("Inside import CSV");
   // Open and parse the CSV file
   const results = [];
   if (req.file) {
@@ -77,7 +77,7 @@ exports.exportExcel = async function(req, res) {
   return workbook.xlsx.write(res).then(function() {
     res.status(200).end();
   });
-}
+};
 
 exports.exportCsv = async function(req, res) {
   let patients = await Patient.find({});
@@ -92,7 +92,7 @@ exports.exportCsv = async function(req, res) {
   res.header('Content-Type', 'text/csv');
   res.attachment('patients.csv');
   return res.send(csv);
-}
+};
 
 
 // Patient Model methods
@@ -115,7 +115,7 @@ exports.create = async function(req, res) {
 exports.update_get = async function(req, res) {
   var patient = await Patient.findOne({ _id: req.query.id });
   res.render('../views/dataEntry/patientUpdate', patient);
-}
+};
 
 exports.update = async function(req, res) {
   const updateData = {
@@ -127,7 +127,7 @@ exports.update = async function(req, res) {
   var result = await Patient.findOneAndUpdate({ _id: req.body.id }, updateData)
   // console.log("In update method" + result)
   res.redirect('/deDashboard/patientList');
-}
+};
 exports.update_from_recently_killed = async function(req, res) {
   const updateData = {
     combat_lv: req.body.combat_lv,
@@ -138,8 +138,7 @@ exports.update_from_recently_killed = async function(req, res) {
   var result = await Patient.findOneAndUpdate({ _id: req.body.id }, updateData)
   // console.log("In update method" + result)
   res.redirect('/qcDashboard');
-}
-
+};
 
 exports.delete = async function(req, res) {
   
@@ -147,7 +146,7 @@ exports.delete = async function(req, res) {
 
   res.redirect('/deDashboard/patientList');
 
-}
+};
 
 exports.getall = async function(req, res) {
   try {
@@ -166,20 +165,16 @@ exports.get_world_kills = async function(req, res) {
   
 };
 
-exports.getRecentKills = async function (req, res) {
+// Helper function to get recent kills data
+async function fetchRecentKills() {
   try {
-    // Calculate the date 7 days ago from now
     const sevenDaysAgo = moment().subtract(7, 'days').toDate();
-    // console.log(sevenDaysAgo);
-
-    
-    // Perform aggregation to find recent kills
     const recentKills = await Patient.aggregate([
       {
         $project: {
           bot_name: 1,
-          combat_lv:1,
-          comments:1,
+          combat_lv: 1,
+          comments: 1,
           recent_kill_data: {
             $reduce: {
               input: {
@@ -243,40 +238,52 @@ exports.getRecentKills = async function (req, res) {
       {
         $project: {
           bot_name: 1,
-          combat_lv:1,
-          comments:1,
+          combat_lv: 1,
+          comments: 1,
           most_recent_kill: 1
         }
       }
     ]);
-    
-    // console.log(recentKills[0]);
 
-    // Sort recentKills array by 'kill_date' and 'kill_time' descending
-  recentKills.sort((a, b) => {
-    const dateA = new Date(a.most_recent_kill.kill_date);
-    const dateB = new Date(b.most_recent_kill.kill_date);
-    if (dateA > dateB) return -1;
-    if (dateA < dateB) return 1;
+    recentKills.sort((a, b) => {
+      const dateA = new Date(a.most_recent_kill.kill_date);
+      const dateB = new Date(b.most_recent_kill.kill_date);
+      if (dateA > dateB) return -1;
+      if (dateA < dateB) return 1;
 
-    // If the dates are the same, sort by time
-    const timeA = a.most_recent_kill.kill_time;
-    const timeB = b.most_recent_kill.kill_time;
-    return timeA > timeB ? -1 : timeA < timeB ? 1 : 0;
-  });
-    
-    
-    
+      const timeA = a.most_recent_kill.kill_time;
+      const timeB = b.most_recent_kill.kill_time;
+      return timeA > timeB ? -1 : timeA < timeB ? 1 : 0;
+    });
 
-    // console.log(recentKills);
-    // res.render('../views/qualityControl/weekKills', { bots: recentKills });
-    res.json(recentKills);
-    // return recentKills;
+    return recentKills;
   } catch (error) {
     console.error('Error getting recent kills:', error);
+    throw error; // Rethrow the error for handling in calling function
   }
 };
 
+// Route handler for fetching recent kills
+exports.getRecentKills = async function (req, res) {
+  try {
+    const recentKills = await fetchRecentKills();
+    res.json(recentKills);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch recent kills' });
+  }
+};
+
+// Method to get recent kills data without sending a response
+exports.getRecentKillsData = async function () {
+  try {
+    return await fetchRecentKills();
+  } catch (error) {
+    console.error('Error getting recent kills data:', error);
+    throw error;
+  }
+};
+
+// Used for the kills frequencies per world
 exports.getTopWorlds = async function (req, res) {
   try {
     const topWorlds = await Patient.aggregate([
@@ -323,7 +330,7 @@ exports.getCommonlyVistedWorlds = async function (req, res) {
         }
       },
       {
-        '$limit': 10
+        '$limit': 20
       }
     ];
     
@@ -376,18 +383,28 @@ exports.getCommonlyVistedWorlds = async function (req, res) {
         }
       }
     ];
-  // Run this aggregation
+  // Fetch bots per world
   const botsPerWorld = await Patient.aggregate(botsPerWorldAggregation);
-  console.log(botsPerWorld)
-  console.log(botsPerWorld[0])
   
-    
+  // Fetch the latest bot data
+  const recentKills = await exports.getRecentKillsData(); // Use the data-returning function
 
-  res.render('../views/qualityControl/commonlyVisitedWorlds', {commonlyVisitedWorlds: commonlyVisitedWorlds, botsPerWorld: botsPerWorld });
+  const botsWithinTheWeek = recentKills.map(bot => bot.bot_name);
+
+  // Filter bot names in each world
+  const filteredBotsPerWorld = botsPerWorld.map(world => {
+    return {
+        _id: world._id,
+        bot_names: world.bot_names.filter(name => botsWithinTheWeek.includes(name))
+    };
+  });
+
+
+  res.render('../views/qualityControl/commonlyVisitedWorlds', {commonlyVisitedWorlds: commonlyVisitedWorlds, botsPerWorld: filteredBotsPerWorld });
 
 
   } catch (error) {
     console.error('Error fetching commonly visited worlds:', error);
     res.status(500).json({ error: 'Failed to fetch commonly visited worlds' });
   }
-}
+};
