@@ -34,24 +34,32 @@
 <body>
     <%- include('../partials/navbar'); %>
     <a href="/deDashboard/patientList" class="btn btn-primary">All Bots</a>
+    <a href="/deDashboard/topWorlds" class="btn btn-primary">World Kills</a>
     <a href="/qcDashboard" class="btn btn-primary">Recent Kills</a>
-    <a href="/qcDashboard/commonlyVisitedWorlds" class="btn btn-primary">Top Worlds</a>
-
-    <h1>Kills per world</h1>
+    <h1>Most visited World by Bots</h1>
     <!-- Optional container around the table to control width better -->
     <div class="table-container">
         <table class="table table-striped table-dark table-hover">
             <thead>
                 <tr>
                     <th>World</th>
-                    <th>Number of Kills</th>
+                    <th>Visits</th>
+                    <th>Visitors</th>
                 </tr>
             </thead>
             <tbody id="botTableBody">
-                <% for (var i = 0; i < topWorlds.length; i++) { %>
+                <% function findBotsByWorld(worldId) { 
+                    const matchingEntry = botsPerWorld.find(world => world._id === worldId);
+                    return matchingEntry ? matchingEntry.bot_names.join(', ') : 'No bots found';
+                } %>
+            
+                <% for (var i = 0; i < commonlyVisitedWorlds.length; i++) { %>
                     <tr>
-                    <td><%= topWorlds[i]._id %></td>
-                    <td><%= topWorlds[i].totalFrequency %></td>
+                        <td><%= commonlyVisitedWorlds[i]._id %></td>
+                        <td><%= commonlyVisitedWorlds[i].count %></td>
+                        <td>
+                            <%= findBotsByWorld(commonlyVisitedWorlds[i]._id) %> 
+                        </td>
                     </tr>
                 <% } %>
             </tbody>

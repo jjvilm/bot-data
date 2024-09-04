@@ -295,3 +295,99 @@ exports.getTopWorlds = async function (req, res) {
     res.status(500).json({ error: 'Failed to fetch top worlds' });
   }
 };
+
+exports.getCommonlyVistedWorlds = async function (req, res) {
+  try {
+    const topWorldsAggregation = [
+      {
+        '$project': {
+          'worlds': {
+            '$objectToArray': '$worlds'
+          }
+        }
+      },
+      {
+        '$unwind': '$worlds'
+      },
+      {
+        '$group': {
+          '_id': '$worlds.k',
+          'count': {
+            '$sum': 1
+          }
+        }
+      },
+      {
+        '$sort': {
+          'count': -1
+        }
+      },
+      {
+        '$limit': 10
+      }
+    ];
+    
+    // Running top aggregation
+    const commonlyVisitedWorlds = await Patient.aggregate(topWorldsAggregation);
+    // Extract the top worlds into an array of world keys
+    const worldKeys = commonlyVisitedWorlds.map(world => world._id);
+
+    const botsPerWorldAggregation = [
+      {
+        '$match': {
+          '$or': worldKeys.map(world => ({
+            [`worlds.${world}`]: {
+              '$exists': true,
+              '$ne': null
+            }
+          }))
+        }
+      },
+      {
+        '$project': {
+          'bot_name': 1,
+          'worlds': 1
+        }
+      },
+      {
+        '$addFields': {
+          'matchedWorlds': {
+            '$filter': {
+              'input': {
+                '$objectToArray': '$worlds'
+              },
+              'as': 'world',
+              'cond': {
+                '$in': ['$$world.k', worldKeys]
+              }
+            }
+          }
+        }
+      },
+      {
+        '$unwind': '$matchedWorlds'
+      },
+      {
+        '$group': {
+          '_id': '$matchedWorlds.k',
+          'bot_names': {
+            '$addToSet': '$bot_name'
+          }
+        }
+      }
+    ];
+  // Run this aggregation
+  const botsPerWorld = await Patient.aggregate(botsPerWorldAggregation);
+  console.log(botsPerWorld)
+  console.log(botsPerWorld[0])
+  
+    
+
+  res.render('../views/qualityControl/commonlyVisitedWorlds', {commonlyVisitedWorlds: commonlyVisitedWorlds, botsPerWorld: botsPerWorld });
+
+
+  } catch (error) {
+    console.error('Error fetching commonly visited worlds:', error);
+    res.status(500).json({ error: 'Failed to fetch commonly visited worlds' });
+  }
+}

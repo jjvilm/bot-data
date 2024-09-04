@@ -42,6 +42,9 @@ router.get('/patientDelete',authMiddleware.ensureAuthenticated,function(req, res
 router.get('/latest-bots',authMiddleware.ensureAuthenticated,function(req, res, next) {
   patientController.getRecentKills(req,res);
 });
+router.get('/commonlyVisitedWorlds',authMiddleware.ensureAuthenticated,function(req, res, next) {
+  patientController.getCommonlyVistedWorlds(req,res);
+});
 
 
 
