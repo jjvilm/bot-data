@@ -4,6 +4,10 @@ const { Schema } = mongoose;
 
 // Define the schema for a single kill entry
 const KillSchema = new Schema({
+  hunter_name: {
+    type: String,
+    default: '', // Default empty string if no comments
+  },
   kill_date: {
     type: Date, // Use String if you store dates as strings
     required: false, // Set to true if you want to make it a mandatory field

@@ -203,7 +203,8 @@ async function fetchRecentKills() {
                       world_number: "$$this.world_number",
                       kill_date: "$$kill.kill_date",
                       kill_time: "$$kill.kill_time",
-                      loot_amount: "$$kill.loot_amount"
+                      loot_amount: "$$kill.loot_amount",
+                      hunter_name: "$$kill.hunter_name"
                     }
                   }
                 }]

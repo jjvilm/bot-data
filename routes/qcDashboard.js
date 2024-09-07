@@ -37,7 +37,7 @@ router.post('/botUpdate',authMiddleware.ensureAuthenticated, function(req, res, 
 router.get('/patientDelete',authMiddleware.ensureAuthenticated,function(req, res, next) {
   patientController.delete(req, res);
 });
-
+// used for fetching bots killing within the recent week
 router.get('/latest-bots',authMiddleware.ensureAuthenticated,function(req, res, next) {
   patientController.getRecentKills(req,res);
 });

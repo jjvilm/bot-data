@@ -43,6 +43,7 @@
     <table class="table table-striped table-dark table-hover">
         <thead>
             <tr>
+                <th>Hunter Name</th>
                 <th>Bot Name</th>
                 <th>World</th>
                 <th>Comments</th>
@@ -100,6 +101,7 @@
                     bots.forEach(bot => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
+                            <td>${bot.most_recent_kill.hunter_name}</td>
                             <td>${bot.bot_name} (${bot.combat_lv})</td>
                             <td>${bot.most_recent_kill.world_number}</td>
                             <td>${bot.comments}

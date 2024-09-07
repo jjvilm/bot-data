@@ -37,6 +37,7 @@
             <tr>
                 <th>World</th>
                 <th>Kill Frequency</th>
+                <th>Hunter</th>
                 <th>Date</th>
                 <th>Time</th>
                 <th>Loot Amount</th>
@@ -56,6 +57,7 @@
                                 <td rowspan="<%= worldData.kills.length %>"><%= worldData.kill_frequency %></td>
                             <% } %>
                             <!-- Display the Kill Date if it exists, otherwise show a placeholder -->
+                            <td><%= kill.hunter_name %></td>
                             <td>
                                 <% if (kill && kill.kill_date !== undefined && kill.kill_date !== null) { %>
                                     <!-- since the date is store as a date datatype, use the following to exract only YYYY-MM-DD -->
