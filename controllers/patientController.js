@@ -5,7 +5,7 @@ const csv = require('csv-parser');
 const fs = require('fs');
 const moment = require('moment'); // Import moment for date manipulation
 const { NONAME } = require('dns');
-
+const axios = require('axios');
 
 
 // methods for importing data
@@ -407,5 +407,106 @@ exports.getCommonlyVistedWorlds = async function (req, res) {
   } catch (error) {
     console.error('Error fetching commonly visited worlds:', error);
     res.status(500).json({ error: 'Failed to fetch commonly visited worlds' });
+  }
+};
+
+// Function to fetch player skills from OSRS Hiscores API
+async function getPlayerSkills(playerName) {
+  const url = `https://secure.runescape.com/m=hiscore_oldschool/index_lite.json?player=${playerName}`;
+
+  try {
+    const response = await axios.get(url);
+
+    // If the response is already in JSON format
+    const data = response.data;
+
+    // Helper function to find skill level by name
+    const getSkillLevel = (skillsArray, skillName) => {
+      const skill = skillsArray.find(s => s.name === skillName);
+      return skill ? skill.level : 0;
+    };
+
+    return {
+      Attack: getSkillLevel(data.skills, 'Attack'),     // Attack skill
+      Defence: getSkillLevel(data.skills, 'Defence'),   // Defence skill
+      Strength: getSkillLevel(data.skills, 'Strength'), // Strength skill
+      Hitpoints: getSkillLevel(data.skills, 'Hitpoints'), // Hitpoints skill
+      Ranged: getSkillLevel(data.skills, 'Ranged'),     // Ranged skill
+      Prayer: getSkillLevel(data.skills, 'Prayer'),     // Prayer skill
+      Magic: getSkillLevel(data.skills, 'Magic')        // Magic skill
+    };
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.warn(`Player ${playerName} not found (404). Skipping...`);
+      return 0; // Return 0 if player not found (404 error)
+    } else {
+      console.error(`Error fetching data for ${playerName}:`, error);
+      return 0; // Return 0 for other errors
+    }
+  }
+}
+
+// Function to calculate the combat level using the player's skills
+function calculateCombatLevel({ Attack, Defence, Strength, Hitpoints, Ranged, Prayer, Magic }) {
+  const base = 0.25 * (Defence + Hitpoints + Prayer / 2);
+  const melee = 0.325 * (Attack + Strength);
+  const rangedLvl = 0.325 * (Ranged * 1.5);
+  const magicLvl = 0.325 * (Magic * 1.5);
+  const combatLevel = base + Math.max(melee, rangedLvl, magicLvl);
+  return Math.floor(combatLevel); // Return the combat level as an integer
+}
+
+// Main function to get player's combat level
+async function getPlayerCombatLevel(playerName) {
+  const skills = await getPlayerSkills(playerName);
+  if (skills === 0) {
+    return 0; // Return 0 if unable to fetch skills
+  }
+  
+  const combatLevel = calculateCombatLevel(skills);
+  // console.log(`Combat Level of ${playerName}: ${combatLevel}`);
+  return combatLevel;
+}
+
+// Function to update recent killed bots' combat levels
+exports.updateRecentKilledBotsCBLevel = async function (req, res) {
+  // const combatLevel = await getPlayerCombatLevel('MountMeeple');
+  // console.log(`MountMeeple updating to ${combatLevel}`);
+  // return 0
+  try {
+    const recentKills = await fetchRecentKills(); // Assuming this fetches a list of recent kills
+
+    for (const kill of recentKills) {
+      const combatLevel = await getPlayerCombatLevel(kill.bot_name);
+      // avoid writing to db if combat lv not found
+      if (combatLevel === 0) {
+        console.log("No combat level found")
+        continue
+      }
+      if (combatLevel === kill.combat_lv) {
+        console.log("Same combat lv")
+        continue
+      }
+      // Update each bot's combat level
+      const updateData = {
+        combat_lv: combatLevel
+      };
+    
+      // Updates database
+      await Patient.findOneAndUpdate({ _id: kill._id }, updateData)
+      console.log(`${kill.bot_name} updated to ${combatLevel}`);
+    }
+
+    // Send updated recent kills as a response
+    // res.status(200).json({
+    //   message: "Combat levels updated successfully",
+    //   recentKills: recentKills
+    // });
+  } catch (error) {
+    console.error('Error updating recent kills data:', error);
+    res.status(500).json({
+      message: 'Error updating combat levels',
+      error: error.message
+    });
   }
 };

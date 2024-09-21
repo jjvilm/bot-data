@@ -2,6 +2,7 @@ let passport = require('passport');
 var express = require('express');
 var router = express.Router();
 var userController = require('../controllers/userController'); 
+var patientController = require('../controllers/patientController'); 
 const authMiddleware = require('../middleware/auth');
 
 /* GET home page. */
@@ -42,6 +43,9 @@ router.post('/userUpdate', authMiddleware.ensureAuthenticated,authMiddleware.has
 
 router.get('/userDelete',authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), function (req, res, next) {
   userController.userDelete(req,res)
+});
+router.get('/updateBotLevels',authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), function (req, res, next) {
+  patientController.updateRecentKilledBotsCBLevel(req,res)
 });
 
 module.exports = router;
