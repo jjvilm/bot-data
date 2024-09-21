@@ -470,9 +470,6 @@ async function getPlayerCombatLevel(playerName) {
 
 // Function to update recent killed bots' combat levels
 exports.updateRecentKilledBotsCBLevel = async function (req, res) {
-  // const combatLevel = await getPlayerCombatLevel('MountMeeple');
-  // console.log(`MountMeeple updating to ${combatLevel}`);
-  // return 0
   try {
     const recentKills = await fetchRecentKills(); // Assuming this fetches a list of recent kills
 
@@ -480,11 +477,11 @@ exports.updateRecentKilledBotsCBLevel = async function (req, res) {
       const combatLevel = await getPlayerCombatLevel(kill.bot_name);
       // avoid writing to db if combat lv not found
       if (combatLevel === 0) {
-        console.log("No combat level found")
+        // console.log("No combat level found")
         continue
       }
       if (combatLevel === kill.combat_lv) {
-        console.log("Same combat lv")
+        // console.log("Same combat lv")
         continue
       }
       // Update each bot's combat level
