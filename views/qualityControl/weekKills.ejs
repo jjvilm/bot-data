@@ -184,13 +184,14 @@
 
 function formatNumber(number) {
     if (number >= 1000000) {
-        return (number / 1000).toFixed(0) + 'K';
-    } else if (number >= 100000) {
-        return (number / 1000).toFixed(0) + 'K';
+        return (number / 1000).toFixed(0) + 'K'; // For numbers 1,000,000 and above
+    } else if (number >= 1000) {
+        return (number / 1000).toFixed(0) + 'K'; // For numbers between 1,000 and 999,999
     } else {
-        return number;
+        return number.toString(); // For numbers below 1,000
     }
 }
+
 
     </script>
 </body>
