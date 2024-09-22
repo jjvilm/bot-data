@@ -92,107 +92,94 @@
     <!-- script for updating the page with new data -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-    let dataTableInstance;
+        let dataTableInstance;
 
-    // Function to fetch the latest bot data
-    async function fetchLatestBots() {
-        try {
-            const response = await fetch('/qcDashboard/latest-bots');
-            const bots = await response.json();
+        // Initialize DataTable on page load
+        dataTableInstance = $('#week-kills-table').DataTable({
+            order: [[4, 'desc']], // Sort by the 5th column (Kill Date) in descending order
+        });
 
-            // Update the table
-            const tableBody = document.getElementById('botTableBody');
-            tableBody.innerHTML = ''; // Clear the existing table rows
+        // Function to fetch the latest bot data
+        async function fetchLatestBots() {
+            try {
+                const response = await fetch('/qcDashboard/latest-bots');
+                const bots = await response.json();
 
-            bots.forEach(bot => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${bot.most_recent_kill.hunter_name}</td>
-                    <td>${bot.bot_name} (${bot.combat_lv})</td>
-                    <td>${bot.most_recent_kill.world_number}</td>
-                    <td>${bot.comments}
+                // Clear the existing table rows using DataTable API
+                dataTableInstance.clear();
+
+                // Prepare new rows from fetched bot data
+                const newRows = bots.map(bot => [
+                    bot.most_recent_kill.hunter_name,
+                    `${bot.bot_name} (${bot.combat_lv})`,
+                    bot.most_recent_kill.world_number,
+                    `${bot.comments}
                         <button type="button" class="btn btn-primary update-bot-btn" data-toggle="modal" data-target="#updateModal" 
                             data-id="${bot._id}"
                             data-botname="${bot.bot_name}"
                             data-combatlv="${bot.combat_lv}"
                             data-comments="${bot.comments}">
                             Edit
-                        </button>
-                    </td>
-                    <td>${new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0]}</td>
-                    <td>${bot.most_recent_kill.kill_time}</td>
-                    <td>${formatNumber(bot.most_recent_kill.loot_amount)}</td>
-                    <td>
-                        <a href="/deDashboard/botKills?id=${bot._id}" class="btn btn-primary">Kills</a>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
+                        </button>`,
+                    new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0], // Format Kill Date
+                    bot.most_recent_kill.kill_time,
+                    formatNumber(bot.most_recent_kill.loot_amount),
+                    `<a href="/deDashboard/botKills?id=${bot._id}" class="btn btn-primary">Kills</a>`
+                ]);
 
-            // Attach click event listeners to update bot buttons after table is updated
-            document.querySelectorAll('.update-bot-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    populateModal(this);
+                // Add new rows to DataTable
+                dataTableInstance.rows.add(newRows).draw();
+
+                // Reattach event listeners for modal buttons
+                document.querySelectorAll('.update-bot-btn').forEach(button => {
+                    button.addEventListener('click', function () {
+                        populateModal(this);
+                    });
                 });
-            });
 
-            // Destroy previous DataTable instance if exists and reinitialize it
-            if (dataTableInstance) {
-                dataTableInstance.destroy(); // Destroy the old instance
+            } catch (error) {
+                console.error('Error fetching latest bots:', error);
             }
-
-            // Initialize DataTables after data is loaded and sort by kill date (column 5)
-            dataTableInstance = $('#week-kills-table').DataTable({
-                order: [[4, 'desc']] // Sort by the 5th column (Kill Date) in descending order
-            });
-
-        } catch (error) {
-            console.error('Error fetching latest bots:', error);
         }
-    }
 
-    // Function to populate the modal with data from the clicked button
-    function populateModal(button) {
-        const botId = button.getAttribute('data-id');
-        const botName = button.getAttribute('data-botname');
-        const combatLv = button.getAttribute('data-combatlv');
-        const comments = button.getAttribute('data-comments');
+        // Function to populate the modal with data from the clicked button
+        function populateModal(button) {
+            const botId = button.getAttribute('data-id');
+            const botName = button.getAttribute('data-botname');
+            const combatLv = button.getAttribute('data-combatlv');
+            const comments = button.getAttribute('data-comments');
 
-        // Get modal elements
-        const idInput = document.querySelector('#updateModal input[name="id"]');
-        const combatLvInput = document.querySelector('#updateModal input[name="combat_lv"]');
-        const commentsInput = document.querySelector('#updateModal input[name="comments"]');
-        const modalTitle = document.querySelector('#updateModalLabel strong');
+            const idInput = document.querySelector('#updateModal input[name="id"]');
+            const combatLvInput = document.querySelector('#updateModal input[name="combat_lv"]');
+            const commentsInput = document.querySelector('#updateModal input[name="comments"]');
+            const modalTitle = document.querySelector('#updateModalLabel strong');
 
-        // Check if elements exist before setting values
-        if (idInput && combatLvInput && commentsInput && modalTitle) {
-            idInput.value = botId;
-            combatLvInput.value = combatLv;
-            commentsInput.value = comments;
-            modalTitle.textContent = botName;
+            if (idInput && combatLvInput && commentsInput && modalTitle) {
+                idInput.value = botId;
+                combatLvInput.value = combatLv;
+                commentsInput.value = comments;
+                modalTitle.textContent = botName;
+            } else {
+                console.error('Modal elements not found.');
+            }
+        }
+
+        // Fetch the latest bots every 1 minutes
+        setInterval(fetchLatestBots, 60000);
+
+        // Initial fetch
+        fetchLatestBots();
+    });
+
+    function formatNumber(number) {
+        if (number >= 1000000) {
+            return (number / 1000).toFixed(0) + 'K'; // For numbers 1,000,000 and above
+        } else if (number >= 1000) {
+            return (number / 1000).toFixed(0) + 'K'; // For numbers between 1,000 and 999,999
         } else {
-            console.error('Modal elements not found. Ensure that the modal structure is correct and elements have the expected names.');
+            return number.toString(); // For numbers below 1,000
         }
     }
-
-    // Fetch the latest bots every 5 minutes
-    setInterval(fetchLatestBots, 60000);
-
-    // Initial fetch
-    fetchLatestBots();
-});
-
-function formatNumber(number) {
-    if (number >= 1000000) {
-        return (number / 1000).toFixed(0) + 'K'; // For numbers 1,000,000 and above
-    } else if (number >= 1000) {
-        return (number / 1000).toFixed(0) + 'K'; // For numbers between 1,000 and 999,999
-    } else {
-        return number.toString(); // For numbers below 1,000
-    }
-}
-
-
     </script>
 </body>
 </html>
