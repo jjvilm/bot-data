@@ -161,9 +161,19 @@ exports.getall = async function(req, res) {
 // shows the data for the selected bot
 exports.get_world_kills = async function(req, res) {
   var patients = await Patient.findOne({ _id: req.query.id });
-  res.render('../views/dataEntry/botKills', {patients: patients});
+  res.render('../views/dataEntry/botKills', {patients: patients, formatNumber});
   
 };
+
+function formatNumber(number) {
+  if (number >= 1000000) {
+      return (number / 1000000).toFixed(1) + 'M'; // For millions
+  } else if (number >= 1000) {
+      return (number / 1000).toFixed(1) + 'K'; // For thousands
+  } else {
+      return number.toString(); // For numbers below 1000
+  }
+}
 
 // Helper function to get recent kills data
 async function fetchRecentKills() {
@@ -263,12 +273,85 @@ async function fetchRecentKills() {
     throw error; // Rethrow the error for handling in calling function
   }
 };
+// Helper function to get recent kills data
+async function fetchPlayerKills(hunter_name) {
+  try {
+    const playerKills = await Patient.aggregate([
+      // Step 1: Unwind the worlds object to deal with individual world entries
+  {
+    '$project': {
+      'bot_name': 1,
+      'worlds': {
+        '$objectToArray': '$worlds'  // Convert worlds object to array for easier processing
+      }
+    }
+  },
+  // Step 2: Unwind the worlds array to handle each world individually
+  {
+    '$unwind': '$worlds'
+  },
+  // Step 3: Filter kills by hunter_name
+  {
+    '$project': {
+      'bot_name': 1,
+      'worlds.k': 1,  // World number
+      'worlds.v.kill_frequency': 1,
+      'kills': {
+        '$filter': {
+          'input': '$worlds.v.kills',
+          'as': 'kill',
+          'cond': {
+            '$eq': ['$$kill.hunter_name', hunter_name]  // Filter kills by hunter name
+          }
+        }
+      }
+    }
+  },
+  // Step 4: Filter out worlds with no kills by the hunter
+  {
+    '$match': {
+      'kills': { '$ne': [] }  // Keep only records where kills are not empty
+    }
+  },
+  // Step 5: Group the data back to consolidate kills for each bot
+  {
+    '$group': {
+      '_id': '$_id',
+      'bot_name': { '$first': '$bot_name' },
+      'worlds': {
+        '$push': {
+          'world': '$worlds.k',
+          'kill_frequency': '$worlds.v.kill_frequency',
+          'kills': '$kills'
+        }
+      }
+    }
+  }
+    ]);
+
+    return playerKills;
+  } catch (error) {
+    console.error('Error getting player kills:', error);
+    throw error;
+  }
+};
+
 
 // Route handler for fetching recent kills
 exports.getRecentKills = async function (req, res) {
   try {
     const recentKills = await fetchRecentKills();
     res.json(recentKills);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch recent kills' });
+  }
+};
+// Route handler for fetching recent kills
+exports.getPlayerKills = async function (req, res) {
+  let hunter_name = req.query.hunter_name
+  try {
+    const playerKills = await fetchPlayerKills(hunter_name);
+    res.render('../views/qualityControl/playerKills', {hunter_name: hunter_name, playerKills: playerKills, formatNumber});
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch recent kills' });
   }

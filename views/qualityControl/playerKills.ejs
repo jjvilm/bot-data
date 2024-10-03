@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/headfile'); %>
+<link rel="stylesheet" href="/stylesheets/patientList.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Hunting Data</title>
+</head>
+
+<body>
+    <%- include('../partials/navbar'); %>
+    <a href="/deDashboard/patientList" class="btn btn-primary">All Bots</a>
+    <a href="/deDashboard/topWorlds" class="btn btn-primary">Top Worlds</a>
+    <a href="/qcDashboard" class="btn btn-primary">Recent Kills</a>
+    <h1><%= hunter_name %></h1>
+
+    <!-- Display total and average loot -->
+    <% let totalLootAmount = 0; %>
+    <% let lootAmounts = []; %>
+    <% playerKills.forEach(function(killData) { %>
+        <% killData.worlds.forEach(function(worldData) { %>
+            <% worldData.kills.forEach(function(kill) { %>
+                <% lootAmounts.push(kill.loot_amount); %>
+                <% totalLootAmount += kill.loot_amount; %>
+            <% }); %>
+        <% }); %>
+    <% }); %>
+    <h4 style="text-align: center;">Total Loot: <%= formatNumber(totalLootAmount) %></h4>
+    <h4 style="text-align: center;">Average Loot: <%= formatNumber(lootAmounts.length ? (totalLootAmount / lootAmounts.length) : 0) %></h4>
+
+    <button id="showGraphButton" class="btn btn-primary">Show Graph</button>
+
+    <!-- Graph Modal -->
+    <div id="graphModal" style="display:none;">
+        <div style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0, 0, 0, 0.5); z-index:1000;">
+            <div style="background:white; margin:10% auto; padding:20px; width:80%; max-width:600px;">
+                <canvas id="myChart" style="width:100%; height:400px;"></canvas>
+                <button id="closeGraphButton">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTable -->
+    <table class="table table-striped table-dark table-hover" id="player-kills-table" style="width: 100%;">
+        <thead>
+            <tr>
+                <th>Bot Name</th>
+                <th>World</th>
+                <th>Date</th>
+                <th>Kill Time</th>
+                <th>Loot Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% playerKills.forEach(function(killData) { %>
+                <% killData.worlds.forEach(function(worldData) { %>
+                    <% worldData.kills.forEach(function(kill) { %>
+                        <tr>
+                            <% if (worldData.kills[0] === kill) { %>
+                                <td rowspan="<%= worldData.kills.length %>">
+                                    <a href="/deDashboard/botKills?id=<%= killData._id %>" style="color: white;">
+                                        <%= killData.bot_name %> 
+                                    </a>
+                                </td>
+                            <% } %>
+                            <% if (kill === worldData.kills[0]) { %>
+                                <td rowspan="<%= worldData.kills.length %>"><%= worldData.world %></td>
+                            <% } %>
+                            <td><%= new Date(kill.kill_date).toISOString().split('T')[0] %></td>
+                            <td><%= kill.kill_time %></td>
+                            <td><%= formatNumber(kill.loot_amount) %></td>
+                        </tr>
+                    <% }); %>
+                <% }); %>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <script>
+        document.getElementById('showGraphButton').addEventListener('click', function() {
+            document.getElementById('graphModal').style.display = 'block';
+            createGraph();
+        });
+
+        document.getElementById('closeGraphButton').addEventListener('click', function() {
+            document.getElementById('graphModal').style.display = 'none';
+        });
+
+        function createGraph() {
+            const labels = []; // Fill this with your dates
+            const dataPoints = []; // Fill this with your loot amounts
+
+            // Collect data from your playerKills array
+            <% playerKills.forEach(function(killData) { %>
+                <% killData.worlds.forEach(function(worldData) { %>
+                    <% worldData.kills.forEach(function(kill) { %>
+                        labels.push(new Date("<%= kill.kill_date %>").toLocaleDateString()); // Get dates
+                        dataPoints.push(<%= kill.loot_amount %>); // Get loot amounts
+                    <% }); %>
+                <% }); %>
+            <% }); %>
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar', // Choose your chart type
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Loot Amount',
+                        data: dataPoints,
+                        backgroundColor: 'rgba(75, 192, 192, 1)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

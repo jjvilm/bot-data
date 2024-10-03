@@ -57,7 +57,12 @@
                                 <td rowspan="<%= worldData.kills.length %>"><%= worldData.kill_frequency %></td>
                             <% } %>
                             <!-- Display the Kill Date if it exists, otherwise show a placeholder -->
-                            <td><%= kill.hunter_name %></td>
+                            <td>
+                                <a href="/qcDashboard/player-latest-bots?hunter_name=<%= kill.hunter_name %>" style="color: white;">
+                                    <%= kill.hunter_name %>
+                                </a>
+                            </td>
+                            
                             <td>
                                 <% if (kill && kill.kill_date !== undefined && kill.kill_date !== null) { %>
                                     <!-- since the date is store as a date datatype, use the following to exract only YYYY-MM-DD -->
@@ -69,7 +74,8 @@
                             
                                                         
                             <td><%= kill.kill_time %></td>
-                            <td><%= kill.loot_amount %></td>
+                            <td><%= formatNumber(kill.loot_amount) %></td>
+
                         </tr>
                     <% }); %>
                 <% } else { %>
@@ -82,5 +88,16 @@
             <% }); %>
         </tbody>
     </table>
+    <script>
+        function formatNumber(number) {
+        if (number >= 1000000) {
+            return (number / 1000).toFixed(0) + 'K'; // For numbers 1,000,000 and above
+        } else if (number >= 1000) {
+            return (number / 1000).toFixed(0) + 'K'; // For numbers between 1,000 and 999,999
+        } else {
+            return number.toString(); // For numbers below 1,000
+        }
+    }
+    </script>
 </body>
 </html>

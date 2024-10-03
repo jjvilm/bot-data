@@ -50,7 +50,6 @@
                 <th>Kill Date</th>
                 <th>Kill Time</th>
                 <th>Loot Amount</th>
-                <th>Action</th>
             </tr>
         </thead>
         <tbody id="botTableBody"></tbody>
@@ -110,8 +109,8 @@
 
                 // Prepare new rows from fetched bot data
                 const newRows = bots.map(bot => [
-                    bot.most_recent_kill.hunter_name,
-                    `${bot.bot_name} (${bot.combat_lv})`,
+                    `<a href="/qcDashboard/player-latest-bots?hunter_name=${bot.most_recent_kill.hunter_name}" style="color: white;">${bot.most_recent_kill.hunter_name}</a>`,
+                    `<a href="/deDashboard/botKills?id=${bot._id}" style="color: white;">${bot.bot_name} (${bot.combat_lv})</a>`,
                     bot.most_recent_kill.world_number,
                     `${bot.comments}
                         <button type="button" class="btn btn-primary update-bot-btn" data-toggle="modal" data-target="#updateModal" 
@@ -123,8 +122,7 @@
                         </button>`,
                     new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0], // Format Kill Date
                     bot.most_recent_kill.kill_time,
-                    formatNumber(bot.most_recent_kill.loot_amount),
-                    `<a href="/deDashboard/botKills?id=${bot._id}" class="btn btn-primary">Kills</a>`
+                    formatNumber(bot.most_recent_kill.loot_amount)
                 ]);
 
                 // Add new rows to DataTable
