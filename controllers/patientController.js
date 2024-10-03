@@ -555,11 +555,14 @@ async function getPlayerCombatLevel(playerName) {
 exports.updateRecentKilledBotsCBLevel = async function (req, res) {
   try {
     const recentKills = await fetchRecentKills(); // Assuming this fetches a list of recent kills
+    const botsWithZeroCombatLevel = [];
 
     for (const kill of recentKills) {
       const combatLevel = await getPlayerCombatLevel(kill.bot_name);
+      
       // avoid writing to db if combat lv not found
       if (combatLevel === 0) {
+        botsWithZeroCombatLevel.push(kill);
         // console.log("No combat level found")
         continue
       }
@@ -576,6 +579,9 @@ exports.updateRecentKilledBotsCBLevel = async function (req, res) {
       await Patient.findOneAndUpdate({ _id: kill._id }, updateData)
       console.log(`${kill.bot_name} updated to ${combatLevel}`);
     }
+
+    // Render the table with bots whose combat level is 0
+    res.render('../views/admin/updateBotCombats', { botsWithZeroCombatLevel });
 
     // Send updated recent kills as a response
     // res.status(200).json({

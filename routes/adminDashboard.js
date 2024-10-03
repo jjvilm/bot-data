@@ -45,6 +45,7 @@ router.get('/userDelete',authMiddleware.ensureAuthenticated,authMiddleware.hasRo
   userController.userDelete(req,res)
 });
 router.get('/updateBotLevels',authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), function (req, res, next) {
+  res.render('../views/admin/updateBotCombat.ejs');
   patientController.updateRecentKilledBotsCBLevel(req,res)
 });
 

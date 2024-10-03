@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/headfile'); %>
+    <title>Bots with Combat Level 0</title>
+</head>
+<body>
+    <%- include('../partials/navbar'); %>
+
+    <div class="container mt-4">
+        <h1>Bots with Combat Level 0</h1>
+        <table class="table table-striped table-dark table-hover">
+            <thead>
+                <tr>
+                    <th>Bot Name</th>
+                    <th>World</th>
+                    <th>Date</th>
+                    <th>Kill Time</th>
+                    <th>Loot Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% botsWithZeroCombatLevel.forEach(function(bot) { %>
+                    <tr>
+                        <td><%= bot.bot_name %></td>
+                        <td><%= bot.world %></td>
+                        <td><%= new Date(bot.kill_date).toISOString().split('T')[0] %></td>
+                        <td><%= bot.kill_time %></td>
+                        <td><%= formatNumber(bot.loot_amount) %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+    <%- include('../partials/footer'); %>
+</body>
+</html>
