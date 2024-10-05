@@ -57,6 +57,6 @@ const BotSchema = new Schema({
   },
 });
 
-const Patient = mongoose.model('bot_kills', BotSchema);
+const Bot = mongoose.model('bot_kills', BotSchema);
 
-module.exports = Patient;
+module.exports = Bot;

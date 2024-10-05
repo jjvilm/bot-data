@@ -5,7 +5,7 @@ const multer = require('multer');
 const upload = multer().single('csvFile'); // specify the field name of the file upload
 
 
-var patientController = require('../controllers/patientController'); 
+var botController = require('../controllers/botController'); 
 const authMiddleware = require('../middleware/auth');
 // var userController = require('../controllers/userController'); 
 
@@ -15,48 +15,48 @@ router.get('/', authMiddleware.ensureAuthenticated,function (req, res, next) {
 });
 
 // Displays the list of customers in the database
-router.get('/patientList',authMiddleware.ensureAuthenticated, function (req, res, next) {
-  patientController.getall(req, res);
+router.get('/botList',authMiddleware.ensureAuthenticated, function (req, res, next) {
+  botController.getall(req, res);
 });
 
 // Displays the list of worlds for a specific bot in the database
 router.get('/botKills',authMiddleware.ensureAuthenticated, function (req, res, next) {
-  // patientController.getRecentKills(req,res);
-  patientController.get_world_kills(req, res);
+  // botController.getRecentKills(req,res);
+  botController.get_world_kills(req, res);
 });
 
 // Displays the list of worlds for a specific bot in the database
 router.get('/topWorlds',authMiddleware.ensureAuthenticated, function (req, res, next) {
-  // patientController.getRecentKills(req,res);
-  patientController.getTopWorlds(req, res);
+  // botController.getRecentKills(req,res);
+  botController.getTopWorlds(req, res);
 });
 
-// Used to create a patient and added to the database
-router.get('/patientCreate',authMiddleware.ensureAuthenticated, function (req, res, next) {
-  res.render('../views/dataEntry/patientCreate');
+// Used to create a bot and added to the database
+router.get('/botCreate',authMiddleware.ensureAuthenticated, function (req, res, next) {
+  res.render('../views/dataEntry/botCreate');
 });
 
-router.post('/patientCreate',authMiddleware.ensureAuthenticated, function(req,res,next){
-  patientController.create(req,res);
+router.post('/botCreate',authMiddleware.ensureAuthenticated, function(req,res,next){
+  botController.create(req,res);
   
 });
-// update patient
-router.get('/patientUpdate',authMiddleware.ensureAuthenticated, function(req, res, next) {
-  patientController.update_get(req, res);
+// update bot
+router.get('/botUpdate',authMiddleware.ensureAuthenticated, function(req, res, next) {
+  botController.update_get(req, res);
 });
-router.post('/patientUpdate',authMiddleware.ensureAuthenticated, function(req, res, next) {
-  patientController.update(req, res);
+router.post('/botUpdate',authMiddleware.ensureAuthenticated, function(req, res, next) {
+  botController.update(req, res);
 });
 // delete
-router.get('/patientDelete',authMiddleware.ensureAuthenticated,function(req, res, next) {
-  patientController.delete(req, res);
+router.get('/botDelete',authMiddleware.ensureAuthenticated,function(req, res, next) {
+  botController.delete(req, res);
 });
 // file exports 
 router.get('/exportCsv',authMiddleware.ensureAuthenticated,function(req, res, next) {
-  patientController.exportCsv(req, res);
+  botController.exportCsv(req, res);
 });
 router.get('/exportExcel',authMiddleware.ensureAuthenticated,function(req, res, next) {
-  patientController.exportExcel(req, res);
+  botController.exportExcel(req, res);
 });
 // file imports
 router.post('/importCsv', authMiddleware.ensureAuthenticated, function(req, res, next) {
@@ -64,7 +64,7 @@ router.post('/importCsv', authMiddleware.ensureAuthenticated, function(req, res,
     if (err) {
       return res.status(400).send({ message: 'Error uploading file' });
     }
-    patientController.importCsv(req, res);
+    botController.importCsv(req, res);
   });
 });
 

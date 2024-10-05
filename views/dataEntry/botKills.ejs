@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('../partials/headfile'); %>
-<link rel="stylesheet" href="/stylesheets/patientList.css" />
+<link rel="stylesheet" href="/stylesheets/botList.css" />
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,11 +26,11 @@
 </head>
 <body>
     <%- include('../partials/navbar'); %>
-    <a href="/deDashboard/patientList" class="btn btn-primary">All Bots</a>
+    <a href="/deDashboard/botList" class="btn btn-primary">All Bots</a>
     <a href="/deDashboard/topWorlds" class="btn btn-primary">Top Worlds</a>
     <a href="/qcDashboard" class="btn btn-primary">Recent Kills</a>
-    <h1><%= patients.bot_name %></h1>
-    <h4>(Combat Level: <%= patients.combat_lv %>)</h4>
+    <h1><%= bots.bot_name %></h1>
+    <h4>(Combat Level: <%= bots.combat_lv %>)</h4>
     
     <table class="table table-striped table-dark table-hover">
         <thead>
@@ -46,7 +46,7 @@
         <tbody>
             <% 
             // Convert the 'worlds' Map to an array of entries and iterate over them
-            Array.from(patients.worlds.entries()).forEach(function([world, worldData]) { 
+            Array.from(bots.worlds.entries()).forEach(function([world, worldData]) { 
             %>
                 <% if (worldData.kills && Array.isArray(worldData.kills)) { %>
                     <% worldData.kills.forEach(function(kill, index) { %>

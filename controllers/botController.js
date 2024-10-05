@@ -1,4 +1,4 @@
-const Patient = require('../models/patient');
+const Bot = require('../models/bot');
 const excel = require('exceljs');
 // packages used for importing data
 const csv = require('csv-parser');
@@ -17,8 +17,8 @@ exports.importCsv = async function(req, res) {
       .pipe(csv())
       .on('data', (data) => results.push(data))
       .on('end', async () => {
-        // Map the CSV data to Patient model fields
-        const patients = results.map((row) => {
+        // Map the CSV data to Bot model fields
+        const bots = results.map((row) => {
           return {
             creatorId: row.creatorId,
             creatorName: row.creatorName,
@@ -37,14 +37,14 @@ exports.importCsv = async function(req, res) {
           };
         });
 
-        // Save each patient to the database
-        for (let patientData of patients) {
-          const patient = new Patient(patientData);
-          await patient.save();
+        // Save each bot to the database
+        for (let botData of bots) {
+          const bot = new Bot(botData);
+          await bot.save();
         }
 
-        // Redirect to the patient list page
-        res.redirect('/deDashboard/patientList');
+        // Redirect to the bot list page
+        res.redirect('/deDashboard/botList');
       });
   } else {
     res.redirect('/deDashboard/importCsv');
@@ -57,13 +57,13 @@ exports.exportExcel = async function(req, res) {
   const workbook = new excel.Workbook();
   const worksheet = workbook.addWorksheet('Bots');
 
-  let patients = await Patient.find({});
+  let bots = await Bot.find({});
   worksheet.columns = [
     { header: 'Bot Name', key: 'bot_name', width: 10 },
     { header: 'Combat Level', key: 'combat_lv', width: 10 },
     { header: 'Comments', key: 'comments', width: 10 },
   ]
-  worksheet.addRows(patients);
+  worksheet.addRows(bots);
 
   res.setHeader(
     'Content-Type',
@@ -79,24 +79,24 @@ exports.exportExcel = async function(req, res) {
 };
 
 exports.exportCsv = async function(req, res) {
-  let patients = await Patient.find({});
+  let bots = await Bot.find({});
 
   let csv = 'Bot Name, Combat Level, Comments\r\n';
-  patients.forEach((patient) => {
-    csv += patient.bot_name + ',';
-    csv += patient.combat_lv + ',';
-    csv += patient.comments + '\r\n';
+  bots.forEach((bot) => {
+    csv += bot.bot_name + ',';
+    csv += bot.combat_lv + ',';
+    csv += bot.comments + '\r\n';
   })
 
   res.header('Content-Type', 'text/csv');
-  res.attachment('patients.csv');
+  res.attachment('bots.csv');
   return res.send(csv);
 };
 
 
-// Patient Model methods
+// Bot Model methods
 exports.create = async function(req, res) {
-  let patient = new Patient({
+  let bot = new Bot({
     bot_name: req.body.bot_name,
     combat_lv: req.body.combat_lv,
     comments: req.body.comments,
@@ -104,16 +104,16 @@ exports.create = async function(req, res) {
 
 
   try {
-    await patient.save();
-    res.redirect('/deDashboard/patientList');
+    await bot.save();
+    res.redirect('/deDashboard/botList');
   } catch (err) {
     console.log(err);
   }
 };
 
 exports.update_get = async function(req, res) {
-  var patient = await Patient.findOne({ _id: req.query.id });
-  res.render('../views/dataEntry/patientUpdate', patient);
+  var bot = await Bot.findOne({ _id: req.query.id });
+  res.render('../views/dataEntry/botUpdate', bot);
 };
 
 exports.update = async function(req, res) {
@@ -123,8 +123,8 @@ exports.update = async function(req, res) {
   };
 
 
-  var result = await Patient.findOneAndUpdate({ _id: req.body.id }, updateData)
-  res.redirect('/deDashboard/patientList');
+  var result = await Bot.findOneAndUpdate({ _id: req.body.id }, updateData)
+  res.redirect('/deDashboard/botList');
 };
 exports.update_from_recently_killed = async function(req, res) {
   const updateData = {
@@ -133,7 +133,7 @@ exports.update_from_recently_killed = async function(req, res) {
   };
 
 
-  var result = await Patient.findOneAndUpdate({ _id: req.body.id }, updateData)
+  var result = await Bot.findOneAndUpdate({ _id: req.body.id }, updateData)
   res.redirect('/qcDashboard');
 };
 exports.update_combat_alias = async function(req, res) {
@@ -143,21 +143,21 @@ exports.update_combat_alias = async function(req, res) {
   };
 
 
-  var result = await Patient.findOneAndUpdate({ _id: req.body.id }, updateData)
+  var result = await Bot.findOneAndUpdate({ _id: req.body.id }, updateData)
 };
 
 exports.delete = async function(req, res) {
   
-  await Patient.findOneAndDelete({ _id: req.query.id });
+  await Bot.findOneAndDelete({ _id: req.query.id });
 
-  res.redirect('/deDashboard/patientList');
+  res.redirect('/deDashboard/botList');
 
 };
 
 exports.getall = async function(req, res) {
   try {
-    var returnedPatients = await Patient.find({});
-    res.render('../views/dataEntry/patientList', { patients: returnedPatients });
+    var returnedBots = await Bot.find({});
+    res.render('../views/dataEntry/botList', { bots: returnedBots });
   } catch (err) {
     console.log(err);
   }
@@ -166,8 +166,8 @@ exports.getall = async function(req, res) {
  
 // shows the data for the selected bot
 exports.get_world_kills = async function(req, res) {
-  var patients = await Patient.findOne({ _id: req.query.id });
-  res.render('../views/dataEntry/botKills', {patients: patients, formatNumber});
+  var bots = await Bot.findOne({ _id: req.query.id });
+  res.render('../views/dataEntry/botKills', {bots: bots, formatNumber});
   
 };
 
@@ -185,7 +185,7 @@ function formatNumber(number) {
 async function fetchRecentKills() {
   try {
     const sevenDaysAgo = moment().subtract(7, 'days').toDate();
-    const recentKills = await Patient.aggregate([
+    const recentKills = await Bot.aggregate([
       {
         $project: {
           bot_name: 1,
@@ -284,7 +284,7 @@ async function fetchRecentKills() {
 // Helper function to get recent kills data
 async function fetchPlayerKills(hunter_name) {
   try {
-    const playerKills = await Patient.aggregate([
+    const playerKills = await Bot.aggregate([
       // Step 1: Unwind the worlds object to deal with individual world entries
   {
     '$project': {
@@ -378,7 +378,7 @@ exports.getRecentKillsData = async function () {
 // Used for the kills frequencies per world
 exports.getTopWorlds = async function (req, res) {
   try {
-    const topWorlds = await Patient.aggregate([
+    const topWorlds = await Bot.aggregate([
       { $project: { worlds: { $objectToArray: "$worlds" } } }, // Convert worlds object to array of key-value pairs
       { $unwind: "$worlds" }, // Unwind the worlds array
       { $group: { _id: "$worlds.k", totalFrequency: { $sum: "$worlds.v.kill_frequency" } } }, // Group by world_number and sum the kill_frequency
@@ -425,7 +425,7 @@ exports.getCommonlyVistedWorlds = async function (req, res) {
     ];
     
     // Running top aggregation
-    const commonlyVisitedWorlds = await Patient.aggregate(topWorldsAggregation);
+    const commonlyVisitedWorlds = await Bot.aggregate(topWorldsAggregation);
     // Extract the top worlds into an array of world keys
     const worldKeys = commonlyVisitedWorlds.map(world => world._id);
 
@@ -474,7 +474,7 @@ exports.getCommonlyVistedWorlds = async function (req, res) {
       }
     ];
   // Fetch bots per world
-  const botsPerWorld = await Patient.aggregate(botsPerWorldAggregation);
+  const botsPerWorld = await Bot.aggregate(botsPerWorldAggregation);
   
   // Fetch the latest bot data
   const recentKills = await exports.getRecentKillsData(); // Use the data-returning function
@@ -563,7 +563,7 @@ exports.setBannedBot = async function (req, res) {
     const botId = req.body.id;
 
       // Update the bot's alias and combat level in the database
-      await Patient.updateOne(
+      await Bot.updateOne(
         { _id: botId }, // Find the bot by _id
         { 
           $set: { 
@@ -592,7 +592,7 @@ exports.fetchPlayerCombatLevel = async function (req, res) {
     // Check if the combat level is valid and not 0
     if (combatLevel !== 0) {
       // Update the bot's alias and combat level in the database
-      await Patient.updateOne(
+      await Bot.updateOne(
         { _id: botId }, // Find the bot by _id
         { 
           $set: { 
@@ -623,7 +623,7 @@ exports.updateRecentKilledBotsCBLevel = async function (req, res) {
 
     for (const kill of recentKills) {
       let bot_name = kill.bot_name
-      
+
       // ignore banned bots
       if (kill.comments === 'BANNED') {
         continue
@@ -648,7 +648,7 @@ exports.updateRecentKilledBotsCBLevel = async function (req, res) {
       };
     
       // Updates database
-      await Patient.findOneAndUpdate({ _id: kill._id }, updateData)
+      await Bot.findOneAndUpdate({ _id: kill._id }, updateData)
     }
 
     // Render the table with bots whose combat level is 0

@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow">
   <div class="container-fluid">
-    <a class="navbar-brand text-uppercase" href="<% if (locals.user && locals.user.role === 'DataEntry') { %>/deDashboard<% } else if (locals.user && locals.user.role === 'QualityControl') { %>/qcDashboard<% } else if (locals.user && locals.user.role === 'Admin') { %>/adminDashboard<% } else { %>/qcDashboard/patientList<% } %>">
+    <a class="navbar-brand text-uppercase" href="<% if (locals.user && locals.user.role === 'DataEntry') { %>/deDashboard<% } else if (locals.user && locals.user.role === 'QualityControl') { %>/qcDashboard<% } else if (locals.user && locals.user.role === 'Admin') { %>/adminDashboard<% } else { %>/qcDashboard/botList<% } %>">
       <img src="/images/aetherborne.jpg" alt="Aetherborne Logo" style="height: 1.5em; vertical-align: middle; margin-right: 0.5em;">       Aetherborne
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

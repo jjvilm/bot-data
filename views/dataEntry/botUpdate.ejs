@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <%- include('../partials/headfile'); %>
-   <link rel="stylesheet" href="/stylesheets/patientedit.css" />
+   <link rel="stylesheet" href="/stylesheets/botEdit.css" />
   <body>
     <%- include('../partials/navbar'); %>
 
@@ -9,7 +9,7 @@
 <div class="container">
 <div class="row">
   <div class="col-4">
-    <form method="post" action="/deDashboard/patientUpdate">
+    <form method="post" action="/deDashboard/botUpdate">
       <input type="hidden" value="<%=_id%>" name="id" />
       <div class="form-group">
         <label for="combat_lv">Combat Level:</label>

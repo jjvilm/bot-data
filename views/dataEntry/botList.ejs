@@ -2,18 +2,18 @@
 <!doctype html>
 <html lang="en">
 <%- include('../partials/headfile'); %>
-<link rel="stylesheet" href="/stylesheets/patientList.css" />
+<link rel="stylesheet" href="/stylesheets/botList.css" />
   <body>
     <%- include('../partials/navbar'); %>
 <div class="container">
-  <!-- <a href="/deDashboard/patientCreate" class="btn btn-primary">Create</a> -->
+  <!-- <a href="/deDashboard/botCreate" class="btn btn-primary">Create</a> -->
   <a href="/qcDashboard" class="btn btn-primary">Recent Kills</a>
   <a href="/deDashboard/topWorlds" class="btn btn-primary">World Kills</a>
   <a href="/qcDashboard/commonlyVisitedWorlds" class="btn btn-primary">Top Worlds</a>
   <!-- <a href="/deDashboard/exportCsv" class="btn btn-primary">Export CSV</a> -->
   <!-- <a href="/deDashboard/exportExcel" class="btn btn-primary">Export Excel</a> -->
   <h1>Bot Database</h1>
-        <table class="table table-striped table-dark table-hover" id="patientTable">
+        <table class="table table-striped table-dark table-hover" id="botTable">
           <thead>
             <tr>
               <th>Bot Name</th>
@@ -24,18 +24,18 @@
             </tr>
           </thead>
           <tbody>
-            <% for (var i = 0; i < patients.length; i++) { %>
+            <% for (var i = 0; i < bots.length; i++) { %>
               <tr>
-                <td><%= patients[i].bot_name %></td>
-                <td><%= patients[i].combat_lv %></td>
-                <td><%= patients[i].comments %></td>
+                <td><%= bots[i].bot_name %></td>
+                <td><%= bots[i].combat_lv %></td>
+                <td><%= bots[i].comments %></td>
                 <td>
-                  <a href="/deDashboard/botKills?id=<%= patients[i]._id %>" class="btn btn-primary">Kills</a>
-                  <!-- <a href="/deDashboard/patientDelete?id=<%= patients[i]._id %>" class="btn btn-danger">Delete</a> -->
+                  <a href="/deDashboard/botKills?id=<%= bots[i]._id %>" class="btn btn-primary">Kills</a>
+                  <!-- <a href="/deDashboard/botDelete?id=<%= bots[i]._id %>" class="btn btn-danger">Delete</a> -->
                 </td>
                 <td>
-                  <a href="/deDashboard/patientUpdate?id=<%= patients[i]._id %>" class="btn btn-primary">Edit</a>
-                  <!-- <a href="/deDashboard/patientDelete?id=<%= patients[i]._id %>" class="btn btn-danger">Delete</a> -->
+                  <a href="/deDashboard/botUpdate?id=<%= bots[i]._id %>" class="btn btn-primary">Edit</a>
+                  <!-- <a href="/deDashboard/botDelete?id=<%= bots[i]._id %>" class="btn btn-danger">Delete</a> -->
                 </td>
               </tr>
             <% } %>
@@ -47,7 +47,7 @@
     <%- include('../partials/scripts'); %>
       <script type="text/javascript">
         $(document).ready(function() {
-          $('#patientTable').DataTable();
+          $('#botTable').DataTable();
         })
       </script>
       
