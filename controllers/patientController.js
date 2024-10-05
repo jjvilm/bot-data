@@ -47,7 +47,6 @@ exports.importCsv = async function(req, res) {
         res.redirect('/deDashboard/patientList');
       });
   } else {
-    console.log("File object is not defined");
     res.redirect('/deDashboard/importCsv');
   }
 };
@@ -125,7 +124,6 @@ exports.update = async function(req, res) {
 
 
   var result = await Patient.findOneAndUpdate({ _id: req.body.id }, updateData)
-  // console.log("In update method" + result)
   res.redirect('/deDashboard/patientList');
 };
 exports.update_from_recently_killed = async function(req, res) {
@@ -136,8 +134,16 @@ exports.update_from_recently_killed = async function(req, res) {
 
 
   var result = await Patient.findOneAndUpdate({ _id: req.body.id }, updateData)
-  // console.log("In update method" + result)
   res.redirect('/qcDashboard');
+};
+exports.update_combat_alias = async function(req, res) {
+  const updateData = {
+    alias: req.body.alias,
+    combat_lv: req.body.combat_lv,
+  };
+
+
+  var result = await Patient.findOneAndUpdate({ _id: req.body.id }, updateData)
 };
 
 exports.delete = async function(req, res) {
@@ -183,6 +189,7 @@ async function fetchRecentKills() {
       {
         $project: {
           bot_name: 1,
+          alias: 1,
           combat_lv: 1,
           comments: 1,
           recent_kill_data: {
@@ -249,6 +256,7 @@ async function fetchRecentKills() {
       {
         $project: {
           bot_name: 1,
+          alias: 1,
           combat_lv: 1,
           comments: 1,
           most_recent_kill: 1
@@ -378,8 +386,6 @@ exports.getTopWorlds = async function (req, res) {
       { $limit: 25 } // Limit to top 10 results
     ]);
 
-    // console.log(topWorlds)
-    // res.json(topWorlds);
     res.render('../views/qualityControl/topWorlds', {topWorlds: topWorlds});
   } catch (error) {
     console.error('Error fetching top worlds:', error);
@@ -547,9 +553,67 @@ async function getPlayerCombatLevel(playerName) {
   }
   
   const combatLevel = calculateCombatLevel(skills);
-  // console.log(`Combat Level of ${playerName}: ${combatLevel}`);
   return combatLevel;
 }
+
+
+// Function to update bot as banned
+exports.setBannedBot = async function (req, res) {
+  try {
+    const botId = req.body.id;
+
+      // Update the bot's alias and combat level in the database
+      await Patient.updateOne(
+        { _id: botId }, // Find the bot by _id
+        { 
+          $set: { 
+            comments: "BANNED", // Update combat level
+          } 
+        }
+      );
+      res.json({ message: 'Bot banned successfully' });
+
+  } catch (error) {
+    console.error('Error in setBannedBot:', error);
+    // Send the error response if something went wrong
+    return res.status(500).json({ message: 'Error updating comments in document for bot', error: error.message });
+  }
+};
+
+// Function to update recent killed bots' combat levels from admin/updateBotCombat.ejs
+exports.fetchPlayerCombatLevel = async function (req, res) {
+  try {
+    const alias = req.body.alias;
+    const botId = req.body.id;
+
+    // Fetch the new combat level
+    const combatLevel = await getPlayerCombatLevel(alias);
+
+    // Check if the combat level is valid and not 0
+    if (combatLevel !== 0) {
+      // Update the bot's alias and combat level in the database
+      await Patient.updateOne(
+        { _id: botId }, // Find the bot by _id
+        { 
+          $set: { 
+            combat_lv: combatLevel, // Update combat level
+            alias: alias // Update alias (if needed)
+          } 
+        }
+      );
+
+      // Respond with the updated combat level
+      return res.json({ combatLevel });
+    } else {
+      return res.status(400).json({ message: 'Combat level is 0, no update performed.' });
+    }
+  } catch (error) {
+    console.error('Error in fetching combat level:', error);
+    // Send the error response if something went wrong
+    return res.status(500).json({ message: 'Error updating combat level', error: error.message });
+  }
+};
+
 
 // Function to update recent killed bots' combat levels
 exports.updateRecentKilledBotsCBLevel = async function (req, res) {
@@ -558,16 +622,24 @@ exports.updateRecentKilledBotsCBLevel = async function (req, res) {
     const botsWithZeroCombatLevel = [];
 
     for (const kill of recentKills) {
-      const combatLevel = await getPlayerCombatLevel(kill.bot_name);
+      let bot_name = kill.bot_name
+      
+      // ignore banned bots
+      if (kill.comments === 'BANNED') {
+        continue
+      }
+      //check alias first
+      if (kill.alias != '') {
+        bot_name = kill.alias
+      }
+      const combatLevel = await getPlayerCombatLevel(bot_name);
       
       // avoid writing to db if combat lv not found
       if (combatLevel === 0) {
         botsWithZeroCombatLevel.push(kill);
-        // console.log("No combat level found")
         continue
       }
       if (combatLevel === kill.combat_lv) {
-        // console.log("Same combat lv")
         continue
       }
       // Update each bot's combat level
@@ -577,11 +649,10 @@ exports.updateRecentKilledBotsCBLevel = async function (req, res) {
     
       // Updates database
       await Patient.findOneAndUpdate({ _id: kill._id }, updateData)
-      console.log(`${kill.bot_name} updated to ${combatLevel}`);
     }
 
     // Render the table with bots whose combat level is 0
-    res.render('../views/admin/updateBotCombats', { botsWithZeroCombatLevel });
+    res.render('../views/admin/updateBotCombat', { botsWithZeroCombatLevel});
 
     // Send updated recent kills as a response
     // res.status(200).json({

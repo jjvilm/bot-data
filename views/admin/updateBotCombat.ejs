@@ -3,7 +3,11 @@
 <head>
     <%- include('../partials/headfile'); %>
     <title>Bots with Combat Level 0</title>
+    <link rel="stylesheet" href="/stylesheets/admindashboard.css" />
+    <!-- Include Bootstrap CSS for Modal -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
+
 <body>
     <%- include('../partials/navbar'); %>
 
@@ -13,26 +17,117 @@
             <thead>
                 <tr>
                     <th>Bot Name</th>
-                    <th>World</th>
-                    <th>Date</th>
-                    <th>Kill Time</th>
-                    <th>Loot Amount</th>
+                    <th>Alias</th>
+                    <th>Combat Level</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 <% botsWithZeroCombatLevel.forEach(function(bot) { %>
-                    <tr>
+                    <tr data-bot-id="<%= bot._id %>">
                         <td><%= bot.bot_name %></td>
-                        <td><%= bot.world %></td>
-                        <td><%= new Date(bot.kill_date).toISOString().split('T')[0] %></td>
-                        <td><%= bot.kill_time %></td>
-                        <td><%= formatNumber(bot.loot_amount) %></td>
+                        <td><%= bot.alias %></td>
+                        <td class="combat-level"><%= bot.combat_lv %></td>
+                        <td>
+                            <!-- Button to Open the Modal -->
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#aliasModal" 
+                                data-id="<%= bot._id %>" 
+                                data-alias="<%= bot.alias %>">
+                                Update Alias
+                            </button>
+                        </td>
                     </tr>
                 <% }) %>
             </tbody>
         </table>
     </div>
 
-    <%- include('../partials/footer'); %>
+    <!-- Modal -->
+<div class="modal fade" id="aliasModal" tabindex="-1" role="dialog" aria-labelledby="aliasModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="aliasModalLabel">Update Combat Alias</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="updateAliasForm" method="POST" action="/adminDashboard/get_player_combat_level">
+                    <input type="hidden" id="botId" name="id">
+                    <div class="form-group">
+                        <label for="alias">Alias</label>
+                        <input type="text" class="form-control" id="alias" name="alias" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Fetch Combat Level</button>
+                </form>
+                <!-- New BANNED button -->
+                <form id="banBotForm" method="POST" action="/adminDashboard/banned">
+                    <input type="hidden" id="banBotId" name="id">
+                    <button type="submit" class="btn btn-danger mt-2">BANNED</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Include jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // JavaScript to handle modal population
+        $('#aliasModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var id = button.data('id'); // Extract info from data-* attributes
+            var alias = button.data('alias');
+    
+            var modal = $(this);
+            modal.find('#botId').val(id);
+            modal.find('#banBotId').val(id); // Set bot ID for ban form
+            modal.find('#alias').val(alias);
+        });
+    
+        // Handle form submission for combat level update
+        $('#updateAliasForm').on('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            const form = $(this);
+            const alias = form.find('#alias').val();
+            const botId = form.find('#botId').val();
+    
+            $.post(form.attr('action'), { alias: alias, id: botId })
+                .done(function(data) {
+                    const combatLevel = data.combatLevel;
+                    $('tr[data-bot-id="' + botId + '"] .combat-level').text(combatLevel);
+                    $('#aliasModal').modal('hide');
+                    $('.modal-backdrop').remove();
+                })
+                .fail(function(xhr) {
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'Unknown error occurred';
+                    alert('Error: ' + errorMessage);
+                });
+        });
+    
+        // Handle form submission for BANNED action
+        $('#banBotForm').on('submit', function(event) {
+            event.preventDefault();
+            const form = $(this);
+            const botId = form.find('#banBotId').val();
+            
+            $.post(form.attr('action'), { id: botId })
+                .done(function(data) {
+                    alert('Bot has been banned successfully!');
+                    // Remove the row from the table
+                    $('tr[data-bot-id="' + botId + '"]').remove();
+                    $('#aliasModal').modal('hide');
+                    $('.modal-backdrop').remove();
+                })
+                .fail(function(xhr) {
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'Unknown error occurred';
+                    alert('Error: ' + errorMessage);
+                });
+        });
+
+    </script>
 </body>
 </html>

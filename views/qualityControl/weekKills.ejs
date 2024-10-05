@@ -112,7 +112,7 @@
                     `<a href="/qcDashboard/player-latest-bots?hunter_name=${bot.most_recent_kill.hunter_name}" style="color: white;">${bot.most_recent_kill.hunter_name}</a>`,
                     `<a href="/deDashboard/botKills?id=${bot._id}" style="color: white;">${bot.bot_name} (${bot.combat_lv})</a>`,
                     bot.most_recent_kill.world_number,
-                    `${bot.comments}
+                    bot.comments === 'BANNED' ? bot.comments : `${bot.comments}
                         <button type="button" class="btn btn-primary update-bot-btn" data-toggle="modal" data-target="#updateModal" 
                             data-id="${bot._id}"
                             data-botname="${bot.bot_name}"
