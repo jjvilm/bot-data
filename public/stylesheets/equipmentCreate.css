@@ -104,3 +104,23 @@ body {
   /*filter: brightness(0) invert(1);  Turns the image white */
   border: 2px solid white; /* Add white border */
 }
+
+hr { 
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 30px;
+  }
+
+.container {
+    border: 2px solid white; /* Add white border */
+}
+.col {
+    border: 2px solid white; /* Add white border */
+}
+.row {
+    border: 2px solid white; /* Add white border */
+}
