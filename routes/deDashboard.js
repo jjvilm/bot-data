@@ -6,6 +6,7 @@ const upload = multer().single('csvFile'); // specify the field name of the file
 
 
 var botController = require('../controllers/botController'); 
+var equipmentController = require('../controllers/equipmentController'); 
 const authMiddleware = require('../middleware/auth');
 // var userController = require('../controllers/userController'); 
 
@@ -66,6 +67,29 @@ router.post('/importCsv', authMiddleware.ensureAuthenticated, function(req, res,
     }
     botController.importCsv(req, res);
   });
+});
+// update bot
+router.get('/EquipmentSets',authMiddleware.ensureAuthenticated, function(req, res, next) {
+  res.render('../views/dataEntry/equipmentSetCreate');
+});
+// update bot
+router.get('/getEquipmentSets',authMiddleware.ensureAuthenticated, function(req, res, next) {
+  equipmentController.getEquipmentSets(req, res);
+});
+// update bot
+router.post('/createEquipmentSet',authMiddleware.ensureAuthenticated, function(req, res, next) {
+  equipmentController.createEquipmentSet(req, res);
+});
+// save set
+router.post('/updateEquipmentSet', authMiddleware.ensureAuthenticated, function(req, res, next) {
+   // Assuming you update the set here successfully
+   const updateResult = equipmentController.updateEquipmentSet(req,res); // Pseudo-code for your database update logic
+  
+   if (updateResult.success) {
+     return res.json({ success: true });
+   } else {
+     return res.json({ success: false, message: 'Failed to update equipment set' });
+   }
 });
 
 

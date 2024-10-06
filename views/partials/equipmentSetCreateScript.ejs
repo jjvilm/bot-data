@@ -1,0 +1,203 @@
+  <script>
+  function fetchAndDisplayEquipmentSets() {
+  // Fetch the equipment sets and display them
+  fetch('/deDashboard/getEquipmentSets')
+    .then(response => response.json())
+    .then(data => {
+      const equipmentSetsContainer = document.getElementById('equipment-sets');
+      
+      // Clear the container before adding new content (in case you call this function again)
+      equipmentSetsContainer.innerHTML = '';
+
+      data.forEach(set => {
+        const setDiv = document.createElement('div');
+        const setBreak = document.createElement('br');
+        setDiv.classList.add('equipment-set');
+        
+        const setNameLabel = document.createElement('label');
+        setNameLabel.innerText = set.set_name;
+        setDiv.appendChild(setNameLabel);
+        setDiv.appendChild(setBreak);
+
+        // Add Load button
+        const loadButton = document.createElement('button');
+        loadButton.innerText = "Load";
+        loadButton.onclick = () => loadEquipmentSet(set);
+        setDiv.appendChild(loadButton);
+
+        // Display the 9 images for this set
+        ['head', 'neck', 'torso', 'legs', 'right_hand', 'left_hand', 'hands', 'feet', 'ammunition', 'cape', 'jewelry'].forEach(slot => {
+          const img = document.createElement('img');
+          img.src = set[slot];
+          img.style = "width: auto; height: auto;";
+          // img.onclick = () => updateImage(slot, set._id); // Update the image on click
+          setDiv.appendChild(img);
+        });
+        
+        //update button
+        const updateButton = document.createElement('button');
+        updateButton.innerText = "update";
+        updateButton.onclick = () => updateEquipmentSet(set._id); // Save the set on click
+        setDiv.appendChild(updateButton);
+
+        equipmentSetsContainer.appendChild(setDiv);
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching equipment sets:', error);
+    });
+}
+
+
+  function updateImage(slot, setId) {
+    const itemName = prompt(`Enter the name of the ${slot}:`);
+    if (!itemName) {
+      // Clear the image in the set on the frontend
+      document.querySelector(`img[src="${slot}"]`).src = '';
+      };
+
+    const imgUrl = `https://oldschool.runescape.wiki/images/${itemName}.png?0a33f`;
+
+    fetch(imgUrl)
+      .then(response => {
+        if (response.ok) {
+          // Update the image in the set on the frontend
+          document.querySelector(`img[src="${slot}"]`).src = imgUrl;
+
+          // You can also store the updated image in the set object if needed
+        } else {
+          alert('Image not found');
+        }
+      })
+      .catch(error => {
+        alert('Error fetching the image');
+      });
+  }
+  // Load the equipment set images when the Load button is clicked
+  function loadEquipmentSet(set) {
+    ['head', 'neck', 'torso', 'legs', 'right_hand', 'left_hand', 'hands', 'feet', 'ammunition', 'cape', 'jewelry'].forEach(slot => {
+      const imgElement = document.getElementById(`${slot}-img`);
+      imgElement.src = set[slot]; // Load equipment image or fallback to placeholder
+    });
+  }
+
+function updateEquipmentSet(setId) {
+    const setData = {
+      _id: setId,
+      head: document.getElementById('head-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('head-img').src : '',
+      cape: document.getElementById('cape-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('cape-img').src : '',
+      neck: document.getElementById('neck-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('neck-img').src : '',
+      ammunition: document.getElementById('ammunition-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('ammunition-img').src : '',
+      left_hand: document.getElementById('left_hand-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('left_hand-img').src : '',
+      torso: document.getElementById('torso-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('torso-img').src : '',
+      right_hand: document.getElementById('right_hand-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('right_hand-img').src : '',
+      legs: document.getElementById('legs-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('legs-img').src : '',
+      hands: document.getElementById('hands-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('hands-img').src : '',
+      feet: document.getElementById('feet-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('feet-img').src : '',
+      jewelry: document.getElementById('jewelry-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('jewelry-img').src : '',
+  };
+
+    fetch('/deDashboard/updateEquipmentSet', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(setData),
+    })
+    .then(response => {
+      if (response.ok) {
+        fetchAndDisplayEquipmentSets()
+      } else {
+        alert('Error updating equipment set');
+      }
+    })
+    .catch(error => {
+      alert('Error updating the equipment set');
+    });
+  }
+
+  
+
+function findItem(slot) {
+  const itemName = prompt(`Enter the name of the ${slot}:`);
+  if (!itemName) {
+    // Clear the image in the set on the frontend
+    document.getElementById(`${slot}-img`).src = ''
+    return
+  }; // If no input, do nothing
+  
+  const imgUrl = `https://oldschool.runescape.wiki/images/${itemName}.png?0a33f`;
+  
+  // Fetch the image and check for errors
+  fetch(imgUrl)
+    .then(response => {
+      if (response.ok) {
+        document.getElementById(`${slot}-img`).src = imgUrl;
+      } else {
+        alert('Image not found');
+      }
+    })
+    .catch(error => {
+      alert('Error fetching the image');
+    });
+};
+
+function openCreateModal() {
+  document.getElementById('createModal').style.display = 'block';
+}
+
+function createEquipmentSet() {
+  const setData = {
+      set_name: document.getElementById('set_name').value,
+      head: document.getElementById('head-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('head-img').src : '',
+      cape: document.getElementById('cape-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('cape-img').src : '',
+      neck: document.getElementById('neck-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('neck-img').src : '',
+      ammunition: document.getElementById('ammunition-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('ammunition-img').src : '',
+      left_hand: document.getElementById('left_hand-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('left_hand-img').src : '',
+      torso: document.getElementById('torso-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('torso-img').src : '',
+      right_hand: document.getElementById('right_hand-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('right_hand-img').src : '',
+      legs: document.getElementById('legs-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('legs-img').src : '',
+      hands: document.getElementById('hands-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('hands-img').src : '',
+      feet: document.getElementById('feet-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('feet-img').src : '',
+      jewelry: document.getElementById('jewelry-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('jewelry-img').src : '',
+  };
+
+  fetch('/deDashboard/createEquipmentSet', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(setData),
+  })
+  .then(response => {
+      if (response.ok) {
+          // Reload equipment
+          fetchAndDisplayEquipmentSets()
+          // Success: show success label
+          const successLabel = document.getElementById('success-label');
+          successLabel.innerText = 'Equipment set saved successfully!';
+          successLabel.style.display = 'block';
+
+          // Hide label after 3 seconds
+          setTimeout(() => {
+              successLabel.style.display = 'none';
+          }, 3000);
+
+          // Hide the modal
+          const createModal = document.getElementById('createModal');
+          createModal.style.display = 'none';
+      } else {
+          // Handle any other status codes (4xx, 5xx)
+          return response.json().then(data => {
+              throw new Error(data.message || 'Error creating the equipment set');
+          });
+      }
+  })
+  .catch(error => {
+      alert(error.message);
+  });
+}
+
+
+fetchAndDisplayEquipmentSets()
+</script>

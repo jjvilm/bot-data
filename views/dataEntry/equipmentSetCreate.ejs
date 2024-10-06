@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Equipment Sets</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="/stylesheets/equipmentCreate.css" />
+    <%- include('../partials/headfile') %>
+</head>
+<body>
+  <%- include('../partials/navbar'); %>
+  <h1>Equipment Sets</h1>
+
+<!-- Main container with the equipment background -->
+<div class="equipment-container">
+    <div class="grid-container">
+        <!-- Left column -->
+        <div class="left-column">
+            <div class="slot cape-slot"> <!-- Added class name -->
+                <img id="cape-img" src="" alt="Cape" class="slot-img">
+                <br>
+                <button onclick="findItem('cape')">Find</button>
+            </div>
+            <div class="slot left-hand-slot"> <!-- Added class name -->
+                <img id="left_hand-img" src="" alt="Left-Hand" class="slot-img">
+                <br>
+                <button onclick="findItem('left_hand')">Find</button>
+            </div>
+            <div class="slot hands-slot"> <!-- Added class name -->
+                <img id="hands-img" src="" alt="Hands" class="slot-img">
+                <br>
+                <button onclick="findItem('hands')">Find</button>
+            </div>
+        </div>
+
+        <!-- Middle column -->
+        <div class="middle-column">
+            <div class="slot head-slot"> <!-- Added class name -->
+                <img id="head-img" src="" alt="Head" class="slot-img">
+                <br>
+                <button onclick="findItem('head')">Find</button>
+            </div>
+            <div class="slot neck-slot"> <!-- Added class name -->
+                <img id="neck-img" src="" alt="Neck" class="slot-img">
+                <br>
+                <button onclick="findItem('neck')">Find</button>
+            </div>
+            <div class="slot torso-slot"> <!-- Added class name -->
+                <img id="torso-img" src="" alt="Torso" class="slot-img">
+                <br>
+                <button onclick="findItem('torso')">Find</button>
+            </div>
+            <div class="slot legs-slot"> <!-- Added class name -->
+                <img id="legs-img" src="" alt="Legs" class="slot-img">
+                <br>
+                <button onclick="findItem('legs')">Find</button>
+            </div>
+            <div class="slot feet-slot"> <!-- Added class name -->
+                <img id="feet-img" src="" alt="Feet" class="slot-img">
+                <br>
+                <button onclick="findItem('feet')">Find</button>
+            </div>
+        </div>
+
+        <!-- Right column -->
+        <div class="right-column">
+            <div class="slot ammunition-slot"> <!-- Added class name -->
+                <img id="ammunition-img" src="" alt="Ammunition" class="slot-img">
+                <br>
+                <button onclick="findItem('ammunition')">Find</button>
+            </div>
+            <div class="slot right-hand-slot"> <!-- Added class name -->
+                <img id="right_hand-img" src="" alt="Right-Hand" class="slot-img">
+                <br>
+                <button onclick="findItem('right_hand')">Find</button>
+            </div>
+            <div class="slot jewelry-slot"> <!-- Added class name -->
+                <img id="jewelry-img" src="" alt="Jewelry" class="slot-img">
+                <br>
+                <button onclick="findItem('jewelry')">Find</button>
+            </div>
+        </div>
+    </div>
+</div>
+  <br>
+<!-- Second container for existing equipment sets -->
+    <!-- Button to create a new equipment set -->
+    <button onclick="openCreateModal()">New Set</button>
+    <div id="createModal" style="display:none;">
+        <!-- Modal content -->
+        <h2>Create New Equipment Set</h2>
+        
+        <label for="set_name">Set Name:</label>
+        <input type="text" id="set_name">
+        
+        <button onclick="createEquipmentSet()">Save</button>
+      </div>
+    <!-- Success label to display after successful save -->
+    <div id="success-label" style="display: none; color: green; font-weight: bold;"></div>
+
+    <h2>Existing Equipment Sets</h2>
+    
+    <div id="equipment-sets">
+      <!-- Fetched sets will be displayed here -->
+    </div>
+  </div>
+  
+</body>
+<%- include('../partials/equipmentSetCreateScript.ejs'); %>
+</html>

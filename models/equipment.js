@@ -6,46 +6,57 @@ const { Schema } = mongoose;
 const EquipmentSchema = new Schema({
   set_name: {
     type: String,
-    default: '', // Default empty string if no comments
+    unique: true, // Each bot_name should be unique
+    default: '', 
   },
   head: {
     type: String,
-    default: '', // Default empty string if no comments
-  },
-  torso: {
-    type: String,
-    default: '', // Default empty string if no comments
-  },
-  legs: {
-    type: String,
-    default: '', // Default empty string if no comments
-  },
-  neck: {
-    type: String,
-    default: '', // Default empty string if no comments
-  },
-  right_hand: {
-    type: String,
-    default: '', // Default empty string if no comments
-  },
-  left_hand: {
-    type: String,
-    default: '', // Default empty string if no comments
-  },
-  feet: {
-    type: String,
-    default: '', // Default empty string if no comments
+    default: '', 
   },
   cape: {
     type: String,
-    default: '', // Default empty string if no comments
+    default: '', 
+  },
+  neck: {
+    type: String,
+    default: '', 
+  },
+  ammunition: {
+    type: String,
+    default: '', 
+  },
+  left_hand: {
+    type: String,
+    default: '',
+    default: '', 
+  },
+  torso: {
+    type: String,
+    default: '', 
+  },
+  right_hand: {
+    type: String,
+    default: '', 
+  },
+  legs: {
+    type: String,
+    default: '', 
+  },
+  hands: {
+    type: String,
+    default: '', 
+  },
+  feet: {
+    type: String,
+    default: '', 
   },
   jewelry: {
     type: String,
-    default: '', // Default empty string if no comments
+    default: '', 
   },
+  
 });
 
-const Equipment = mongoose.model('bot_kills', EquipmentSchema);
+const Equipment = mongoose.model('equipment_sets', EquipmentSchema);
 
 module.exports = Equipment;

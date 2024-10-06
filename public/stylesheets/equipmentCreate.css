@@ -1,0 +1,89 @@
+body {
+    background: linear-gradient(to bottom right, #f7f7f7, #3192d6, #182536);
+
+}
+/* Equipment Container */
+.equipment-container {
+    position: relative; /* Allows absolute positioning of children */
+    width: 300px; 
+    height: 400px; 
+    background-image: url('/images/equipmentSlots.png');
+    background-size: cover;
+}
+
+/* Positioning each slot */
+.cape-slot {
+    position: absolute;
+    top: 90px; /* Adjust the value as needed */
+    left: 45px; /* Adjust the value as needed */
+}
+
+.left-hand-slot {
+    position: absolute;
+    top: 170px; /* Adjust the value as needed */
+    left: 10px; /* Adjust the value as needed */
+}
+
+.hands-slot {
+    position: absolute;
+    top: 320px; /* Adjust the value as needed */
+    left: 15px; /* Adjust the value as needed */
+}
+
+.head-slot {
+    position: absolute;
+    top: 20px; /* Adjust the value as needed */
+    left: 135px; /* Adjust the value as needed */
+}
+
+.neck-slot {
+    position: absolute;
+    top: 80px; /* Adjust the value as needed */
+    left: 135px; /* Adjust the value as needed */
+}
+
+.torso-slot {
+    position: absolute;
+    top: 170px; /* Adjust the value as needed */
+    left: 135px; /* Adjust the value as needed */
+}
+
+.legs-slot {
+    position: absolute;
+    top: 250px; /* Adjust the value as needed */
+    left: 135px; /* Adjust the value as needed */
+}
+
+.feet-slot {
+    position: absolute;
+    top: 320px; /* Adjust the value as needed */
+    left: 130px; /* Adjust the value as needed */
+}
+
+.ammunition-slot {
+    position: absolute;
+    top: 80px; /* Adjust the value as needed */
+    left: 225px; /* Adjust the value as needed */
+}
+
+.right-hand-slot {
+    position: absolute;
+    top: 170px; /* Adjust the value as needed */
+    left: 248px; /* Adjust the value as needed */
+}
+
+.jewelry-slot {
+    position: absolute;
+    top: 320px; /* Adjust the value as needed */
+    left: 248px; /* Adjust the value as needed */
+}
+.slot-img {
+    width: 50;  /* Set the desired width */
+    height: 50; /* Set the desired height */
+    object-fit: cover; /* Ensures the image covers the slot without distortion */
+}
+
+.highlighted {
+    outline: 3px solid yellow;
+  }
+
