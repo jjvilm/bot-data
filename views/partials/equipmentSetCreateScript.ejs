@@ -257,7 +257,7 @@ async function fetchLatestBots() {
       const response = await fetch('/qcDashboard/latest-bots');
       const bots = await response.json();
 
-      console.log('Fetched bots:', bots); // Debugging line to verify the fetched data
+      // console.log('Fetched bots:', bots); // Debugging line to verify the fetched data
 
       const botSelect = document.getElementById('bot-select');
 
@@ -280,24 +280,22 @@ async function fetchLatestBots() {
     }
   }
 
-
-
-  // Handle the Apply button click
-  document.getElementById('apply-button').addEventListener('click', async function() {
+// Handle the Apply button click
+document.getElementById('apply-button').addEventListener('click', async function() {
     const botSelect = document.getElementById('bot-select');
     const selectedBotId = botSelect.value;
+    // console.log("selectedBotId",selectedBotId)
     
     if (!selectedBotId) {
       alert('Please select a bot.');
       return;
     }
 
-    // Assuming currentlyLoadedSet contains the current equipment set being loaded
-    const equipmentSetElement = currentlyLoadedSet.querySelector(`[data-set-id]`);
-    const equipmentSetName = equipmentSetElement ? equipmentSetElement.dataset.setId : null;
-    console.log(equipmentSetElement)
-    console.log(equipmentSetName)
+    // Ensure that currentlyLoadedSet is not null and has the equipment set loaded
+    // const equipmentSetId = currentlyLoadedSet ? currentlyLoadedSet.dataset.setId : null;
+    const equipmentSetName = currentlyLoadedSet ? currentlyLoadedSet.querySelector('label').innerText : null;
 
+    // Check if the equipment set name was found
     if (!equipmentSetName) {
       alert('No equipment set is currently loaded.');
       return;
