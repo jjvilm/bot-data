@@ -128,13 +128,15 @@ exports.update = async function(req, res) {
 };
 exports.updateEquipmentSetName = async function(req, res) {
   try {
+    const { botId, equipmentSetName } = req.body;
     const updateData = {
-      equipment_set_name: req.body.equipment_set_name,
+      equipment_set_name: equipmentSetName ,
       };
     
-      await Bot.findOneAndUpdate({ _id: req.body._id }, updateData)
-  } catch (err) {
-    console.log(err);
+      await Bot.findOneAndUpdate({ _id: botId  }, updateData)
+  } catch (error) {
+    console.error('Error updating equipment set:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 exports.update_from_recently_killed = async function(req, res) {

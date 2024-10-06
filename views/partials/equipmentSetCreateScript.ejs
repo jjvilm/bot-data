@@ -251,5 +251,88 @@ function createEquipmentSet() {
   });
 }
 
+/// Fetch the latest bots and populate the dropdown
+async function fetchLatestBots() {
+    try {
+      const response = await fetch('/qcDashboard/latest-bots');
+      const bots = await response.json();
+
+      console.log('Fetched bots:', bots); // Debugging line to verify the fetched data
+
+      const botSelect = document.getElementById('bot-select');
+
+      // Clear existing options (if any)
+      botSelect.innerHTML = '<option value="" disabled selected>Select a bot</option>';
+
+      // Check if bots array is valid and contains data
+      if (Array.isArray(bots) && bots.length > 0) {
+        bots.forEach(bot => {
+          const option = document.createElement('option');
+          option.value = bot._id; // Store the bot _id in the option value
+          option.textContent = bot.bot_name; // Display the bot name
+          botSelect.appendChild(option);
+        });
+      } else {
+        console.error('No bots available or invalid data format.');
+      }
+    } catch (error) {
+      console.error('Error fetching latest bots:', error);
+    }
+  }
+
+
+
+  // Handle the Apply button click
+  document.getElementById('apply-button').addEventListener('click', async function() {
+    const botSelect = document.getElementById('bot-select');
+    const selectedBotId = botSelect.value;
+    
+    if (!selectedBotId) {
+      alert('Please select a bot.');
+      return;
+    }
+
+    // Assuming currentlyLoadedSet contains the current equipment set being loaded
+    const equipmentSetElement = currentlyLoadedSet.querySelector(`[data-set-id]`);
+    const equipmentSetName = equipmentSetElement ? equipmentSetElement.dataset.setId : null;
+    console.log(equipmentSetElement)
+    console.log(equipmentSetName)
+
+    if (!equipmentSetName) {
+      alert('No equipment set is currently loaded.');
+      return;
+    }
+
+    // Send the data to the server
+    try {
+      const response = await fetch('/qcDashboard/botUpdateEquipmentSetName', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          botId: selectedBotId,
+          equipmentSetName: equipmentSetName
+        })
+      });
+
+      if (response.ok) {
+        // Show success message
+        const successMessage = document.getElementById('success-message');
+        successMessage.style.display = 'inline';
+        setTimeout(() => {
+          successMessage.style.display = 'none';
+        }, 3000);
+      } else {
+        console.error('Failed to apply the equipment set:', await response.text());
+      }
+    } catch (error) {
+      console.error('Error updating equipment set:', error);
+    }
+  });
+
+
+// Call the function to populate the dropdown when the page loads
+document.addEventListener('DOMContentLoaded', fetchLatestBots);
 fetchAndDisplayEquipmentSets()
 </script>
