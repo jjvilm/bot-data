@@ -39,6 +39,7 @@
     <a href="/deDashboard/botList" class="btn btn-primary">All Bots</a>
     <a href="/deDashboard/topWorlds" class="btn btn-primary">World Kills</a>
     <a href="/qcDashboard/commonlyVisitedWorlds" class="btn btn-primary">Top Worlds</a>
+    <a href="/deDashboard/EquipmentSets" class="btn btn-primary">Equipments</a>
     <h1>Recently Hunted Bots</h1>
     <table class="table table-striped table-dark table-hover" id="week-kills-table">
         <thead>
@@ -84,101 +85,6 @@
         </div>
     </div>
 
-    <!-- Include DataTables and jQuery scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-
-    <!-- script for updating the page with new data -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-        let dataTableInstance;
-
-        // Initialize DataTable on page load
-        dataTableInstance = $('#week-kills-table').DataTable({
-            order: [[4, 'desc']], // Sort by the 5th column (Kill Date) in descending order
-        });
-
-        // Function to fetch the latest bot data
-        async function fetchLatestBots() {
-            try {
-                const response = await fetch('/qcDashboard/latest-bots');
-                const bots = await response.json();
-
-                // Clear the existing table rows using DataTable API
-                dataTableInstance.clear();
-
-                // Prepare new rows from fetched bot data
-                const newRows = bots.map(bot => [
-                    `<a href="/qcDashboard/player-latest-bots?hunter_name=${bot.most_recent_kill.hunter_name}" style="color: white;">${bot.most_recent_kill.hunter_name}</a>`,
-                    `<a href="/deDashboard/botKills?id=${bot._id}" style="color: white;">${bot.bot_name} (${bot.combat_lv})</a>
-                        <img src=''></img>`,
-                    bot.most_recent_kill.world_number,
-                    bot.comments === 'BANNED' ? bot.comments : `${bot.comments}
-                        <button type="button" class="btn btn-primary update-bot-btn" data-toggle="modal" data-target="#updateModal" 
-                            data-id="${bot._id}"
-                            data-botname="${bot.bot_name}"
-                            data-combatlv="${bot.combat_lv}"
-                            data-comments="${bot.comments}">
-                            Edit
-                        </button>`,
-                    new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0], // Format Kill Date
-                    bot.most_recent_kill.kill_time,
-                    formatNumber(bot.most_recent_kill.loot_amount)
-                ]);
-
-                // Add new rows to DataTable
-                dataTableInstance.rows.add(newRows).draw();
-
-                // Reattach event listeners for modal buttons
-                document.querySelectorAll('.update-bot-btn').forEach(button => {
-                    button.addEventListener('click', function () {
-                        populateModal(this);
-                    });
-                });
-
-            } catch (error) {
-                console.error('Error fetching latest bots:', error);
-            }
-        }
-
-        // Function to populate the modal with data from the clicked button
-        function populateModal(button) {
-            const botId = button.getAttribute('data-id');
-            const botName = button.getAttribute('data-botname');
-            const combatLv = button.getAttribute('data-combatlv');
-            const comments = button.getAttribute('data-comments');
-
-            const idInput = document.querySelector('#updateModal input[name="id"]');
-            const combatLvInput = document.querySelector('#updateModal input[name="combat_lv"]');
-            const commentsInput = document.querySelector('#updateModal input[name="comments"]');
-            const modalTitle = document.querySelector('#updateModalLabel strong');
-
-            if (idInput && combatLvInput && commentsInput && modalTitle) {
-                idInput.value = botId;
-                combatLvInput.value = combatLv;
-                commentsInput.value = comments;
-                modalTitle.textContent = botName;
-            } else {
-                console.error('Modal elements not found.');
-            }
-        }
-
-        // Fetch the latest bots every 1 minutes
-        setInterval(fetchLatestBots, 60000);
-
-        // Initial fetch
-        fetchLatestBots();
-    });
-
-    function formatNumber(number) {
-        if (number >= 1000000) {
-            return (number / 1000).toFixed(0) + 'K'; // For numbers 1,000,000 and above
-        } else if (number >= 1000) {
-            return (number / 1000).toFixed(0) + 'K'; // For numbers between 1,000 and 999,999
-        } else {
-            return number.toString(); // For numbers below 1,000
-        }
-    }
-    </script>
+<%- include('../partials/weekKillsScript.ejs'); %>
 </body>
 </html>

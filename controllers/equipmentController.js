@@ -9,6 +9,16 @@ exports.getEquipmentSets = async function(req, res) {
     }
     
   };
+exports.getEquipmentSetByName = async function(req, res) {
+    try {
+      const EquipmentSet = await Equipment.findOne({set_name: req.query.set_name});
+      res.json(EquipmentSet);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: 'Error fetching equipment set' });
+    }
+    
+  };
 
 
 exports.createEquipmentSet= async function(req, res) {

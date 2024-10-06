@@ -286,6 +286,7 @@ document.getElementById('apply-button').addEventListener('click', async function
     const selectedBotId = botSelect.value;
     // console.log("selectedBotId",selectedBotId)
     
+    // no bot selected from drop down menu
     if (!selectedBotId) {
       alert('Please select a bot.');
       return;
@@ -311,19 +312,22 @@ document.getElementById('apply-button').addEventListener('click', async function
         body: JSON.stringify({
           botId: selectedBotId,
           equipmentSetName: equipmentSetName
-        })
+        }) 
       });
 
-      if (response.ok) {
-        // Show success message
-        const successMessage = document.getElementById('success-message');
-        successMessage.style.display = 'inline';
-        setTimeout(() => {
-          successMessage.style.display = 'none';
-        }, 3000);
-      } else {
-        console.error('Failed to apply the equipment set:', await response.text());
-      }
+        if (!response.ok) {
+          console.error('Server responded with an error:', response.statusText);
+          return;
+        }
+
+      // Show success message
+      const successMessage = document.getElementById('apply-success-message');
+      successMessage.style.display = 'block';
+      setTimeout(() => {
+        successMessage.style.display = 'none';
+      }, 3000);
+    
+
     } catch (error) {
       console.error('Error updating equipment set:', error);
     }

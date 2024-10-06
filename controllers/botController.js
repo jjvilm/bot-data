@@ -131,9 +131,19 @@ exports.updateEquipmentSetName = async function(req, res) {
     const { botId, equipmentSetName } = req.body;
     const updateData = {
       equipment_set_name: equipmentSetName ,
-      };
+    };
     
-      await Bot.findOneAndUpdate({ _id: botId  }, updateData)
+    // Update bot and check for success
+    const updatedBot = await Bot.findOneAndUpdate({ _id: botId }, updateData, { new: true });
+
+    // If the bot was not found, respond accordingly
+    if (!updatedBot) {
+      return res.status(404).json({ error: 'Bot not found.' });
+    }
+
+    // Respond with success message
+    return res.status(200).json({ message: 'Equipment set name updated successfully.' });
+
   } catch (error) {
     console.error('Error updating equipment set:', error);
     return res.status(500).json({ error: 'Internal server error' });
@@ -205,6 +215,7 @@ async function fetchRecentKills() {
           alias: 1,
           combat_lv: 1,
           comments: 1,
+          equipment_set_name: 1,
           recent_kill_data: {
             $reduce: {
               input: {
@@ -272,6 +283,7 @@ async function fetchRecentKills() {
           alias: 1,
           combat_lv: 1,
           comments: 1,
+          equipment_set_name: 1,
           most_recent_kill: 1
         }
       }

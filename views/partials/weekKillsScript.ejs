@@ -1,0 +1,146 @@
+<!-- Include DataTables and jQuery scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+<!-- script for updating the page with new data -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    let dataTableInstance;
+
+    // Initialize DataTable on page load
+    dataTableInstance = $('#week-kills-table').DataTable({
+        order: [[4, 'desc']], // Sort by the 5th column (Kill Date) in descending order
+    });
+
+    // Function to fetch the latest bot data
+    async function fetchLatestBots() {
+        try {
+            const response = await fetch('/qcDashboard/latest-bots');
+            const bots = await response.json();
+
+            // Clear the existing table rows using DataTable API
+            dataTableInstance.clear();
+            // Prepare new rows from fetched bot data
+            const newRows = bots.map(bot => [
+                `<a href="/qcDashboard/player-latest-bots?hunter_name=${bot.most_recent_kill.hunter_name}" style="color: white;">${bot.most_recent_kill.hunter_name}</a>`,
+                `<a href="/deDashboard/botKills?id=${bot._id}" style="color: white;">${bot.bot_name} (${bot.combat_lv})</a>
+                    <div id="equipment-images-${bot._id}"></div>`,
+                bot.most_recent_kill.world_number,
+                bot.comments === 'BANNED' ? bot.comments : `${bot.comments}
+                <button type="button" class="btn btn-primary update-bot-btn" data-toggle="modal" data-target="#updateModal" 
+                    data-id="${bot._id}"
+                    data-botname="${bot.bot_name}"
+                    data-combatlv="${bot.combat_lv}"
+                    data-comments="${bot.comments}">
+                    Edit
+                </button>`,
+                new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0], // Format Kill Date
+                bot.most_recent_kill.kill_time,
+                formatNumber(bot.most_recent_kill.loot_amount)
+            ]);
+
+            // Add new rows to DataTable
+            dataTableInstance.rows.add(newRows).draw();
+
+            // Reattach event listeners for modal buttons
+            document.querySelectorAll('.update-bot-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    populateModal(this);
+                });
+            });
+            
+            // Displays the images for equipment sets
+            bots.forEach(bot => {
+                fetchEquipmentSet(bot._id, bot.equipment_set_name);
+            })
+            
+        } catch (error) {
+            console.error('Error fetching latest bots:', error);
+        }
+    }
+
+    // Function to populate the modal with data from the clicked button
+    function populateModal(button) {
+        const botId = button.getAttribute('data-id');
+        const botName = button.getAttribute('data-botname');
+        const combatLv = button.getAttribute('data-combatlv');
+        const comments = button.getAttribute('data-comments');
+
+        const idInput = document.querySelector('#updateModal input[name="id"]');
+        const combatLvInput = document.querySelector('#updateModal input[name="combat_lv"]');
+        const commentsInput = document.querySelector('#updateModal input[name="comments"]');
+        const modalTitle = document.querySelector('#updateModalLabel strong');
+
+        if (idInput && combatLvInput && commentsInput && modalTitle) {
+            idInput.value = botId;
+            combatLvInput.value = combatLv;
+            commentsInput.value = comments;
+            modalTitle.textContent = botName;
+        } else {
+            console.error('Modal elements not found.');
+        }
+    }
+
+    async function fetchEquipmentSet(botId, setName) {
+        if (!setName) {
+            return
+        }
+        try {
+        const response = await fetch(`/deDashboard/getEquipmentSetByName?set_name=${setName}`);
+        const equipmentSet = await response.json();
+
+        // Only proceed if we received valid equipment set data
+        if (equipmentSet && equipmentSet.set_name) {
+            const equipmentImagesContainer = document.getElementById(`equipment-images-${botId}`);
+
+            // Add each equipment image if it exists
+            const equipmentPieces = [
+            { key: 'head', label: 'Head' },
+            { key: 'cape', label: 'Cape' },
+            { key: 'neck', label: 'Neck' },
+            { key: 'ammunition', label: 'Ammunition' },
+            { key: 'left_hand', label: 'Left Hand' },
+            { key: 'torso', label: 'Torso' },
+            { key: 'right_hand', label: 'Right Hand' },
+            { key: 'legs', label: 'Legs' },
+            { key: 'hands', label: 'Hands' },
+            { key: 'feet', label: 'Feet' },
+            { key: 'jewelry', label: 'Jewelry' }
+            ];
+
+            equipmentPieces.forEach(piece => {
+            const imageUrl = equipmentSet[piece.key];
+            if (imageUrl) {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = piece.label;
+                img.style = "width: 30px; height: 30px; margin-right: 5px;";
+                equipmentImagesContainer.appendChild(img);
+            }
+            });
+        }
+        } catch (error) {
+        console.error('Error fetching equipment set:', error);
+        }
+    };
+
+    // Fetch the latest bots every 1 minutes
+    setInterval(fetchLatestBots, 60000);
+
+    // Initial fetch
+    fetchLatestBots();
+    
+});
+
+function formatNumber(number) {
+    if (number >= 1000000) {
+        return (number / 1000).toFixed(0) + 'K'; // For numbers 1,000,000 and above
+    } else if (number >= 1000) {
+        return (number / 1000).toFixed(0) + 'K'; // For numbers between 1,000 and 999,999
+    } else {
+        return number.toString(); // For numbers below 1,000
+    }
+};
+
+</script>
+

@@ -72,7 +72,12 @@ router.post('/importCsv', authMiddleware.ensureAuthenticated, function(req, res,
 router.get('/EquipmentSets',authMiddleware.ensureAuthenticated, function(req, res, next) {
   res.render('../views/dataEntry/equipmentSetCreate');
 });
-// update bot
+// get equipment set
+router.get('/getEquipmentSetByName',authMiddleware.ensureAuthenticated, function(req, res, next) {
+  equipmentController.getEquipmentSetByName(req, res);
+});
+
+// get equipment sets
 router.get('/getEquipmentSets',authMiddleware.ensureAuthenticated, function(req, res, next) {
   equipmentController.getEquipmentSets(req, res);
 });
