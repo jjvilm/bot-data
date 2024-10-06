@@ -13,6 +13,7 @@
         const setDiv = document.createElement('div');
         const setBreak = document.createElement('br');
         setDiv.classList.add('equipment-set');
+        setDiv.setAttribute('data-set-id', set._id); // Add a unique identifier
         
         const setNameLabel = document.createElement('label');
         setNameLabel.innerText = set.set_name;
@@ -48,7 +49,6 @@
     });
 }
 
-
   function updateImage(slot, setId) {
     const itemName = prompt(`Enter the name of the ${slot}:`);
     if (!itemName) {
@@ -73,13 +73,31 @@
         alert('Error fetching the image');
       });
   }
+
+  let currentlyLoadedSet = null; // Keep track of the currently loaded set
   // Load the equipment set images when the Load button is clicked
   function loadEquipmentSet(set) {
+    // If there is a previously loaded set, remove the highlight
+    if (currentlyLoadedSet) {
+      currentlyLoadedSet.classList.remove('highlighted');
+    }
+
+    // Get the container div for this set
+    const setDiv = document.querySelector(`[data-set-id="${set._id}"]`);
+
+    // Add the 'highlighted' class to the currently loaded set
+    setDiv.classList.add('highlighted');
+
+    // Update the current set reference
+    currentlyLoadedSet = setDiv;
+
+    // Loop through each slot and load the corresponding image
     ['head', 'neck', 'torso', 'legs', 'right_hand', 'left_hand', 'hands', 'feet', 'ammunition', 'cape', 'jewelry'].forEach(slot => {
       const imgElement = document.getElementById(`${slot}-img`);
-      imgElement.src = set[slot]; // Load equipment image or fallback to placeholder
+      imgElement.src = set[slot]; // Get the source for the slot
     });
-  }
+}
+
 
 function updateEquipmentSet(setId) {
     const setData = {
@@ -115,8 +133,6 @@ function updateEquipmentSet(setId) {
       alert('Error updating the equipment set');
     });
   }
-
-  
 
 function findItem(slot) {
   const itemName = prompt(`Enter the name of the ${slot}:`);
@@ -197,7 +213,6 @@ function createEquipmentSet() {
       alert(error.message);
   });
 }
-
 
 fetchAndDisplayEquipmentSets()
 </script>

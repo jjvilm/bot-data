@@ -12,75 +12,54 @@
 
 <!-- Main container with the equipment background -->
 <div class="equipment-container">
-    <div class="grid-container">
-        <!-- Left column -->
-        <div class="left-column">
-            <div class="slot cape-slot"> <!-- Added class name -->
-                <img id="cape-img" src="" alt="Cape" class="slot-img">
-                <br>
-                <button onclick="findItem('cape')">Find</button>
-            </div>
-            <div class="slot left-hand-slot"> <!-- Added class name -->
-                <img id="left_hand-img" src="" alt="Left-Hand" class="slot-img">
-                <br>
-                <button onclick="findItem('left_hand')">Find</button>
-            </div>
-            <div class="slot hands-slot"> <!-- Added class name -->
-                <img id="hands-img" src="" alt="Hands" class="slot-img">
-                <br>
-                <button onclick="findItem('hands')">Find</button>
-            </div>
-        </div>
+  <div class="grid-container">
+      <!-- Left column -->
+      <div class="left-column">
+          <div class="slot cape-slot"> <!-- Added class name -->
+              <img id="cape-img" src="" class="slot-img" alt="Cape" onclick="findItem('cape')">
+          </div>
+          <div class="slot left-hand-slot"> <!-- Added class name -->
+              <img id="left_hand-img" src="" alt="Left-Hand" class="slot-img" onclick="findItem('left_hand')">
+          </div>
+          <div class="slot hands-slot"> <!-- Added class name -->
+              <img id="hands-img" src="" alt="Hands" class="slot-img" onclick="findItem('hands')">
+          </div>
+      </div>
 
-        <!-- Middle column -->
-        <div class="middle-column">
-            <div class="slot head-slot"> <!-- Added class name -->
-                <img id="head-img" src="" alt="Head" class="slot-img">
-                <br>
-                <button onclick="findItem('head')">Find</button>
-            </div>
-            <div class="slot neck-slot"> <!-- Added class name -->
-                <img id="neck-img" src="" alt="Neck" class="slot-img">
-                <br>
-                <button onclick="findItem('neck')">Find</button>
-            </div>
-            <div class="slot torso-slot"> <!-- Added class name -->
-                <img id="torso-img" src="" alt="Torso" class="slot-img">
-                <br>
-                <button onclick="findItem('torso')">Find</button>
-            </div>
-            <div class="slot legs-slot"> <!-- Added class name -->
-                <img id="legs-img" src="" alt="Legs" class="slot-img">
-                <br>
-                <button onclick="findItem('legs')">Find</button>
-            </div>
-            <div class="slot feet-slot"> <!-- Added class name -->
-                <img id="feet-img" src="" alt="Feet" class="slot-img">
-                <br>
-                <button onclick="findItem('feet')">Find</button>
-            </div>
-        </div>
+      <!-- Middle column -->
+      <div class="middle-column">
+          <div class="slot head-slot"> <!-- Added class name -->
+              <img id="head-img" src="" alt="Head" class="slot-img" onclick="findItem('head')">
+          </div>
+          <div class="slot neck-slot"> <!-- Added class name -->
+              <img id="neck-img" src="" alt="Neck" class="slot-img" onclick="findItem('neck')">
+          </div>
+          <div class="slot torso-slot"> <!-- Added class name -->
+              <img id="torso-img" src="" alt="Torso" class="slot-img" onclick="findItem('torso')">
+          </div>
+          <div class="slot legs-slot"> <!-- Added class name -->
+              <img id="legs-img" src="" alt="Legs" class="slot-img" onclick="findItem('legs')">
+          </div>
+          <div class="slot feet-slot"> <!-- Added class name -->
+              <img id="feet-img" src="" alt="Feet" class="slot-img" onclick="findItem('feet')">
+          </div>
+      </div>
 
-        <!-- Right column -->
-        <div class="right-column">
-            <div class="slot ammunition-slot"> <!-- Added class name -->
-                <img id="ammunition-img" src="" alt="Ammunition" class="slot-img">
-                <br>
-                <button onclick="findItem('ammunition')">Find</button>
-            </div>
-            <div class="slot right-hand-slot"> <!-- Added class name -->
-                <img id="right_hand-img" src="" alt="Right-Hand" class="slot-img">
-                <br>
-                <button onclick="findItem('right_hand')">Find</button>
-            </div>
-            <div class="slot jewelry-slot"> <!-- Added class name -->
-                <img id="jewelry-img" src="" alt="Jewelry" class="slot-img">
-                <br>
-                <button onclick="findItem('jewelry')">Find</button>
-            </div>
-        </div>
-    </div>
+      <!-- Right column -->
+      <div class="right-column">
+          <div class="slot ammunition-slot"> <!-- Added class name -->
+              <img id="ammunition-img" src="" alt="Ammunition" class="slot-img" onclick="findItem('ammunition')">
+          </div>
+          <div class="slot right-hand-slot"> <!-- Added class name -->
+              <img id="right_hand-img" src="" alt="Right-Hand" class="slot-img" onclick="findItem('right_hand')">
+          </div>
+          <div class="slot jewelry-slot"> <!-- Added class name -->
+              <img id="jewelry-img" src="" alt="Jewelry" class="slot-img" onclick="findItem('jewelry')">
+          </div>
+      </div>
+  </div>
 </div>
+
   <br>
 <!-- Second container for existing equipment sets -->
     <!-- Button to create a new equipment set -->
@@ -103,7 +82,7 @@
       <!-- Fetched sets will be displayed here -->
     </div>
   </div>
-  
+
 </body>
 <%- include('../partials/equipmentSetCreateScript.ejs'); %>
 </html>

@@ -78,12 +78,29 @@ body {
     left: 248px; /* Adjust the value as needed */
 }
 .slot-img {
-    width: 50;  /* Set the desired width */
-    height: 50; /* Set the desired height */
-    object-fit: cover; /* Ensures the image covers the slot without distortion */
+    width: 64px;
+    height: 64px;
+    border: 2px solid transparent;
+    object-fit: contain;
 }
 
 .highlighted {
     outline: 3px solid yellow;
-  }
+}
 
+/* Specific styles based on alt attribute */
+.slot-img[alt="Cape"],
+.slot-img[alt="Left-Hand"],
+.slot-img[alt="Head"],
+.slot-img[alt="Neck"],
+.slot-img[alt="Torso"],
+.slot-img[alt="Legs"],
+.slot-img[alt="Feet"],
+.slot-img[alt="Ammunition"],
+.slot-img[alt="Right-Hand"],
+.slot-img[alt="Jewelry"],
+.slot-img[alt="Hands"] {
+  /* Make images appear white using filters or additional styles */
+  filter: brightness(0) invert(1); /* Turns the image white */
+  border: 2px solid white; /* Add white border */
+}
