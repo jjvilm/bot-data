@@ -93,8 +93,17 @@
 
     // Loop through each slot and load the corresponding image
     ['head', 'neck', 'torso', 'legs', 'right_hand', 'left_hand', 'hands', 'feet', 'ammunition', 'cape', 'jewelry'].forEach(slot => {
-      const imgElement = document.getElementById(`${slot}-img`);
-      imgElement.src = set[slot]; // Get the source for the slot
+        const imgElement = document.getElementById(`${slot}-img`);
+        imgElement.src = set[slot]; // Get the source for the slot
+
+        // Check if the image source is not an empty string
+        if (imgElement.src !== '') {
+            imgElement.style.filter = 'none'; // Remove filter style
+            imgElement.style.border = ''; // Remove the border if you want
+        } else {
+            imgElement.style.filter = 'brightness(0) invert(1)'; // Apply filter if the source is empty
+            imgElement.style.border = '2px solid white'; // Add white border
+        }
     });
 }
 
@@ -136,26 +145,55 @@ function updateEquipmentSet(setId) {
 
 function findItem(slot) {
   const itemName = prompt(`Enter the name of the ${slot}:`);
+
   if (!itemName) {
     // Clear the image in the set on the frontend
     document.getElementById(`${slot}-img`).src = ''
     return
-  }; // If no input, do nothing
+  }; 
+
+  // Check if the input is alphanumeric (using regex)
+  const isAlphanumeric = /^[a-zA-Z ]+$/.test(itemName);
   
-  const imgUrl = `https://oldschool.runescape.wiki/images/${itemName}.png?0a33f`;
-  
-  // Fetch the image and check for errors
-  fetch(imgUrl)
-    .then(response => {
-      if (response.ok) {
-        document.getElementById(`${slot}-img`).src = imgUrl;
-      } else {
-        alert('Image not found');
-      }
-    })
-    .catch(error => {
-      alert('Error fetching the image');
-    });
+  if (isAlphanumeric) {
+      // Transform the itemName
+      const formattedItemName = itemName
+          .trim() // Remove leading and trailing spaces
+          .toLowerCase() // Convert the whole string to lowercase
+          .replace(/ /g, "_") // Replace spaces with underscores
+          .replace(/^(.)/, (match) => match.toUpperCase()); // Capitalize the first letter
+
+          const imgUrl = `https://oldschool.runescape.wiki/images/${formattedItemName}.png?0a33f`;
+
+          // Fetch the image and check for errors
+          fetch(imgUrl)
+            .then(response => {
+              if (response.ok) {
+                // Set image
+                document.getElementById(`${slot}-img`).src = imgUrl;
+
+                // remove filter that makes imgs white
+                const imgElement = document.getElementById(`${slot}-img`);
+                
+                // Check if the image source is not an empty string
+                if (imgElement.src !== '') {
+                    imgElement.style.filter = 'none'; // Remove filter style
+                    imgElement.style.border = ''; // Remove the border if you want
+                } else {
+                    imgElement.style.filter = 'brightness(0) invert(1)'; // Apply filter if the source is empty
+                    imgElement.style.border = '2px solid white'; // Add white border
+                }
+
+              } else {
+                alert('Image not found');
+              }
+            })
+            .catch(error => {
+              alert('Error fetching the image');
+            });
+  } else {
+      console.error("The item name must be alphanumeric.");
+  };  
 };
 
 function openCreateModal() {

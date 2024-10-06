@@ -14,68 +14,68 @@ body {
 /* Positioning each slot */
 .cape-slot {
     position: absolute;
-    top: 90px; /* Adjust the value as needed */
-    left: 45px; /* Adjust the value as needed */
+    top: 88px; /* Adjust the value as needed */
+    left: 40px; /* Adjust the value as needed */
 }
 
 .left-hand-slot {
     position: absolute;
-    top: 170px; /* Adjust the value as needed */
+    top: 167px; /* Adjust the value as needed */
     left: 10px; /* Adjust the value as needed */
 }
 
 .hands-slot {
     position: absolute;
-    top: 320px; /* Adjust the value as needed */
-    left: 15px; /* Adjust the value as needed */
+    top: 326px; /* Adjust the value as needed */
+    left: 10px; /* Adjust the value as needed */
 }
 
 .head-slot {
     position: absolute;
-    top: 20px; /* Adjust the value as needed */
-    left: 135px; /* Adjust the value as needed */
+    top: 10px; /* Adjust the value as needed */
+    left: 127px; /* Adjust the value as needed */
 }
 
 .neck-slot {
     position: absolute;
-    top: 80px; /* Adjust the value as needed */
-    left: 135px; /* Adjust the value as needed */
+    top: 88px; /* Adjust the value as needed */
+    left: 127px; /* Adjust the value as needed */
 }
 
 .torso-slot {
     position: absolute;
-    top: 170px; /* Adjust the value as needed */
-    left: 135px; /* Adjust the value as needed */
+    top: 167px; /* Adjust the value as needed */
+    left: 127px; /* Adjust the value as needed */
 }
 
 .legs-slot {
     position: absolute;
-    top: 250px; /* Adjust the value as needed */
-    left: 135px; /* Adjust the value as needed */
+    top: 247px; /* Adjust the value as needed */
+    left: 127px; /* Adjust the value as needed */
 }
 
 .feet-slot {
     position: absolute;
-    top: 320px; /* Adjust the value as needed */
-    left: 130px; /* Adjust the value as needed */
+    top: 327px; /* Adjust the value as needed */
+    left: 127px; /* Adjust the value as needed */
 }
 
 .ammunition-slot {
     position: absolute;
-    top: 80px; /* Adjust the value as needed */
-    left: 225px; /* Adjust the value as needed */
+    top: 88px; /* Adjust the value as needed */
+    left: 212px; /* Adjust the value as needed */
 }
 
 .right-hand-slot {
     position: absolute;
-    top: 170px; /* Adjust the value as needed */
-    left: 248px; /* Adjust the value as needed */
+    top: 167px; /* Adjust the value as needed */
+    left: 235px; /* Adjust the value as needed */
 }
 
 .jewelry-slot {
     position: absolute;
-    top: 320px; /* Adjust the value as needed */
-    left: 248px; /* Adjust the value as needed */
+    top: 326px; /* Adjust the value as needed */
+    left: 235px; /* Adjust the value as needed */
 }
 .slot-img {
     width: 64px;
