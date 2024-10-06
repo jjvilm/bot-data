@@ -5,11 +5,14 @@ body {
 /* Equipment Container */
 .equipment-container {
     position: relative; /* Allows absolute positioning of children */
-    width: 300px; 
-    height: 400px; 
+    width: 300px;
+    height: 400px;
     background-image: url('/images/equipmentSlots.png');
     background-size: cover;
+    border: 5px solid rgb(0, 0, 0); /* Adds a white border */
+    outline: none; /* Removes any default outline */
 }
+
 
 /* Positioning each slot */
 .cape-slot {
