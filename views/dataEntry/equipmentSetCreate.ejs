@@ -8,13 +8,16 @@
 </head>
 <body>
   <%- include('../partials/navbar'); %>
-  
 
 <!-- Main container with the equipment background -->
 <div class="container">
   <div class="row">
     <div class="col col-md-4 .offset-md-4">
-      <h1>Equipment Sets</h1>
+      <h1 style="
+        color: rgb(52, 51, 51);
+        padding: 0px;
+        text-shadow: 1px 1px 0 white,-1px -1px 0 white,-1px 1px 0 white,1px -1px 0 white;">
+        Equipment Sets</h1>
 <div class="equipment-container">
   <!-- slots in the grid -->
   <div class="grid-container">
@@ -66,7 +69,11 @@
   </div>
     </div>
     <div class="col">
-      <h1>Apply Equipment Sets</h1>
+      <h1 style="
+        color: rgb(52, 51, 51);
+        padding: 0px;
+        text-shadow: 1px 1px 0 white,-1px -1px 0 white,-1px 1px 0 white,1px -1px 0 white;">
+        Apply Equipment Sets</h1>
       <div id="bot-selection-container">
         <!-- Dropdown to select a bot -->
         <label for="bot-select">Select Bot:</label>
@@ -100,7 +107,11 @@
   <!-- Success label to display after successful save -->
   <div id="success-label" style="display: none; color: green; font-weight: bold;"></div>
 
-  <h2>Existing Equipment Sets</h2>
+  <h2 style="color: rgb(52, 51, 51);
+  padding: 0px;
+  text-shadow: 1px 1px 0 white,-1px -1px 0 white,-1px 1px 0 white,1px -1px 0 white;">
+  Existing Equipment Sets</h2>
+  
 
   <div id="equipment-sets">
     <!-- Fetched sets will be displayed here -->
