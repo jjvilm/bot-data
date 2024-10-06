@@ -152,7 +152,7 @@ function findItem(slot) {
   }; 
 
   // Check if the input is alphanumeric (using regex)
-  const isAlphanumeric = /^[a-zA-Z ]+$/.test(itemName);
+  const isAlphanumeric = /^[a-zA-Z0-9()' ]+$/.test(itemName);
   
   if (isAlphanumeric) {
       // Transform the itemName
