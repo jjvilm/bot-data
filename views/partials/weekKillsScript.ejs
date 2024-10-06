@@ -27,12 +27,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div id="equipment-images-${bot._id}"></div>`,
                 bot.most_recent_kill.world_number,
                 bot.comments === 'BANNED' ? bot.comments : `${bot.comments}
-                <button type="button" class="btn btn-primary update-bot-btn" data-toggle="modal" data-target="#updateModal" 
+                <button type="button" class="btn btn-info update-bot-btn" data-toggle="modal" data-target="#updateModal" 
                     data-id="${bot._id}"
                     data-botname="${bot.bot_name}"
                     data-combatlv="${bot.combat_lv}"
                     data-comments="${bot.comments}">
-                    Edit
+                    Post
                 </button>`,
                 new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0], // Format Kill Date
                 bot.most_recent_kill.kill_time,
@@ -89,8 +89,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const response = await fetch(`/deDashboard/getEquipmentSetByName?set_name=${setName}`);
         const equipmentSet = await response.json();
 
+        if (!response.ok) {
+            console.log("bad response")
+        }
+
         // Only proceed if we received valid equipment set data
         if (equipmentSet && equipmentSet.set_name) {
+            console.log("received valid data")
             const equipmentImagesContainer = document.getElementById(`equipment-images-${botId}`);
 
             // Add each equipment image if it exists
