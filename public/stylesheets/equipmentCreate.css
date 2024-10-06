@@ -101,6 +101,6 @@ body {
 .slot-img[alt="Jewelry"],
 .slot-img[alt="Hands"] {
   /* Make images appear white using filters or additional styles */
-  filter: brightness(0) invert(1); /* Turns the image white */
+  /*filter: brightness(0) invert(1);  Turns the image white */
   border: 2px solid white; /* Add white border */
 }

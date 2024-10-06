@@ -97,12 +97,11 @@
         imgElement.src = set[slot]; // Get the source for the slot
 
         // Check if the image source is not an empty string
-        if (imgElement.src !== '') {
+        if (imgElement.src.includes('wiki')) {
             imgElement.style.filter = 'none'; // Remove filter style
             imgElement.style.border = ''; // Remove the border if you want
         } else {
-            imgElement.style.filter = 'brightness(0) invert(1)'; // Apply filter if the source is empty
-            imgElement.style.border = '2px solid white'; // Add white border
+            imgElement.src = "/images/Bank_filler.png"
         }
     });
 }
@@ -148,7 +147,7 @@ function findItem(slot) {
 
   if (!itemName) {
     // Clear the image in the set on the frontend
-    document.getElementById(`${slot}-img`).src = ''
+    document.getElementById(`${slot}-img`).src = '/images/Bank_filler.png'
     return
   }; 
 
