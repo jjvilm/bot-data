@@ -26,8 +26,13 @@ router.post('/botCreate',authMiddleware.ensureAuthenticated, function(req,res,ne
 router.get('/botUpdate',authMiddleware.ensureAuthenticated, function(req, res, next) {
   botController.update_get(req, res);
 });
+
 router.post('/botUpdate',authMiddleware.ensureAuthenticated, function(req, res, next) {
   botController.update_from_recently_killed(req, res);
+});
+
+router.post('/botUpdateEquipmentSetName',authMiddleware.ensureAuthenticated, function(req, res, next) {
+  botController.updateEquipmentSetName(req, res);
 });
 
 router.get('/botDelete',authMiddleware.ensureAuthenticated,function(req, res, next) {

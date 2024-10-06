@@ -126,6 +126,17 @@ exports.update = async function(req, res) {
   var result = await Bot.findOneAndUpdate({ _id: req.body.id }, updateData)
   res.redirect('/deDashboard/botList');
 };
+exports.updateEquipmentSetName = async function(req, res) {
+  try {
+    const updateData = {
+      equipment_set_name: req.body.equipment_set_name,
+      };
+    
+      await Bot.findOneAndUpdate({ _id: req.body._id }, updateData)
+  } catch (err) {
+    console.log(err);
+  }
+};
 exports.update_from_recently_killed = async function(req, res) {
   const updateData = {
     combat_lv: req.body.combat_lv,

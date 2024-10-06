@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-// Define the schema for a single kill entry
+// Equipment Set
 const EquipmentSchema = new Schema({
   set_name: {
     type: String,
-    unique: true, // Each bot_name should be unique
+    unique: true, 
     default: '', 
   },
   head: {

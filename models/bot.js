@@ -55,6 +55,10 @@ const BotSchema = new Schema({
     type: String,
     default: '', // Default empty string if no comments
   },
+  equipment_set_name: {
+    type: String,
+    default: '', // Default empty string if no comments
+  },
 });
 
 const Bot = mongoose.model('bot_kills', BotSchema);
