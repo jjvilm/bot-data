@@ -129,6 +129,11 @@ body {
     cursor: pointer;
 }
 
+label {
+    font-weight: bold;
+}
+
+
 /*.container {
     border: 2px solid white; /* Add white border */
 /*} 

@@ -41,7 +41,6 @@ exports.update_get = async function(req, res) {
 exports.update = async function(req, res) {
   try {
     const userId = req.query.id;
-    console.log(userId);
     const user = await User.findById(userId);
 
     if (!user) {
@@ -50,21 +49,21 @@ exports.update = async function(req, res) {
 
     user.username = req.body.username;
     user.role = req.body.role;
+    console.log("req.body.updatePassword:",req.body.updatePassword)
 
+    // Password switch is on
     if (req.body.updatePassword) {
+      console.log("generating has for user.password: ", user.password)
       user.password = user.generateHash(req.body.password);
+      console.log("Hash generated: ", user.password)
     }
-    else {
-      user.password = req.body.password;
-    }
-
-    
-  
 
     await user.save();
 
     const users = await User.find({});
+
     res.render('../views/admin/userList', { users: users });
+
   } catch (err) {
     console.log(err);
     res.status(500).send('Internal server error');
@@ -76,8 +75,6 @@ exports.userDelete = async function(req, res) {
   try {
     const userId = req.query.id;
     await User.findByIdAndDelete(userId);
-    // res.redirect('/dashboard/userList');
-    // res.redirect('/adminRoute/userList');
     res.redirect('/adminRoute/userList');
   } catch (err) {
     console.log(err);

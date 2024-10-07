@@ -5,7 +5,7 @@
     <%- include('../partials/headfile') %>
   </head>
   <%- include('../partials/navbar') %>
-  <h1> Update User Test</h1>
+  <h1> Update User</h1>
   <body>
     <form action="/adminRoute/userUpdate?id=<%=user._id%>" method="POST">    
       <label for="username">username:</label>
@@ -16,11 +16,11 @@
         <input type="checkbox" id="passwordSwitch">
         <span class="slider round"></span>
       </label>
-      <input type="password" id="passwordInput" name="password" disabled required><br>
-      <input type="hidden" name="updatePassword" value=false>
+      <input type="password" id="passwordInput" name="password" autocomplete="new-password" disabled required><br>
+      <input type="hidden" name="updatePassword" id="updatePasswordField" value=0>
 
       <label for="role">Role:</label>
- <select id="role" name="role" required>
+      <select id="role" name="role" required>
         <option value="DataEntry" <%= user.role === 'DataEntry' ? 'selected' : '' %>>Data Entry</option>
         <option value="Admin" <%= user.role === 'Admin' ? 'selected' : '' %>>Admin</option>
         <option value="QualityControl" <%= user.role === 'QualityControl' ? 'selected' : '' %>>Quality Control</option>
@@ -40,10 +40,12 @@
     <script>
       const passwordSwitch = document.getElementById("passwordSwitch");
       const passwordInput = document.getElementById("passwordInput");
+      const updatePasswordField = document.getElementById("updatePasswordField");
 
       passwordSwitch.addEventListener("change", () => {
         passwordInput.disabled = !passwordInput.disabled;
-        updatePassword = true;
+        // Update the hidden field value
+        updatePasswordField.value = passwordInput.disabled ? false : true;
       });
     </script>
   </body>

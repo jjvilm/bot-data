@@ -80,52 +80,61 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Modal elements not found.');
         }
     }
-
+    // start fetchEquipmentSet
+    // end fetchEquipmentSet
     async function fetchEquipmentSet(botId, setName) {
         if (!setName) {
             return
+            console.warn(`No set name provided for bot ID: ${botId}`);
         }
         try {
-        const response = await fetch(`/deRoute/getEquipmentSetByName?set_name=${setName}`);
-        const equipmentSet = await response.json();
+            const response = await fetch(`/deRoute/getEquipmentSetByName?set_name=${setName}`);
+            const equipmentSet = await response.json();
 
-        if (!response.ok) {
-            console.log("bad response")
-        }
-
-        // Only proceed if we received valid equipment set data
-        if (equipmentSet && equipmentSet.set_name) {
-            console.log("received valid data")
-            const equipmentImagesContainer = document.getElementById(`equipment-images-${botId}`);
-
-            // Add each equipment image if it exists
-            const equipmentPieces = [
-            { key: 'head', label: 'Head' },
-            { key: 'cape', label: 'Cape' },
-            { key: 'neck', label: 'Neck' },
-            { key: 'ammunition', label: 'Ammunition' },
-            { key: 'left_hand', label: 'Left Hand' },
-            { key: 'torso', label: 'Torso' },
-            { key: 'right_hand', label: 'Right Hand' },
-            { key: 'legs', label: 'Legs' },
-            { key: 'hands', label: 'Hands' },
-            { key: 'feet', label: 'Feet' },
-            { key: 'jewelry', label: 'Jewelry' }
-            ];
-
-            equipmentPieces.forEach(piece => {
-            const imageUrl = equipmentSet[piece.key];
-            if (imageUrl) {
-                const img = document.createElement('img');
-                img.src = imageUrl;
-                img.alt = piece.label;
-                img.style = "width: 30px; height: 30px; margin-right: 5px;";
-                equipmentImagesContainer.appendChild(img);
+            if (!response.ok) {
+                return;
+                console.error("bad response")
             }
-            });
-        }
+
+            // Only proceed if we received valid equipment set data
+            if (equipmentSet && equipmentSet.set_name) {
+                const equipmentImagesContainer = document.getElementById(`equipment-images-${botId}`);
+
+                // Check if the container exists in the DOM
+                if (!equipmentImagesContainer) {
+                    return;
+                    console.error(`Could not find container for bot ID: ${botId}`);
+                }
+
+                // Add each equipment image if it exists
+                const equipmentPieces = [
+                    { key: 'head', label: 'Head' },
+                    { key: 'cape', label: 'Cape' },
+                    { key: 'neck', label: 'Neck' },
+                    { key: 'ammunition', label: 'Ammunition' },
+                    { key: 'left_hand', label: 'Left Hand' },
+                    { key: 'torso', label: 'Torso' },
+                    { key: 'right_hand', label: 'Right Hand' },
+                    { key: 'legs', label: 'Legs' },
+                    { key: 'hands', label: 'Hands' },
+                    { key: 'feet', label: 'Feet' },
+                    { key: 'jewelry', label: 'Jewelry' }
+                    ];
+
+                equipmentPieces.forEach(piece => {
+                    const imageUrl = equipmentSet[piece.key];
+                    if (imageUrl) {
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.alt = piece.label;
+                        img.style = "width: 30px; height: 30px; margin-right: 5px;";
+                        equipmentImagesContainer.appendChild(img);
+                    }
+                });
+            } 
+
         } catch (error) {
-        console.error('Error fetching equipment set:', error);
+            console.error('Error fetching equipment set:', error);
         }
     };
 

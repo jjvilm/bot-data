@@ -26,8 +26,8 @@ router.get('/userCreate',authMiddleware.ensureAuthenticated,authMiddleware.hasRo
 //   userController.createUser(req,res);
 // });
 router.post('/userCreate',authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), passport.authenticate('local-signup', {
-    successRedirect: '/adminDashboard/userList', //redirect to the secure home page
-    failureRedirect: '/adminDashboard/userCreate', // redirect back to the signup page if there is an error
+    successRedirect: '/adminRoute/userList', //redirect to the secure home page
+    failureRedirect: '/adminRoute/userCreate', // redirect back to the signup page if there is an error
     failureFlash: true // allow flash messages
 }));
 
@@ -52,7 +52,7 @@ router.post('/banned', authMiddleware.ensureAuthenticated,authMiddleware.hasRole
     await botController.setBannedBot(req, res);
   } catch (error) {
     console.error('Error in /banned:', error);
-    res.status(500).json({ message: 'Error in /adminDashboard/banned', error: error.message });
+    res.status(500).json({ message: 'Error in /adminRoute/banned', error: error.message });
   }
 });
 
