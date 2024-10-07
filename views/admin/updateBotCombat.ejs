@@ -53,7 +53,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="updateAliasForm" method="POST" action="/adminDashboard/get_player_combat_level">
+                <form id="updateAliasForm" method="POST" action="/adminRoute/get_player_combat_level">
                     <input type="hidden" id="botId" name="id">
                     <div class="form-group">
                         <label for="alias">Alias</label>
@@ -62,7 +62,7 @@
                     <button type="submit" class="btn btn-primary">Fetch Combat Level</button>
                 </form>
                 <!-- New BANNED button -->
-                <form id="banBotForm" method="POST" action="/adminDashboard/banned">
+                <form id="banBotForm" method="POST" action="/adminRoute/banned">
                     <input type="hidden" id="banBotId" name="id">
                     <button type="submit" class="btn btn-danger mt-2">BANNED</button>
                 </form>

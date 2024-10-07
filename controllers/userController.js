@@ -77,8 +77,8 @@ exports.userDelete = async function(req, res) {
     const userId = req.query.id;
     await User.findByIdAndDelete(userId);
     // res.redirect('/dashboard/userList');
-    // res.redirect('/adminDashboard/userList');
-    res.redirect('/adminDashboard/userList');
+    // res.redirect('/adminRoute/userList');
+    res.redirect('/adminRoute/userList');
   } catch (err) {
     console.log(err);
     res.status(500).send('Internal server error');

@@ -10,15 +10,15 @@ router.get('/login', function (req, res) {
 
 // After log on, Roles will determine the landing page
 router.post('/login', passport.authenticate('local-login', {
-    failureRedirect: '/account/login',
+    failureRedirect: '/accountRoute/login',
     failureFlash: true
 }), (req, res) => {
     if (req.user.role === 'Admin') {
-        res.redirect('/adminDashboard');
+        res.redirect('/adminRoute');
     } else if (req.user.role === 'DataEntry') {
-        res.redirect('/deDashboard');
+        res.redirect('/deRoute');
     } else {
-      res.redirect('/qcDashboard');
+      res.redirect('/qcRoute');
     }
 });
 
@@ -35,18 +35,18 @@ router.get('/signup', authMiddleware.ensureAuthenticated,authMiddleware.hasRole(
 });
 
 router.post('/signup', passport.authenticate('local-signup', {
-    successRedirect: '/account/login', //redirect to the secure home page
-    failureRedirect: '/account/signup', // redirect back to the signup page if there is an error
+    successRedirect: '/accountRoute/login', //redirect to the secure home page
+    failureRedirect: '/accountRoute/signup', // redirect back to the signup page if there is an error
     failureFlash: true // allow flash messages
 }));
 
 // router.post('/signup', passport.authenticate('local-signup', {
-//     failureRedirect: '/account/signup', // redirect back to the signup page if there is an error
+//     failureRedirect: '/accountRoute/signup', // redirect back to the signup page if there is an error
 //     failureFlash: true // allow flash messages
 // }), (req, res) => {
 //   /// if already logged in and creating user, do not redirct to login screen
 //     if (req.user) {
-//         res.redirect('/adminDashboard/userList');
+//         res.redirect('/adminRoute/userList');
 //     } else {
 //         res.redirect('/account/login');
 //     }

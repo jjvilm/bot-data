@@ -12,10 +12,10 @@ require('dotenv').config()
 
 // our routes
 var indexRouter = require('./routes/index');
-var accountRouter = require('./routes/account');
-var adminDashboardRouter = require('./routes/adminDashboard');
-var deDashboardRouter = require('./routes/deDashboard');
-var qcDashboardRouter = require('./routes/qcDashboard');
+var accountRouter = require('./routes/accountRoute');
+var adminRouter = require('./routes/adminRoute');
+var deRouter = require('./routes/deRoute');
+var qcRouter = require('./routes/qcRoute');
 
 var app = express();
 
@@ -68,10 +68,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 // our map routing
-app.use('/account', accountRouter);
-app.use('/adminDashboard', adminDashboardRouter);
-app.use('/deDashboard', deDashboardRouter);
-app.use('/qcDashboard', qcDashboardRouter);
+app.use('/accountRoute', accountRouter);
+app.use('/adminRoute', adminRouter);
+app.use('/deRoute', deRouter);
+app.use('/qcRoute', qcRouter);
 
 
 // catch 404 and forward to error handler

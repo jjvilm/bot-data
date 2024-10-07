@@ -12,9 +12,9 @@
 
 <body>
     <%- include('../partials/navbar'); %>
-    <a href="/deDashboard/botList" class="btn btn-primary">All Bots</a>
-    <a href="/deDashboard/topWorlds" class="btn btn-primary">Top Worlds</a>
-    <a href="/qcDashboard" class="btn btn-primary">Recent Kills</a>
+    <a href="/deRoute/botList" class="btn btn-primary">All Bots</a>
+    <a href="/deRoute/topWorlds" class="btn btn-primary">Top Worlds</a>
+    <a href="/qcRoute" class="btn btn-primary">Recent Kills</a>
     <h1><%= hunter_name %></h1>
 
     <!-- Display total and average loot -->
@@ -61,7 +61,7 @@
                         <tr>
                             <% if (worldData.kills[0] === kill) { %>
                                 <td rowspan="<%= worldData.kills.length %>">
-                                    <a href="/deDashboard/botKills?id=<%= killData._id %>" style="color: white;">
+                                    <a href="/deRoute/botKills?id=<%= killData._id %>" style="color: white;">
                                         <%= killData.bot_name %> 
                                     </a>
                                 </td>

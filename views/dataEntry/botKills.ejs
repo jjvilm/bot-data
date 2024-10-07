@@ -26,9 +26,9 @@
 </head>
 <body>
     <%- include('../partials/navbar'); %>
-    <a href="/deDashboard/botList" class="btn btn-primary">All Bots</a>
-    <a href="/deDashboard/topWorlds" class="btn btn-primary">Top Worlds</a>
-    <a href="/qcDashboard" class="btn btn-primary">Recent Kills</a>
+    <a href="/deRoute/botList" class="btn btn-primary">All Bots</a>
+    <a href="/deRoute/topWorlds" class="btn btn-primary">Top Worlds</a>
+    <a href="/qcRoute" class="btn btn-primary">Recent Kills</a>
     <h1><%= bots.bot_name %></h1>
     <h4>(Combat Level: <%= bots.combat_lv %>)</h4>
     
@@ -58,7 +58,7 @@
                             <% } %>
                             <!-- Display the Kill Date if it exists, otherwise show a placeholder -->
                             <td>
-                                <a href="/qcDashboard/player-latest-bots?hunter_name=<%= kill.hunter_name %>" style="color: white;">
+                                <a href="/qcRoute/player-latest-bots?hunter_name=<%= kill.hunter_name %>" style="color: white;">
                                     <%= kill.hunter_name %>
                                 </a>
                             </td>

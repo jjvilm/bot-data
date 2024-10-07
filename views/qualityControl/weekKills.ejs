@@ -36,10 +36,10 @@
 </head>
 <body>
     <%- include('../partials/navbar'); %>
-    <a href="/deDashboard/botList" class="btn btn-success" style="font-weight: bold; color: black;">All Bots</a>
-<a href="/deDashboard/topWorlds" class="btn btn-secondary" style="font-weight: bold; color: black;">World Kills</a>
-<a href="/qcDashboard/commonlyVisitedWorlds" class="btn btn-danger" style="font-weight: bold; color: black;">Top Worlds</a>
-<a href="/deDashboard/EquipmentSets" class="btn btn-dark" style="font-weight: bold; color: rgb(255, 255, 255);">Equipments</a>
+    <a href="/deRoute/botList" class="btn btn-success" style="font-weight: bold; color: black;">All Bots</a>
+<a href="/deRoute/topWorlds" class="btn btn-secondary" style="font-weight: bold; color: black;">World Kills</a>
+<a href="/qcRoute/commonlyVisitedWorlds" class="btn btn-danger" style="font-weight: bold; color: black;">Top Worlds</a>
+<a href="/deRoute/EquipmentSets" class="btn btn-dark" style="font-weight: bold; color: rgb(255, 255, 255);">Equipments</a>
 
     <h1>Recently Hunted Bots</h1>
     <table class="table table-striped table-dark table-hover" id="week-kills-table">
@@ -68,7 +68,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="/qcDashboard/botUpdate">
+                    <form method="post" action="/qcRoute/botUpdate">
                         <input type="hidden" name="id" />
                         <div class="form-group">
                             <label for="combat_lv">Combat Level:</label>

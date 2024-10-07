@@ -118,6 +118,17 @@ body {
     border-width: 30px;
   }
 
+.delete-button {
+    background-color: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    display: block;
+    padding: 1px;
+    border: none;
+    cursor: pointer;
+}
+
 /*.container {
     border: 2px solid white; /* Add white border */
 /*} 

@@ -15,15 +15,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to fetch the latest bot data
     async function fetchLatestBots() {
         try {
-            const response = await fetch('/qcDashboard/latest-bots');
+            const response = await fetch('/qcRoute/latest-bots');
             const bots = await response.json();
 
             // Clear the existing table rows using DataTable API
             dataTableInstance.clear();
             // Prepare new rows from fetched bot data
             const newRows = bots.map(bot => [
-                `<a href="/qcDashboard/player-latest-bots?hunter_name=${bot.most_recent_kill.hunter_name}" style="color: white;">${bot.most_recent_kill.hunter_name}</a>`,
-                `<a href="/deDashboard/botKills?id=${bot._id}" style="color: white;">${bot.bot_name} (${bot.combat_lv})</a>
+                `<a href="/qcRoute/player-latest-bots?hunter_name=${bot.most_recent_kill.hunter_name}" style="color: white;">${bot.most_recent_kill.hunter_name}</a>`,
+                `<a href="/deRoute/botKills?id=${bot._id}" style="color: white;">${bot.bot_name} (${bot.combat_lv})</a>
                     <div id="equipment-images-${bot._id}"></div>`,
                 bot.most_recent_kill.world_number,
                 bot.comments === 'BANNED' ? bot.comments : `${bot.comments}
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return
         }
         try {
-        const response = await fetch(`/deDashboard/getEquipmentSetByName?set_name=${setName}`);
+        const response = await fetch(`/deRoute/getEquipmentSetByName?set_name=${setName}`);
         const equipmentSet = await response.json();
 
         if (!response.ok) {

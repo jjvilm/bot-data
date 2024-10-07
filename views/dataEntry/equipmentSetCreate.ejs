@@ -8,10 +8,10 @@
 </head>
 <body>
   <%- include('../partials/navbar'); %>
-  <a href="/qcDashboard/" class="btn btn-dark">Recent Hunts</a>
-  <a href="/deDashboard/botList" class="btn btn-success">All Bots</a>
-    <a href="/deDashboard/topWorlds" class="btn btn-secondary">World Kills</a>
-    <a href="/qcDashboard/commonlyVisitedWorlds" class="btn btn-danger">Top Worlds</a>
+  <a href="/qcRoute/" class="btn btn-dark">Recent Hunts</a>
+  <a href="/deRoute/botList" class="btn btn-success">All Bots</a>
+    <a href="/deRoute/topWorlds" class="btn btn-secondary">World Kills</a>
+    <a href="/qcRoute/commonlyVisitedWorlds" class="btn btn-danger">Top Worlds</a>
 
 <!-- Main container with the equipment background -->
 <div class="container">
@@ -96,29 +96,27 @@
   <div class="row">
     <div class="col">
       <br>
-  <!-- Second container for existing equipment sets -->
+      <!-- Second container for existing equipment sets -->
       <!-- Button to create a new equipment set -->
-  <button onclick="openCreateModal()">New Set</button>
-  <div id="createModal" style="display:none;">
-      <!-- Modal content -->
-    <h2>Create New Equipment Set</h2>
-    
-    <label for="set_name">Set Name:</label>
-    <input type="text" id="set_name">
-    
-    <button onclick="createEquipmentSet()">Save</button>
-  </div>
-  <!-- Success label to display after successful save -->
-  <div id="success-label" style="display: none; color: green; font-weight: bold;"></div>
+      <button onclick="openCreateModal()">New Set</button>
+      <div id="createModal" style="display:none;">
+          <!-- Modal content -->
+        <h2>Create New Equipment Set</h2>
+        
+        <label for="set_name">Set Name:</label>
+        <input type="text" id="set_name">
+        
+        <button onclick="createEquipmentSet()">Save</button>
+      </div>
+      <!-- Success label to display after successful save -->
+      <div id="success-label" style="display: none; color: green; font-weight: bold;"></div>
+      <h2 style="color: rgb(52, 51, 51);padding: 0px;text-shadow: 1px 1px 0 white,-1px -1px 0 white,-1px 1px 0 white,1px -1px 0 white;">
+      Existing Equipment Sets</h2>
+      <div id="equipment-sets">
+        <!-- Fetched sets will be displayed here -->
+         
+         <!-- New logic ends here  -->
 
-  <h2 style="color: rgb(52, 51, 51);
-  padding: 0px;
-  text-shadow: 1px 1px 0 white,-1px -1px 0 white,-1px 1px 0 white,1px -1px 0 white;">
-  Existing Equipment Sets</h2>
-  
-
-  <div id="equipment-sets">
-    <!-- Fetched sets will be displayed here -->
   </div>
 </div>
     </div>

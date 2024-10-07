@@ -44,10 +44,10 @@ exports.importCsv = async function(req, res) {
         }
 
         // Redirect to the bot list page
-        res.redirect('/deDashboard/botList');
+        res.redirect('/deRoute/botList');
       });
   } else {
-    res.redirect('/deDashboard/importCsv');
+    res.redirect('/deRoute/importCsv');
   }
 };
 
@@ -105,7 +105,7 @@ exports.create = async function(req, res) {
 
   try {
     await bot.save();
-    res.redirect('/deDashboard/botList');
+    res.redirect('/deRoute/botList');
   } catch (err) {
     console.log(err);
   }
@@ -124,7 +124,7 @@ exports.update = async function(req, res) {
 
 
   var result = await Bot.findOneAndUpdate({ _id: req.body.id }, updateData)
-  res.redirect('/deDashboard/botList');
+  res.redirect('/deRoute/botList');
 };
 exports.updateEquipmentSetName = async function(req, res) {
   try {
@@ -157,7 +157,7 @@ exports.update_from_recently_killed = async function(req, res) {
 
 
   var result = await Bot.findOneAndUpdate({ _id: req.body.id }, updateData)
-  res.redirect('/qcDashboard');
+  res.redirect('/qcRoute');
 };
 exports.update_combat_alias = async function(req, res) {
   const updateData = {
@@ -173,7 +173,7 @@ exports.delete = async function(req, res) {
   
   await Bot.findOneAndDelete({ _id: req.query.id });
 
-  res.redirect('/deDashboard/botList');
+  res.redirect('/deRoute/botList');
 
 };
 

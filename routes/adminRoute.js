@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 var userController = require('../controllers/userController'); 
 var botController = require('../controllers/botController'); 
+var equipmentController = require('../controllers/equipmentController'); 
 const authMiddleware = require('../middleware/auth');
 
 /* GET home page. */
@@ -69,9 +70,21 @@ router.post('/get_player_combat_level', authMiddleware.ensureAuthenticated,authM
 });
 
 
+router.post('/deleteEquipmentSet/',authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), function (req, res, next) {
+  try {
+    equipmentController.deleteEquipmentSet(req,res);
+  } catch (error) {
+    console.error('Error in deleting equipment set:', error);
+    res.status(500).json({message: 'Error deleting equpment set', error:error.message});
+  }
+});
+
 router.get('/updateBotLevels',authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), function (req, res, next) {
   // res.render('../views/admin/updateBotCombat.ejs');
   botController.updateRecentKilledBotsCBLevel(req,res)
+});
+router.post('/updateEquipmentSetName',authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), function (req, res, next) {
+  equipmentController.updateEquipmentSetName(req,res)
 });
 
 module.exports = router;

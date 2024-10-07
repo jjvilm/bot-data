@@ -1,7 +1,55 @@
   <script>
+    let currentlyLoadedSet = null; // Keep track of the currently loaded set
+
+  function deleteEquipmentSet(setId) {
+
+      /////
+      const setData = {
+      _id: setId,
+      };
+      if (!confirm('Are you sure you want to delete this equipment set?')) {
+        return;
+      }
+    fetch('/adminRoute/deleteEquipmentSet/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(setData),
+    })
+    .then(response => {
+        if (response.ok) {
+            // Reload equipment
+            fetchAndDisplayEquipmentSets()
+            // Success: show success label
+            const successLabel = document.getElementById('success-label');
+            successLabel.innerText = 'Equipment set saved successfully!';
+            successLabel.style.display = 'block';
+
+            // Hide label after 3 seconds
+            setTimeout(() => {
+                successLabel.style.display = 'none';
+            }, 3000);
+
+            // Hide the modal
+            const createModal = document.getElementById('createModal');
+            createModal.style.display = 'none';
+        } else {
+            // Handle any other status codes (4xx, 5xx)
+            return response.json().then(data => {
+                throw new Error(data.message || 'Error creating the equipment set');
+            });
+        }
+    })
+    .catch(error => {
+        alert(error.message);
+    });
+      /////
+}
+
   function fetchAndDisplayEquipmentSets() {
   // Fetch the equipment sets and display them
-  fetch('/deDashboard/getEquipmentSets')
+  fetch('/deRoute/getEquipmentSets')
     .then(response => response.json())
     .then(data => {
       const equipmentSetsContainer = document.getElementById('equipment-sets');
@@ -20,6 +68,47 @@
         setDiv.appendChild(setNameLabel);
         setDiv.appendChild(setBreak);
 
+        // Label logic
+        // Make the label clickable
+setNameLabel.addEventListener('click', function () {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = set.set_name;
+    
+    // Replace the label with the input field
+    setDiv.replaceChild(input, setNameLabel);
+
+    // When the user presses Enter, submit the new name
+    input.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+            const newSetName = input.value;
+
+            // Send the new name to the server
+            fetch('/adminRoute/updateEquipmentSetName', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ _id: set._id, set_name: newSetName, previous_set_name: set.set_name})
+            })
+            .then(response => {
+                if (response.ok) {
+                    setNameLabel.innerText = newSetName;
+                    // Replace the input back with the updated label
+                    setDiv.replaceChild(setNameLabel, input);
+                } else {
+                    alert('Error updating equipment set name.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating equipment set name.');
+            });
+        }
+    });
+});
+        // Label logic end
+
         // Add Load button
         const loadButton = document.createElement('button');
         loadButton.innerText = "Load";
@@ -31,7 +120,6 @@
           const img = document.createElement('img');
           img.src = set[slot];
           img.style = "width: auto; height: auto;";
-          // img.onclick = () => updateImage(slot, set._id); // Update the image on click
           setDiv.appendChild(img);
         });
         
@@ -40,6 +128,20 @@
         updateButton.innerText = "update";
         updateButton.onclick = () => updateEquipmentSet(set._id); // Save the set on click
         setDiv.appendChild(updateButton);
+
+        // Add Delete button
+        // Assuming 'userRole' is available from your authentication middleware
+        const userRole = '<%= user.role %>'; // Replace with actual logic to get the user's role
+
+        // Add Delete button
+        if (userRole === 'Admin') {
+            const deleteButton = document.createElement('button');
+            deleteButton.innerText = "Delete";
+            deleteButton.classList.add('delete-button');
+            deleteButton.onclick = () => deleteEquipmentSet(set._id);
+            setDiv.appendChild(deleteButton);
+        }
+        // end delete button
 
         equipmentSetsContainer.appendChild(setDiv);
       });
@@ -74,7 +176,6 @@
       });
   }
 
-  let currentlyLoadedSet = null; // Keep track of the currently loaded set
   // Load the equipment set images when the Load button is clicked
   function loadEquipmentSet(set) {
     // If there is a previously loaded set, remove the highlight
@@ -106,7 +207,6 @@
     });
 }
 
-
 function updateEquipmentSet(setId) {
     const setData = {
       _id: setId,
@@ -123,7 +223,7 @@ function updateEquipmentSet(setId) {
       jewelry: document.getElementById('jewelry-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('jewelry-img').src : '',
   };
 
-    fetch('/deDashboard/updateEquipmentSet', {
+    fetch('/deRoute/updateEquipmentSet', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -215,7 +315,7 @@ function createEquipmentSet() {
       jewelry: document.getElementById('jewelry-img').src.includes("https://oldschool.runescape.wiki") ? document.getElementById('jewelry-img').src : '',
   };
 
-  fetch('/deDashboard/createEquipmentSet', {
+  fetch('/deRoute/createEquipmentSet', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
@@ -254,7 +354,7 @@ function createEquipmentSet() {
 /// Fetch the latest bots and populate the dropdown
 async function fetchLatestBots() {
     try {
-      const response = await fetch('/qcDashboard/latest-bots');
+      const response = await fetch('/qcRoute/latest-bots');
       const bots = await response.json();
 
       // console.log('Fetched bots:', bots); // Debugging line to verify the fetched data
@@ -280,6 +380,8 @@ async function fetchLatestBots() {
     }
   }
 
+
+  
 // Handle the Apply button click
 document.getElementById('apply-button').addEventListener('click', async function() {
     const botSelect = document.getElementById('bot-select');
@@ -304,7 +406,7 @@ document.getElementById('apply-button').addEventListener('click', async function
 
     // Send the data to the server
     try {
-      const response = await fetch('/qcDashboard/botUpdateEquipmentSetName', {
+      const response = await fetch('/qcRoute/botUpdateEquipmentSetName', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

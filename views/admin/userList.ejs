@@ -8,7 +8,7 @@
     <%- include('../partials/navbar'); %>
 
     <div class="container">
-        <a href="/adminDashboard/userCreate" class="btn btn-primary">Create</a>
+        <a href="/adminRoute/userCreate" class="btn btn-primary">Create</a>
         <table class="table table-bordered" id="userTable">
             <thead>
                 <tr>
@@ -22,8 +22,8 @@
                     <td><%=users[i].username%></td>
                     <td><%=users[i].role%></td>
                     <td>
-                        <a href="/adminDashboard/userUpdate?id=<%=users[i]._id%>" class="btn btn-primary">Update</a>
-                        <a href="/adminDashboard/userDelete?id=<%=users[i]._id%>" class="btn btn-danger">Delete</a>
+                        <a href="/adminRoute/userUpdate?id=<%=users[i]._id%>" class="btn btn-primary">Update</a>
+                        <a href="/adminRoute/userDelete?id=<%=users[i]._id%>" class="btn btn-danger">Delete</a>
                     </td>
                 </tr>
             <% } %>
