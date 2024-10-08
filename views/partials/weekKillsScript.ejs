@@ -35,7 +35,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     Post
                 </button>`,
                 new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0], // Format Kill Date
-                bot.most_recent_kill.kill_time,
+                //  Time column
+                new Date(bot.most_recent_kill.kill_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+
+                // bot.most_recent_kill.kill_time,
                 formatNumber(bot.most_recent_kill.loot_amount)
             ]);
 
@@ -155,6 +158,16 @@ function formatNumber(number) {
         } else {
             console.error('Modal elements not found.');
         }
+    }
+
+    function convertToUserLocalTime(isoDateString) {
+    // Convert the ISO date string to a Date object
+    const dateObject = new Date(isoDateString);
+    
+    // Get the user's local time as a string
+    const localTime = dateObject.toLocaleString();
+
+    return localTime;
     }
 </script>
 
