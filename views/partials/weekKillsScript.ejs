@@ -59,27 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Function to populate the modal with data from the clicked button
-    function populateModal(button) {
-        const botId = button.getAttribute('data-id');
-        const botName = button.getAttribute('data-botname');
-        const combatLv = button.getAttribute('data-combatlv');
-        const comments = button.getAttribute('data-comments');
-
-        const idInput = document.querySelector('#updateModal input[name="id"]');
-        const combatLvInput = document.querySelector('#updateModal input[name="combat_lv"]');
-        const commentsInput = document.querySelector('#updateModal input[name="comments"]');
-        const modalTitle = document.querySelector('#updateModalLabel strong');
-
-        if (idInput && combatLvInput && commentsInput && modalTitle) {
-            idInput.value = botId;
-            combatLvInput.value = combatLv;
-            commentsInput.value = comments;
-            modalTitle.textContent = botName;
-        } else {
-            console.error('Modal elements not found.');
-        }
-    }
+   
     // start fetchEquipmentSet
     // end fetchEquipmentSet
     async function fetchEquipmentSet(botId, setName) {
@@ -155,6 +135,26 @@ function formatNumber(number) {
         return number.toString(); // For numbers below 1,000
     }
 };
+ // Function to populate the modal with data from the clicked button
+ function populateModal(button) {
+        const botId = button.getAttribute('data-id');
+        const botName = button.getAttribute('data-botname');
+        const combatLv = button.getAttribute('data-combatlv');
+        const comments = button.getAttribute('data-comments');
 
+        const idInput = document.querySelector('#updateModal input[name="id"]');
+        const combatLvInput = document.querySelector('#updateModal input[name="combat_lv"]');
+        const commentsInput = document.querySelector('#updateModal input[name="comments"]');
+        const modalTitle = document.querySelector('#updateModalLabel strong');
+
+        if (idInput && combatLvInput && commentsInput && modalTitle) {
+            idInput.value = botId;
+            combatLvInput.value = combatLv;
+            commentsInput.value = comments;
+            modalTitle.textContent = botName;
+        } else {
+            console.error('Modal elements not found.');
+        }
+    }
 </script>
 

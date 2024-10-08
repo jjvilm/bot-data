@@ -1,61 +1,45 @@
-h1 {
-  text-align: center;
-}
-body{
-      background: linear-gradient(to bottom right, #f7f7f7, #3192d6, #182536);
-  margin-bottom: auto;
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom right, #f7f7f7, #3192d6, #182536);
 }
 
 .container {
-  width: 100%;
+  max-width: 100%; /* Allow it to take the full width */
+  margin: 0 auto; /* Centering the container */
+  padding: 1rem; /* Padding for better spacing */
 }
 
-/* Table styles */
+.table-responsive {
+  overflow-x: auto; /* Allow horizontal scrolling */
+  width: 100%; /* Ensure it fills the available width */
+}
+
 table {
-  width: 100%;
+  width: 100%; /* Ensure the table fills the container */
   border-collapse: collapse;
-  margin-bottom: 1rem;
-background: #ffffff
+  background: #ffffff; /* Background color for the table */
+  margin-bottom: 1rem; /* Margin for spacing */
 }
 
-tbody td {
-  border: 1px solid #999;
-  padding: 0.5rem;
-  font-weight: bold;
+th {
+  background-color: #7d7d7d; /* Header background */
+  color: #ffffff; /* Text color for contrast */
+  padding: 0.75rem; /* Padding for table header */
+  text-align: left; /* Align text to the left */
 }
 
-/* Link styles */
-a {
-  text-decoration: none;
-  color: #333;
-  font-weight: bold;
+td {
+  border: 1px solid #999; /* Border for table cells */
+  padding: 0.5rem; /* Padding for table cells */
+  font-weight: bold; /* Bold font for table cells */
 }
 
-a:hover {
-  text-decoration: underline;
+/* Responsive adjustments for mobile screens */
+@media (max-width: 768px) {
+  th, td {
+      font-size: 12px; /* Adjust font size */
+      padding: 5px; /* Adjust padding */
+  }
 }
-
-/* Form styles */
-input[type="text"],
-input[type="date"] {
-  width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  border-radius: 0.25rem;
-  border: 1px solid #ccc;
-}
-
-button[type="submit"] {
-  background-color: #333;
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 0.25rem;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-button[type="submit"]:hover {
-  background-color: #555;
-}
-
