@@ -73,7 +73,7 @@
                             </td>
                             
                                                         
-                            <td><%= kill.kill_time %></td>
+                            <td><%= new Date(kill.kill_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></td>
                             <td><%= formatNumber(kill.loot_amount) %></td>
 
                         </tr>
