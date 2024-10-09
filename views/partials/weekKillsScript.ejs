@@ -37,8 +37,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0], // Format Kill Date
                 //  Time column
                 new Date(bot.most_recent_kill.kill_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-
-                // bot.most_recent_kill.kill_time,
                 formatNumber(bot.most_recent_kill.loot_amount)
             ]);
 
