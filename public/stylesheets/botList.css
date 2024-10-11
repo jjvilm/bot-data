@@ -35,11 +35,6 @@ td {
   padding: 0.5rem; /* Padding for table cells */
   font-weight: bold; /* Bold font for table cells */
 }
-
-/* Responsive adjustments for mobile screens */
-@media (max-width: 768px) {
-  th, td {
-      font-size: 12px; /* Adjust font size */
-      padding: 5px; /* Adjust padding */
-  }
+h1 {
+  text-align: center;
 }

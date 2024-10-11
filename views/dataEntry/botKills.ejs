@@ -8,7 +8,7 @@
     <title>Bot Hunting Data</title>
     <style>
         h1,h4 {
-            text-align: center;
+            text-align: right;
         }
         table {
             width: 100%;
@@ -32,15 +32,29 @@
 </head>
 <body>
     <%- include('../partials/navbar'); %>
-    <a href="/deRoute/botList" class="btn btn-primary">All Bots</a>
-    <a href="/deRoute/topWorlds" class="btn btn-primary">Top Worlds</a>
-    <a href="/qcRoute" class="btn btn-primary">Recent Kills</a>
-    <dev>
-        <h1><%= bots.bot_name %></h1>
-        <div class="container center" id="equipment-images-<%= bots._id %>">
+    <!-- Add your buttons here -->
+    <div class="btn-group mb-4" role="group" aria-label="Button group">
+        <a href="/deRoute/botList" class="btn btn-success" style="font-weight: bold; color: black;">All Bots</a>
+        <a href="/deRoute/topWorlds" class="btn btn-secondary" style="font-weight: bold; color: black;">World Kills</a>
+        <a href="/qcRoute/commonlyVisitedWorlds" class="btn btn-danger" style="font-weight: bold; color: black;">Top Worlds</a>
+        <a href="/deRoute/EquipmentSets" class="btn btn-dark" style="font-weight: bold; color: white;">Equipments</a>
+        <a href="/dcRoute" class="btn btn-primary" style="font-weight: bold; color: rgb(22, 51, 239);">Recent Hunts</a>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1><%= bots.bot_name %></h1>
+                <h4>(Combat Level: <%= bots.combat_lv %>)</h4>
+            </div>
+            <div class="col" style="text-align: left;">
+                <div class="container center" id="equipment-images-<%= bots._id %>" style="text-align: left;"></div>
+                <label class="center" for="label-<% bots._id %>" style="text-align:left;">Set Name: <%= bots.equipment_set_name %></label>
+            </div>
+
+        <!-- End row -->
         </div>
-        <h4>(Combat Level: <%= bots.combat_lv %>)</h4>
-    </dev>
+    <!-- End container -->
+    </div>
     
     <table class="table table-striped table-dark table-hover">
         <thead>
