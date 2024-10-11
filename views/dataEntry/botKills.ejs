@@ -22,6 +22,12 @@
         th {
             background-color: #7d7d7d;
         }
+        .center {
+            margin: auto;
+            width: 50%;
+            padding: 10px;
+            text-align: center;
+            }
     </style>
 </head>
 <body>
@@ -29,8 +35,12 @@
     <a href="/deRoute/botList" class="btn btn-primary">All Bots</a>
     <a href="/deRoute/topWorlds" class="btn btn-primary">Top Worlds</a>
     <a href="/qcRoute" class="btn btn-primary">Recent Kills</a>
-    <h1><%= bots.bot_name %></h1>
-    <h4>(Combat Level: <%= bots.combat_lv %>)</h4>
+    <dev>
+        <h1><%= bots.bot_name %></h1>
+        <div class="container center" id="equipment-images-<%= bots._id %>">
+        </div>
+        <h4>(Combat Level: <%= bots.combat_lv %>)</h4>
+    </dev>
     
     <table class="table table-striped table-dark table-hover">
         <thead>
@@ -89,6 +99,62 @@
         </tbody>
     </table>
     <script>
+        async function fetchEquipmentSet(botId, setName) {
+        if (!setName) {
+            return
+            console.warn(`No set name provided for bot ID: ${botId}`);
+        }
+        try {
+            const response = await fetch(`/deRoute/getEquipmentSetByName?set_name=${setName}`);
+            const equipmentSet = await response.json();
+
+            if (!response.ok) {
+                return;
+                console.error("bad response")
+            }
+
+            // Only proceed if we received valid equipment set data
+            
+            if (equipmentSet && equipmentSet.set_name) {
+                const equipmentImagesContainer = document.getElementById(`equipment-images-${botId}`);
+
+                // Check if the container exists in the DOM
+                if (!equipmentImagesContainer) {
+                    return;
+                    console.error(`Could not find container for bot ID: ${botId}`);
+                }
+
+                // Add each equipment image if it exists
+                const equipmentPieces = [
+                    { key: 'head', label: 'Head' },
+                    { key: 'cape', label: 'Cape' },
+                    { key: 'neck', label: 'Neck' },
+                    { key: 'ammunition', label: 'Ammunition' },
+                    { key: 'left_hand', label: 'Left Hand' },
+                    { key: 'torso', label: 'Torso' },
+                    { key: 'right_hand', label: 'Right Hand' },
+                    { key: 'legs', label: 'Legs' },
+                    { key: 'hands', label: 'Hands' },
+                    { key: 'feet', label: 'Feet' },
+                    { key: 'jewelry', label: 'Jewelry' }
+                    ];
+
+                equipmentPieces.forEach(piece => {
+                    const imageUrl = equipmentSet[piece.key];
+                    if (imageUrl) {
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.alt = piece.label;
+                        img.style = "width: 30px; height: 30px; margin-right: 5px;";
+                        equipmentImagesContainer.appendChild(img);
+                    }
+                });
+            } 
+
+        } catch (error) {
+            console.error('Error fetching equipment set:', error);
+        }
+    };
         function formatNumber(number) {
         if (number >= 1000000) {
             return (number / 1000).toFixed(0) + 'K'; // For numbers 1,000,000 and above
@@ -98,6 +164,10 @@
             return number.toString(); // For numbers below 1,000
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchEquipmentSet(`<%= bots._id %>`,`<%= bots.equipment_set_name %>`)
+    })
     </script>
 </body>
 </html>
