@@ -49,13 +49,11 @@ exports.update = async function(req, res) {
 
     user.username = req.body.username;
     user.role = req.body.role;
-    console.log("req.body.updatePassword:",req.body.updatePassword)
+    update_password = req.body.updatePassword
 
     // Password switch is on
-    if (req.body.updatePassword) {
-      console.log("generating has for user.password: ", user.password)
+    if (update_password === "true") {
       user.password = user.generateHash(req.body.password);
-      console.log("Hash generated: ", user.password)
     }
 
     await user.save();
