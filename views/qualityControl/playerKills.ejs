@@ -54,6 +54,7 @@
                 <th>Loot Amount</th>
             </tr>
         </thead>
+        <p><%= playerKills[0].worlds[0].kills[0].kill_date %></p>
         <tbody>
             <% playerKills.forEach(function(killData) { %>
                 <% killData.worlds.forEach(function(worldData) { %>
