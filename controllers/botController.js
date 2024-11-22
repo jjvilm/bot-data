@@ -640,7 +640,7 @@ exports.fetchPlayerCombatLevel = async function (req, res) {
 };
 
 
-// Function to update recent killed bots' combat levels
+// Function to update recent killed bots' combat levels. it is called by pressing button from adming dashboard
 exports.updateRecentKilledBotsCBLevel = async function (req, res) {
   try {
     const recentKills = await fetchRecentKills(); // Assuming this fetches a list of recent kills
@@ -653,11 +653,13 @@ exports.updateRecentKilledBotsCBLevel = async function (req, res) {
       if (kill.comments === 'BANNED') {
         continue
       }
-      //check alias first
-      if (kill.alias != '') {
+      //check alias first; This ensures that the code only assigns bot_name to kill.alias when alias exists in document and is non-empty.
+      if (kill.alias && kill.alias != '') {
         bot_name = kill.alias
       }
+      console.log("Retrieving level for", bot_name);
       const combatLevel = await getPlayerCombatLevel(bot_name);
+      console.log("Retrived level:", combatLevel);
       
       // avoid writing to db if combat lv not found
       if (combatLevel === 0) {

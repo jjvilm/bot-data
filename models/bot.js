@@ -41,7 +41,7 @@ const BotSchema = new Schema({
   alias: {
     type: String,
     required: false,
-    unique: true, // Each bot_name should be unique
+    unique: true, // Each alias should be unique
   },
   combat_lv: {
     type: Number,
