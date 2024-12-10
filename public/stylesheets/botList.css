@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(to bottom right, #f7f7f7, #3192d6, #182536);
+  background: linear-gradient(to bottom right, #191919, #3192d6, #182536);
 }
 
 .container {
@@ -37,4 +37,14 @@ td {
 }
 h1 {
   text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  img {
+    opacity: .75;
+    transition: opacity .5s ease-in-out;
+  }
+  img:hover {
+    opacity: 1;
+  }
 }
