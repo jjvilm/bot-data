@@ -238,19 +238,28 @@ function convertToUserLocalTime(isoDateString) {
 
 document.addEventListener('DOMContentLoaded', function () {
     // Fetch stored combat level and range from localStorage
-    const storedCombatLevel = localStorage.getItem('combatLevel');
-    const storedCombatRange = localStorage.getItem('combatRange');
+    let storedCombatLevel = localStorage.getItem('combatLevel');
+    let storedCombatRange = localStorage.getItem('combatRange');
 
-    // Set default values if nothing is stored in localStorage
-    if (storedCombatLevel) {
-        document.getElementById('combatLevelInput').value = storedCombatLevel;
+     // If combatLevel is not stored, alert the user and ask for input
+     if (!storedCombatLevel) {
+        alert("Combat level is not set. Please enter a combat level.");
+        // Optionally, you can set a default value
+        storedCombatLevel = 3; // Set default if needed
+        localStorage.setItem('combatLevel', storedCombatLevel); // Store it for future use
     }
-    if (storedCombatRange) {
-        document.getElementById('combatRangeInput').value = storedCombatRange;
-    } else {
-        // Set the default value for combat range to 10 if no value is stored
-        document.getElementById('combatRangeInput').value = 10;
+
+    // Set the stored or default values in the input fields
+    document.getElementById('combatLevelInput').value = storedCombatLevel;
+
+    // If combatRange is not stored, set a default value of 10
+    if (!storedCombatRange) {
+        storedCombatRange = 10; // Set default value
+        localStorage.setItem('combatRange', storedCombatRange); // Store it for future use
     }
+
+    // Set the stored or default values in the input fields
+    document.getElementById('combatRangeInput').value = storedCombatRange;
 
     // Event listener for the filter button
     document.getElementById('filterBotsBtn').addEventListener('click', function () {
@@ -315,5 +324,39 @@ function filterBotsByCombatLevel(combatLevel, combatRange) {
         }
     });
 }
+
+// Function to get and validate combat level
+function getCombatLevel() {
+        // Check if combat level is already saved in localStorage
+        let storedCombatLevel = localStorage.getItem('combatLevel');
+
+        // If it's not saved, prompt the user for it
+        if (!storedCombatLevel) {
+            // Keep prompting until the user enters a valid combat level
+            while (true) {
+                storedCombatLevel = prompt("Please enter your combat level (between 3 and 126):");
+
+                // Validate the input: must be a positive integer between 3 and 126
+                if (storedCombatLevel !== null) {
+                    storedCombatLevel = parseInt(storedCombatLevel);
+
+                    // Check if the combat level is a number and within the valid range
+                    if (!isNaN(storedCombatLevel) && storedCombatLevel >= 3 && storedCombatLevel <= 126) {
+                        // Save the valid combat level to localStorage
+                        localStorage.setItem('combatLevel', storedCombatLevel);
+                        break;  // Exit the loop once a valid value is entered
+                    } else {
+                        alert("Please enter a valid combat level between 3 and 126.");
+                    }
+                } else {
+                    // If the user cancels the prompt, break out of the loop
+                    break;
+                }
+            }
+        }
+    }
+
+    // Call the function to get the combat level if it's not stored
+    getCombatLevel();
 
 </script>
