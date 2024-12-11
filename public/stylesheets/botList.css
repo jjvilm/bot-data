@@ -19,32 +19,23 @@ body {
 table {
   width: 100%; /* Ensure the table fills the container */
   border-collapse: collapse;
-  background: #ffffff; /* Background color for the table */
+  background: #000000; /* Background color for the table */
   margin-bottom: 1rem; /* Margin for spacing */
 }
 
 th {
-  background-color: #7d7d7d; /* Header background */
-  color: #ffffff; /* Text color for contrast */
+  background-color: #000000; /* Header background */
+  color: #892a2a; /* Text color for contrast */
   padding: 0.75rem; /* Padding for table header */
   text-align: left; /* Align text to the left */
 }
 
 td {
-  border: 1px solid #999; /* Border for table cells */
+  background-color: #ffdea1; /* Header background */
+  border: 1px solid #000000; /* Border for table cells */
   padding: 0.5rem; /* Padding for table cells */
   font-weight: bold; /* Bold font for table cells */
 }
 h1 {
   text-align: center;
-}
-
-@media (prefers-color-scheme: dark) {
-  img {
-    opacity: .75;
-    transition: opacity .5s ease-in-out;
-  }
-  img:hover {
-    opacity: 1;
-  }
 }

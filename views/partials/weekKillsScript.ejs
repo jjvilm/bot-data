@@ -6,27 +6,87 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     let dataTableInstance;
+    const rowColors = {}; // Object to store row colors by bot name
 
     // Initialize DataTable on page load
     dataTableInstance = $('#week-kills-table').DataTable({
         order: [[4, 'desc']], // Sort by the 5th column (Kill Date) in descending order
     });
 
-    // Function to fetch the latest bot data
+    const tableBody = document.querySelector('#week-kills-table tbody');
+
+    // Function to set row colors
+    function initializeRowColors() {
+        const rows = tableBody.querySelectorAll('tr');
+        rows.forEach(row => {
+            const botName = row.querySelector('td:nth-child(2) a')?.textContent.trim();
+            const killTimeText = row.querySelector('td:nth-child(3)')?.textContent.trim(); // Assuming the kill time is in the 3rd column
+            let initialColor = 'green'; // Default color
+
+            // If the kill time is available, check if it's 15 minutes or more
+            if (killTimeText) {
+                const killTime = parseFloat(killTimeText); // Assuming the kill time is a number in minutes
+                if (killTime >= 15) {
+                    initialColor = 'red';
+                }
+            }
+
+            // Retrieve saved color or use the computed default color
+            initialColor = rowColors[botName] || initialColor;
+            row.style.backgroundColor = initialColor;
+
+            // Add click event listener to all cells
+            row.querySelectorAll('td').forEach(cell => {
+                cell.addEventListener('click', function () {
+                    // Toggle color on click
+                    const newColor = row.style.backgroundColor === 'green' ? 'red' : 'green';
+                    row.style.backgroundColor = newColor;
+
+                    // Save the color to rowColors object
+                    if (botName) {
+                        rowColors[botName] = newColor;
+                    }
+                });
+            });
+        });
+    }
+
+
+    // Function to switch rows to red after 10 minutes
+    function switchToRed() {
+        const rows = tableBody.querySelectorAll('tr');
+        rows.forEach(row => {
+            const botName = row.querySelector('td:nth-child(2) a')?.textContent.trim();
+
+            if (row.style.backgroundColor === 'green') {
+                row.style.backgroundColor = 'red';
+
+                // Save the red color to rowColors object
+                if (botName) {
+                    rowColors[botName] = 'red';
+                }
+            }
+        });
+    }
+
+    // Set timeout to change color after 10 minutes (600,000 ms)
+    setTimeout(switchToRed, 600000);
+
+    // Fetch the latest bot data
     async function fetchLatestBots() {
         try {
             const response = await fetch('/qcRoute/latest-bots');
             const bots = await response.json();
-            console.log(bots[0].most_recent_kill.kill_date)
+            console.log(bots[0].most_recent_kill.kill_date);
 
             // Clear the existing table rows using DataTable API
             dataTableInstance.clear();
             // Prepare new rows from fetched bot data
             const newRows = bots.map(bot => [
-                `<a href="/qcRoute/player-latest-bots?hunter_name=${bot.most_recent_kill.hunter_name}" style="color: white;">${bot.most_recent_kill.hunter_name}</a>`,
-                `<a href="/deRoute/botKills?id=${bot._id}" style="color: white;">${bot.bot_name} (${bot.combat_lv})</a>
+                `<a href="/qcRoute/player-latest-bots?hunter_name=${bot.most_recent_kill.hunter_name}" style="color: black;">${bot.most_recent_kill.hunter_name}</a>`,
+                `<a href="/deRoute/botKills?id=${bot._id}" style="color: black;">${bot.bot_name} (${bot.combat_lv})</a>
                     <div id="equipment-images-${bot._id}"></div>`,
-                bot.most_recent_kill.world_number,
+                `<span style="font-size: larger;">${bot.most_recent_kill.world_number}</span>`,
                 bot.comments === 'BANNED' ? bot.comments : `${bot.comments}
                 <button type="button" class="btn btn-info update-bot-btn" data-toggle="modal" data-target="#updateModal" 
                     data-id="${bot._id}"
@@ -36,9 +96,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     Post
                 </button>`,
                 new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0], // Format Kill Date
-                //  Time column
-                new Date(bot.most_recent_kill.kill_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                formatNumber(bot.most_recent_kill.loot_amount)
+                new Date(bot.most_recent_kill.kill_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + `\n${calculateMinutesSinceKill(bot.most_recent_kill.kill_date)} ago`,
+                formatNumber(bot.most_recent_kill.loot_amount),
+                
             ]);
 
             // Add new rows to DataTable
@@ -54,8 +114,10 @@ document.addEventListener('DOMContentLoaded', function () {
             // Displays the images for equipment sets
             bots.forEach(bot => {
                 fetchEquipmentSet(bot._id, bot.equipment_set_name);
-            })
+            });
             
+            // Reinitialize row colors after table update
+            initializeRowColors();
         } catch (error) {
             console.error('Error fetching latest bots:', error);
         }
@@ -64,16 +126,16 @@ document.addEventListener('DOMContentLoaded', function () {
    
     async function fetchEquipmentSet(botId, setName) {
         if (!setName) {
-            return
             console.warn(`No set name provided for bot ID: ${botId}`);
+            return;
         }
         try {
             const response = await fetch(`/deRoute/getEquipmentSetByName?set_name=${setName}`);
             const equipmentSet = await response.json();
 
             if (!response.ok) {
+                console.error("bad response");
                 return;
-                console.error("bad response")
             }
 
             // Only proceed if we received valid equipment set data
@@ -82,8 +144,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Check if the container exists in the DOM
                 if (!equipmentImagesContainer) {
-                    return;
                     console.error(`Could not find container for bot ID: ${botId}`);
+                    return;
                 }
 
                 // Add each equipment image if it exists
@@ -99,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     { key: 'hands', label: 'Hands' },
                     { key: 'feet', label: 'Feet' },
                     { key: 'jewelry', label: 'Jewelry' }
-                    ];
+                ];
 
                 equipmentPieces.forEach(piece => {
                     const imageUrl = equipmentSet[piece.key];
@@ -118,12 +180,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    // Fetch the latest bots every 1 minutes
-    setInterval(fetchLatestBots, 300000);
+    // Fetch the latest bots every 1 minute
+    setInterval(fetchLatestBots, 60000);
 
     // Initial fetch
     fetchLatestBots();
-    
+
+    // Initialize row colors on page load
+    initializeRowColors();
 });
 
 function formatNumber(number) {
@@ -135,29 +199,48 @@ function formatNumber(number) {
         return number.toString(); // For numbers below 1,000
     }
 };
+
+function calculateMinutesSinceKill(killDate) {
+    const killTime = new Date(killDate);
+    const now = new Date();
+    const diffInMs = now - killTime;
+    const elapsedMins = Math.floor(diffInMs / 60000);
+
+    if (elapsedMins <= 60) {
+        return `${elapsedMins} min`;
+    } else if (elapsedMins <= 1440) {
+        const elapsedHours = (elapsedMins / 60).toFixed(1);
+        return `${elapsedHours} hr`;
+        
+    } else {
+        const elapsedHours = (elapsedMins / 60 / 24).toFixed(1);
+        return `${elapsedHours} day`;
+    } 
+}
+
  // Function to populate the modal with data from the clicked button
- function populateModal(button) {
-        const botId = button.getAttribute('data-id');
-        const botName = button.getAttribute('data-botname');
-        const combatLv = button.getAttribute('data-combatlv');
-        const comments = button.getAttribute('data-comments');
+function populateModal(button) {
+    const botId = button.getAttribute('data-id');
+    const botName = button.getAttribute('data-botname');
+    const combatLv = button.getAttribute('data-combatlv');
+    const comments = button.getAttribute('data-comments');
 
-        const idInput = document.querySelector('#updateModal input[name="id"]');
-        const combatLvInput = document.querySelector('#updateModal input[name="combat_lv"]');
-        const commentsInput = document.querySelector('#updateModal input[name="comments"]');
-        const modalTitle = document.querySelector('#updateModalLabel strong');
+    const idInput = document.querySelector('#updateModal input[name="id"]');
+    const combatLvInput = document.querySelector('#updateModal input[name="combat_lv"]');
+    const commentsInput = document.querySelector('#updateModal input[name="comments"]');
+    const modalTitle = document.querySelector('#updateModalLabel strong');
 
-        if (idInput && combatLvInput && commentsInput && modalTitle) {
-            idInput.value = botId;
-            combatLvInput.value = combatLv;
-            commentsInput.value = comments;
-            modalTitle.textContent = botName;
-        } else {
-            console.error('Modal elements not found.');
-        }
+    if (idInput && combatLvInput && commentsInput && modalTitle) {
+        idInput.value = botId;
+        combatLvInput.value = combatLv;
+        commentsInput.value = comments;
+        modalTitle.textContent = botName;
+    } else {
+        console.error('Modal elements not found.');
     }
+}
 
-    function convertToUserLocalTime(isoDateString) {
+function convertToUserLocalTime(isoDateString) {
     // Convert the ISO date string to a Date object
     const dateObject = new Date(isoDateString);
     
@@ -165,6 +248,5 @@ function formatNumber(number) {
     const localTime = dateObject.toLocaleString();
 
     return localTime;
-    }
+}
 </script>
-
