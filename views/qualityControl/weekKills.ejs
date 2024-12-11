@@ -27,7 +27,21 @@
         <a href="/deRoute/topWorlds" class="btn btn-secondary" style="font-weight: bold; color: black;">World Kills</a>
         <a href="/qcRoute/commonlyVisitedWorlds" class="btn btn-danger" style="font-weight: bold; color: black;">Top Worlds</a>
         <a href="/deRoute/EquipmentSets" class="btn btn-dark" style="font-weight: bold; color: white;">Equipments</a>
+        
+        <!-- Combat Level and Range Input Fields -->
+        <div class="form-group">
+            <label style=color:white for="combatLevelInput">Your Combat Level:</label>
+            <input type="number" id="combatLevelInput" class="form-control" placeholder="Enter Combat Level" min="3" max="126">
+        </div>
+        <div class="form-group">
+            <label style=color:white for="combatRangeInput">Combat Range (±):</label>
+            <input type="number" id="combatRangeInput" class="form-control" placeholder="Enter Combat Range" min="10" max="15" value="10">
+        </div>
+        <button id="filterBotsBtn" class="btn btn-primary">Filter Bots</button>
+
+
     </div>
+    
 
     <div class="container">
         <h4 style="text-align: center;">Recently Hunted Bots</h4>

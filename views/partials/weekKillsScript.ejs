@@ -52,32 +52,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    // Function to switch rows to red after 10 minutes
-    function switchToRed() {
-        const rows = tableBody.querySelectorAll('tr');
-        rows.forEach(row => {
-            const botName = row.querySelector('td:nth-child(2) a')?.textContent.trim();
-
-            if (row.style.backgroundColor === 'green') {
-                row.style.backgroundColor = 'red';
-
-                // Save the red color to rowColors object
-                if (botName) {
-                    rowColors[botName] = 'red';
-                }
-            }
-        });
-    }
-
-    // Set timeout to change color after 10 minutes (600,000 ms)
-    setTimeout(switchToRed, 600000);
 
     // Fetch the latest bot data
     async function fetchLatestBots() {
         try {
             const response = await fetch('/qcRoute/latest-bots');
             const bots = await response.json();
-            console.log(bots[0].most_recent_kill.kill_date);
 
             // Clear the existing table rows using DataTable API
             dataTableInstance.clear();
@@ -121,6 +101,9 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Error fetching latest bots:', error);
         }
+
+    // Apply filter after the table loads
+    filterBotsByCombatLevel(parseInt(localStorage.getItem('combatLevel')), parseInt(localStorage.getItem('combatRange')));
     }
 
    
@@ -183,11 +166,14 @@ document.addEventListener('DOMContentLoaded', function () {
     // Fetch the latest bots every 1 minute
     setInterval(fetchLatestBots, 60000);
 
-    // Initial fetch
+    // INITIAL fetch
     fetchLatestBots();
 
     // Initialize row colors on page load
     initializeRowColors();
+
+    
+
 });
 
 function formatNumber(number) {
@@ -249,4 +235,85 @@ function convertToUserLocalTime(isoDateString) {
 
     return localTime;
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Fetch stored combat level and range from localStorage
+    const storedCombatLevel = localStorage.getItem('combatLevel');
+    const storedCombatRange = localStorage.getItem('combatRange');
+
+    // Set default values if nothing is stored in localStorage
+    if (storedCombatLevel) {
+        document.getElementById('combatLevelInput').value = storedCombatLevel;
+    }
+    if (storedCombatRange) {
+        document.getElementById('combatRangeInput').value = storedCombatRange;
+    } else {
+        // Set the default value for combat range to 10 if no value is stored
+        document.getElementById('combatRangeInput').value = 10;
+    }
+
+    // Event listener for the filter button
+    document.getElementById('filterBotsBtn').addEventListener('click', function () {
+        const combatLevel = parseInt(document.getElementById('combatLevelInput').value, 10);
+        const combatRange = parseInt(document.getElementById('combatRangeInput').value, 10);
+
+        // Validate the combat level and range inputs
+        if (isNaN(combatLevel) || combatLevel < 3 || combatLevel > 126) {
+            alert("Please enter a valid Combat Level between 3 and 126.");
+            return;
+        }
+
+        if (isNaN(combatRange) || combatRange < 10 || combatRange > 15) {
+            alert("Please enter a valid Combat Range between 10 and 15.");
+            return;
+        }
+
+        // Store these values in localStorage
+        localStorage.setItem('combatLevel', combatLevel);
+        localStorage.setItem('combatRange', combatRange);
+
+        // Filter the bots based on the combat level and range
+        filterBotsByCombatLevel(combatLevel, combatRange);
+    });
+
+    // Function to filter bots based on combat level and range
+    function filterBotsByCombatLevel(combatLevel, combatRange) {
+        const rows = document.querySelectorAll('#week-kills-table tbody tr');
+        rows.forEach(row => {
+            // Assuming the combat level is stored in parentheses in the second column
+            const botCombatLevelText = row.querySelector('td:nth-child(2)')?.textContent.split('(')[1]?.split(')')[0];
+            const botCombatLevel = parseInt(botCombatLevelText, 10);
+
+            // If botCombatLevel is within the range, display the row, otherwise hide it
+            if (botCombatLevel >= (combatLevel - combatRange) && botCombatLevel <= (combatLevel + combatRange)) {
+                row.style.display = ''; // Show row
+            } else {
+                row.style.display = 'none'; // Hide row
+            }
+        });
+    }
+
+    // If filter criteria are already in localStorage, apply the filter on page load
+    if (storedCombatLevel && storedCombatRange) {
+        filterBotsByCombatLevel(parseInt(storedCombatLevel), parseInt(storedCombatRange));
+    }
+});
+
+// Function to filter bots based on combat level and range
+function filterBotsByCombatLevel(combatLevel, combatRange) {
+    const rows = document.querySelectorAll('#week-kills-table tbody tr');
+    rows.forEach(row => {
+        // Assuming the combat level is stored in parentheses in the second column
+        const botCombatLevelText = row.querySelector('td:nth-child(2)')?.textContent.split('(')[1]?.split(')')[0];
+        const botCombatLevel = parseInt(botCombatLevelText, 10);
+
+        // If botCombatLevel is within the range, display the row, otherwise hide it
+        if (botCombatLevel >= (combatLevel - combatRange) && botCombatLevel <= (combatLevel + combatRange)) {
+            row.style.display = ''; // Show row
+        } else {
+            row.style.display = 'none'; // Hide row
+        }
+    });
+}
+
 </script>
