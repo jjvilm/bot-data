@@ -18,31 +18,54 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to set row colors
     function initializeRowColors() {
         const rows = tableBody.querySelectorAll('tr');
+        const now_mins = new Date().getMinutes(); // Current time
+        const now_hour = new Date().getHours();
+        const now_date_day = new Date().getDate(); // Current date
+
+
         rows.forEach(row => {
             const botName = row.querySelector('td:nth-child(2) a')?.textContent.trim();
-            const killTimeText = row.querySelector('td:nth-child(3)')?.textContent.trim(); // Assuming the kill time is in the 3rd column
+            const dateColumnText = row.querySelector('td:nth-child(5)')?.textContent.trim();
+            const timeColumnText = row.querySelector('td:nth-child(6)')?.textContent.trim().slice(0, 8);
             let initialColor = 'green'; // Default color
 
-            // If the kill time is available, check if it's 15 minutes or more
-            if (killTimeText) {
-                const killTime = parseFloat(killTimeText); // Assuming the kill time is a number in minutes
-                if (killTime >= 15) {
-                    initialColor = 'red';
+            
+            if (dateColumnText && timeColumnText) {
+                try {
+                    let [yy, mm, past_date_day] = dateColumnText.split('-')
+                    past_date_day = parseInt(past_date_day)
+
+                    // Parse and set the time on the rowDate
+                    const [time, meridiem] = timeColumnText.split(' ');
+                    const [hours, row_minutes] = time.split(':').map(Number);
+
+                    if (past_date_day === now_date_day && now_hour === hours) {
+                        // Calculate elapsed minutes
+                        const elapsedMinutes = now_mins - row_minutes;
+        
+                        // Determine color based on elapsed time
+                        if (elapsedMinutes >= 15) {
+                            initialColor = 'red';
+                        }
+                    } else {
+                        initialColor = 'red';
+                    }
+
+                } catch (error) {
+                    console.error(`Error parsing date for ${botName}:`, error.message);
                 }
             }
 
-            // Retrieve saved color or use the computed default color
+            // Apply color to row
             initialColor = rowColors[botName] || initialColor;
             row.style.backgroundColor = initialColor;
 
             // Add click event listener to all cells
             row.querySelectorAll('td').forEach(cell => {
                 cell.addEventListener('click', function () {
-                    // Toggle color on click
                     const newColor = row.style.backgroundColor === 'green' ? 'red' : 'green';
                     row.style.backgroundColor = newColor;
 
-                    // Save the color to rowColors object
                     if (botName) {
                         rowColors[botName] = newColor;
                     }
@@ -50,6 +73,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
+
+
+
+
+
 
 
 
@@ -61,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Clear the existing table rows using DataTable API
             dataTableInstance.clear();
+            // DATA THAT GOES ON
             // Prepare new rows from fetched bot data
             const newRows = bots.map(bot => [
                 `<a href="/qcRoute/player-latest-bots?hunter_name=${bot.most_recent_kill.hunter_name}" style="color: black;">${bot.most_recent_kill.hunter_name}</a>`,
@@ -76,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     Post
                 </button>`,
                 new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0], // Format Kill Date
-                new Date(bot.most_recent_kill.kill_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + `\n${calculateMinutesSinceKill(bot.most_recent_kill.kill_date)} ago`,
+                new Date(bot.most_recent_kill.kill_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + `<br>`+ `${calculateMinutesSinceKill(bot.most_recent_kill.kill_date)} ago`,
                 formatNumber(bot.most_recent_kill.loot_amount),
                 
             ]);
@@ -356,7 +385,7 @@ function getCombatLevel() {
         }
     }
 
-    // Call the function to get the combat level if it's not stored
-    getCombatLevel();
+// Call the function to get the combat level if it's not stored
+getCombatLevel();
 
 </script>
