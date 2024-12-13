@@ -25,35 +25,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
         rows.forEach(row => {
             const botName = row.querySelector('td:nth-child(2) a')?.textContent.trim();
-            const dateColumnText = row.querySelector('td:nth-child(5)')?.textContent.trim();
-            const timeColumnText = row.querySelector('td:nth-child(6)')?.textContent.trim().slice(0, 8);
-            let initialColor = 'green'; // Default color
+            const timeAgoColumnText = parseInt(row.querySelector('td:nth-child(6)')?.textContent.trim().slice(8, 11));
+            const timeAgoMinColumnText = row.querySelector('td:nth-child(6)')?.textContent.trim().slice(11, 14);
+            let initialColor = 'red'; // Default color
 
-            
-            if (dateColumnText && timeColumnText) {
-                try {
-                    let [yy, mm, past_date_day] = dateColumnText.split('-')
-                    past_date_day = parseInt(past_date_day)
+            try {
+                if (timeAgoColumnText < 15 && timeAgoMinColumnText === "min") {
+                    initialColor = 'green';
+                } 
 
-                    // Parse and set the time on the rowDate
-                    const [time, meridiem] = timeColumnText.split(' ');
-                    const [hours, row_minutes] = time.split(':').map(Number);
-
-                    if (past_date_day === now_date_day && now_hour === hours) {
-                        // Calculate elapsed minutes
-                        const elapsedMinutes = now_mins - row_minutes;
-        
-                        // Determine color based on elapsed time
-                        if (elapsedMinutes >= 15) {
-                            initialColor = 'red';
-                        }
-                    } else {
-                        initialColor = 'red';
-                    }
-
-                } catch (error) {
-                    console.error(`Error parsing date for ${botName}:`, error.message);
-                }
+            } catch (error) {
+                console.error(`Error parsing date for ${botName}:`, error.message);
             }
 
             // Apply color to row
