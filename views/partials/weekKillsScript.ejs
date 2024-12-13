@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const rows = tableBody.querySelectorAll('tr');
 
         rows.forEach((row) => {
-A
             const botName = row.querySelector('td:nth-child(2) a')?.textContent.trim();
             const timeAgoColumnText = parseInt(row.querySelector('td:nth-child(6)')?.textContent.trim().slice(8, 11));
             const timeAgoMinColumnText = row.querySelector('td:nth-child(6)')?.textContent.trim().slice(10, 14);
