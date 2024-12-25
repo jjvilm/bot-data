@@ -205,9 +205,9 @@ function formatNumber(number) {
 }
 
 // Helper function to get recent kills data
-async function fetchRecentKills() {
+async function fetchRecentKills(quantity = 7, time = 'days') {
   try {
-    const sevenDaysAgo = moment().subtract(7, 'days').toDate();
+    const sevenDaysAgo = moment().subtract(quantity, time).toDate();
     const recentKills = await Bot.aggregate([
       {
         $project: {
@@ -277,6 +277,10 @@ async function fetchRecentKills() {
           most_recent_kill: { $ne: null }
         }
       },
+      {
+        $limit: 10
+      }
+      ,
       {
         $project: {
           bot_name: 1,
@@ -373,7 +377,7 @@ async function fetchPlayerKills(hunter_name) {
 // Route handler for fetching recent kills
 exports.getRecentKills = async function (req, res) {
   try {
-    const recentKills = await fetchRecentKills();
+    const recentKills = await fetchRecentKills(quantity=3, time='hours');
     res.json(recentKills);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch recent kills' });
@@ -393,7 +397,7 @@ exports.getPlayerKills = async function (req, res) {
 // Method to get recent kills data without sending a response
 exports.getRecentKillsData = async function () {
   try {
-    return await fetchRecentKills();
+    return await fetchRecentKills(quantity=7, time='days');
   } catch (error) {
     console.error('Error getting recent kills data:', error);
     throw error;

@@ -93,6 +93,7 @@
                                     <!-- since the date is store as a date datatype, use the following to exract only YYYY-MM-DD -->
                                     <%= new Date(kill.kill_date).toISOString().split('T')[0] %>
                                 <% } else { %>
+                                    <!-- If the date is not available, display a placeholder -->
                                     -
                                 <% } %>
                             </td>
