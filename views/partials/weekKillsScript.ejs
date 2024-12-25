@@ -78,15 +78,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 `<a href="/deRoute/botKills?id=${bot._id}" style="color: black;">${bot.bot_name} (${bot.combat_lv})</a>
                     <div id="equipment-images-${bot._id}"></div>`,
                 `<span style="font-size: larger;">${bot.most_recent_kill.world_number}</span>`,
-                bot.comments === 'BANNED' ? bot.comments : `${bot.comments}
-                <button type="button" class="btn btn-info update-bot-btn" data-toggle="modal" data-target="#updateModal" 
-                    data-id="${bot._id}"
-                    data-botname="${bot.bot_name}"
-                    data-combatlv="${bot.combat_lv}"
-                    data-comments="${bot.comments}">
-                    Post
-                </button>`,
-                new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0], // Format Kill Date
+                // bot.comments === 'BANNED' ? bot.comments : `${bot.comments}
+                // <button type="button" class="btn btn-info update-bot-btn" data-toggle="modal" data-target="#updateModal" 
+                //     data-id="${bot._id}"
+                //     data-botname="${bot.bot_name}"
+                //     data-combatlv="${bot.combat_lv}"
+                //     data-comments="${bot.comments}">
+                //     Post
+                // </button>`,
+                // new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0], // Format Kill Date
                 new Date(bot.most_recent_kill.kill_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + `<br>`+ `${calculateMinutesSinceKill(bot.most_recent_kill.kill_date)} ago`,
                 formatNumber(bot.most_recent_kill.loot_amount),
                 
