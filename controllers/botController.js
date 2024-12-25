@@ -303,7 +303,6 @@ async function fetchRecentKills(quantity = 7, time = 'days') {
       const timeB = b.most_recent_kill.kill_time;
       return timeA > timeB ? -1 : timeA < timeB ? 1 : 0;
     });
-
     return recentKills;
   } catch (error) {
     console.error('Error getting recent kills:', error);

@@ -328,7 +328,7 @@ function filterBotsByCombatLevel(combatLevel, combatRange) {
         const botCombatLevel = parseInt(botCombatLevelText, 10);
 
         // If botCombatLevel is within the range, display the row, otherwise hide it
-        if (botCombatLevel >= (combatLevel - combatRange) && botCombatLevel <= (combatLevel + combatRange)) {
+        if (botCombatLevel >= (combatLevel - combatRange) && botCombatLevel <= (combatLevel + combatRange) || botCombatLevel === 0) {
             row.style.display = ''; // Show row
         } else {
             row.style.display = 'none'; // Hide row
