@@ -42,6 +42,9 @@
                 padding: 5px; /* Adjust padding */
             }
         }
+        .table th, .table td {
+            text-align: center; /* Center the contents of the table */
+        }
     </style>
 </head>
 
@@ -84,11 +87,11 @@
             <table class="table table-hover" id="week-kills-table">
                 <thead>
                     <tr>
-                        <th>Hunter Name</th>
-                        <th>Bot Name</th>
+                        <th>Hunter</th>
+                        <th>Bot</th>
                         <th>World</th>
-                        <th>Kill Time</th>
-                        <th>Loot Amount</th>
+                        <th>Time</th>
+                        <th>Loot</th>
                     </tr>
                 </thead>
                 <tbody id="botTableBody"></tbody>
@@ -149,5 +152,4 @@
         }
     });
 
-    // Your existing script...
 </script>

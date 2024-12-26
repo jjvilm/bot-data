@@ -8,9 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
     let dataTableInstance;
     const rowColors = {}; // Object to store row colors by bot name
 
-    // Initialize DataTable on page load
+    // Initialize DataTable on page load without changing the order
     dataTableInstance = $('#week-kills-table').DataTable({
-        order: [[3, 'desc']], // Sort by the 3rd column (Kill time) in descending order, starting from 0th indexed column
+        order: [] // Disable initial sorting to preserve the original order
     });
 
     const tableBody = document.querySelector('#week-kills-table tbody');
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Prepare new rows from fetched bot data
             const newRows = bots.map(bot => [
                 `<a href="/qcRoute/player-latest-bots?hunter_name=${bot.most_recent_kill.hunter_name}" style="color: black;">${bot.most_recent_kill.hunter_name}</a>`,
-                `<a href="/deRoute/botKills?id=${bot._id}" style="color: black;">${bot.bot_name} (${bot.combat_lv})</a>
+                `<a href="/deRoute/botKills?id=${bot._id}" style="color: black;">${bot.bot_name} <br> (${bot.combat_lv})</a>
                     <div id="equipment-images-${bot._id}"></div>`,
                 `<span style="font-size: larger;">${bot.most_recent_kill.world_number}</span>`,
                 // bot.comments === 'BANNED' ? bot.comments : `${bot.comments}
