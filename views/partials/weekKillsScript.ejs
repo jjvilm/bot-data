@@ -20,9 +20,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const rows = tableBody.querySelectorAll('tr');
 
         rows.forEach((row) => {
-            const botName = row.querySelector('td:nth-child(2) a')?.textContent.trim();
-            const timeAgoColumnText = parseInt(row.querySelector('td:nth-child(4)')?.textContent.trim().slice(8, 11));
-            const timeAgoMinColumnText = row.querySelector('td:nth-child(4)')?.textContent.trim().slice(10, 14);
+            const botName = row.querySelector('td:nth-child(1) a')?.textContent.trim();
+            const timeAgoColumnText = parseInt(row.querySelector('td:nth-child(3)')?.textContent.trim().slice(8, 11)); // starts with 1 as index
+            const timeAgoMinColumnText = row.querySelector('td:nth-child(3)')?.textContent.trim().slice(10, 14);
             let initialColor = 'red'; // Default color
 
             if (botName === undefined) {
@@ -56,13 +56,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-
-
-
-
-
-
-
     // Fetch the latest bot data
     async function fetchLatestBots() {
         try {
@@ -74,22 +67,12 @@ document.addEventListener('DOMContentLoaded', function () {
             // DATA THAT GOES ON
             // Prepare new rows from fetched bot data
             const newRows = bots.map(bot => [
-                `<a href="/qcRoute/player-latest-bots?hunter_name=${bot.most_recent_kill.hunter_name}" style="color: black;">${bot.most_recent_kill.hunter_name}</a>`,
                 `<a href="/deRoute/botKills?id=${bot._id}" style="color: black;">${bot.bot_name} <br> (${bot.combat_lv})</a>
-                    <div id="equipment-images-${bot._id}"></div>`,
+                    <div id="equipment-images-${bot._id}"></div>
+                    <span class="hunter-name">hunted by: <a href="/qcRoute/player-latest-bots?hunter_name=${bot.most_recent_kill.hunter_name}" style="color: black;">${bot.most_recent_kill.hunter_name}</a></span>`,
                 `<span style="font-size: larger;">${bot.most_recent_kill.world_number}</span>`,
-                // bot.comments === 'BANNED' ? bot.comments : `${bot.comments}
-                // <button type="button" class="btn btn-info update-bot-btn" data-toggle="modal" data-target="#updateModal" 
-                //     data-id="${bot._id}"
-                //     data-botname="${bot.bot_name}"
-                //     data-combatlv="${bot.combat_lv}"
-                //     data-comments="${bot.comments}">
-                //     Post
-                // </button>`,
-                // new Date(bot.most_recent_kill.kill_date).toISOString().split('T')[0], // Format Kill Date
                 new Date(bot.most_recent_kill.kill_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + `<br>`+ `${calculateMinutesSinceKill(bot.most_recent_kill.kill_date)} ago`,
-                formatNumber(bot.most_recent_kill.loot_amount),
-                
+                formatNumber(bot.most_recent_kill.loot_amount)                
             ]);
 
             // Add new rows to DataTable
@@ -301,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const rows = document.querySelectorAll('#week-kills-table tbody tr');
         rows.forEach(row => {
             // Assuming the combat level is stored in parentheses in the second column
-            const botCombatLevelText = row.querySelector('td:nth-child(2)')?.textContent.split('(')[1]?.split(')')[0];
+            const botCombatLevelText = row.querySelector('td:nth-child(1)')?.textContent.split('(')[1]?.split(')')[0];
             const botCombatLevel = parseInt(botCombatLevelText, 10);
 
             // If botCombatLevel is within the range, display the row, otherwise hide it
@@ -324,7 +307,7 @@ function filterBotsByCombatLevel(combatLevel, combatRange) {
     const rows = document.querySelectorAll('#week-kills-table tbody tr');
     rows.forEach(row => {
         // Assuming the combat level is stored in parentheses in the second column
-        const botCombatLevelText = row.querySelector('td:nth-child(2)')?.textContent.split('(')[1]?.split(')')[0];
+        const botCombatLevelText = row.querySelector('td:nth-child(1)')?.textContent.split('(')[1]?.split(')')[0];
         const botCombatLevel = parseInt(botCombatLevelText, 10);
 
         // If botCombatLevel is within the range, display the row, otherwise hide it
