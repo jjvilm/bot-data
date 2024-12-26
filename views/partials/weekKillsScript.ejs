@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize DataTable on page load
     dataTableInstance = $('#week-kills-table').DataTable({
-        order: [[4, 'desc']], // Sort by the 5th column (Kill Date) in descending order
+        order: [[3, 'desc']], // Sort by the 3rd column (Kill time) in descending order, starting from 0th indexed column
     });
 
     const tableBody = document.querySelector('#week-kills-table tbody');
