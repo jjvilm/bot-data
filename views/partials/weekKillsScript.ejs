@@ -13,16 +13,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const timeAgoColumnText = parseInt(row.querySelector('td:nth-child(3)')?.textContent.trim().slice(8, 12));
             const timeAgoMinColumnText = row.querySelector('td:nth-child(3)')?.textContent.trim().slice(10, 16);
             let initialColor = 'red'; // Default color
-            console.log("botname", botName);
-            console.log("timeAgoMinColumnText", timeAgoMinColumnText);
-            console.log( "timeAgoColumnText", timeAgoColumnText);
+
 
             if (botName === undefined) {
                 return; 
             }
 
             try {
-                if (timeAgoColumnText < 15 && timeAgoMinColumnText.includes("min")) {
+                if (timeAgoColumnText < 10 && timeAgoMinColumnText.includes("min")) {
                     initialColor = 'green';
                 } 
 
