@@ -2,14 +2,6 @@
 <html lang="en">
 <%- include('../partials/headfile'); %>
 <link rel="stylesheet" href="/stylesheets/botList.css" />
-<!-- Include DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
-<!-- Bootstrap CSS -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-<!-- Bootstrap JS and Popper.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <head>
     <meta charset="UTF-8">
@@ -50,6 +42,9 @@
             text-align: right; /* Align to the bottom-right */
             display: block;
             margin-top: 5px;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -136,10 +131,6 @@
     </div>
 </body>
 </html>
-
-<!-- Include DataTables and jQuery scripts -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
 <script>
     // Toggle filter container visibility

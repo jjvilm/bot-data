@@ -376,7 +376,7 @@ async function fetchPlayerKills(hunter_name) {
 // Route handler for fetching recent kills
 exports.getRecentKills = async function (req, res) {
   try {
-    const recentKills = await fetchRecentKills(quantity=3, time='hours');
+    const recentKills = await fetchRecentKills(quantity=3, time='days');
     res.json(recentKills);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch recent kills' });

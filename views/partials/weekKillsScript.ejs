@@ -1,18 +1,7 @@
-<!-- Include DataTables and jQuery scripts -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-
 <!-- script for updating the page with new data -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    let dataTableInstance;
     const rowColors = {}; // Object to store row colors by bot name
-
-    // Initialize DataTable on page load without changing the order
-    dataTableInstance = $('#week-kills-table').DataTable({
-        order: [] // Disable initial sorting to preserve the original order
-    });
-
     const tableBody = document.querySelector('#week-kills-table tbody');
 
     // Function to set row colors
@@ -20,17 +9,20 @@ document.addEventListener('DOMContentLoaded', function () {
         const rows = tableBody.querySelectorAll('tr');
 
         rows.forEach((row) => {
-            const botName = row.querySelector('td:nth-child(1) a')?.textContent.trim();
-            const timeAgoColumnText = parseInt(row.querySelector('td:nth-child(3)')?.textContent.trim().slice(8, 11)); // starts with 1 as index
-            const timeAgoMinColumnText = row.querySelector('td:nth-child(3)')?.textContent.trim().slice(10, 14);
+            const botName = row.querySelector('td:nth-child(1)')?.textContent.trim().split(' (')[0];
+            const timeAgoColumnText = parseInt(row.querySelector('td:nth-child(3)')?.textContent.trim().slice(8, 12));
+            const timeAgoMinColumnText = row.querySelector('td:nth-child(3)')?.textContent.trim().slice(10, 16);
             let initialColor = 'red'; // Default color
+            console.log("botname", botName);
+            console.log("timeAgoMinColumnText", timeAgoMinColumnText);
+            console.log( "timeAgoColumnText", timeAgoColumnText);
 
             if (botName === undefined) {
                 return; 
             }
 
             try {
-                if (timeAgoColumnText < 10 && timeAgoMinColumnText.includes("min")) {
+                if (timeAgoColumnText < 15 && timeAgoMinColumnText.includes("min")) {
                     initialColor = 'green';
                 } 
 
@@ -62,48 +54,42 @@ document.addEventListener('DOMContentLoaded', function () {
             const response = await fetch('/qcRoute/latest-bots');
             const bots = await response.json();
 
-            // Clear the existing table rows using DataTable API
-            dataTableInstance.clear();
-            // DATA THAT GOES ON
+            // Clear the existing table rows
+            tableBody.innerHTML = '';
+
             // Prepare new rows from fetched bot data
-            const newRows = bots.map(bot => [
-                `<a href="/deRoute/botKills?id=${bot._id}" style="color: black;">${bot.bot_name} <br> (${bot.combat_lv})</a>
-                    <div id="equipment-images-${bot._id}"></div>
-                    <span class="hunter-name">hunted by: <a href="/qcRoute/player-latest-bots?hunter_name=${bot.most_recent_kill.hunter_name}" style="color: black;">${bot.most_recent_kill.hunter_name}</a></span>`,
-                `<span style="font-size: larger;">${bot.most_recent_kill.world_number}</span>`,
-                new Date(bot.most_recent_kill.kill_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + `<br>`+ `${calculateMinutesSinceKill(bot.most_recent_kill.kill_date)} ago`,
-                formatNumber(bot.most_recent_kill.loot_amount)                
-            ]);
+            const newRows = bots.map(bot => `
+                <tr>
+                    <td><a href="/deRoute/botKills?id=${bot._id}" style="color: black;">${bot.bot_name} <br> (${bot.combat_lv})</a>
+                        <div id="equipment-images-${bot._id}" class="equipment-grid"></div>
+                        <span class="hunter-name">hunted by: <a href="/qcRoute/player-latest-bots?hunter_name=${bot.most_recent_kill.hunter_name}" style="color: black;">${bot.most_recent_kill.hunter_name}</a></span>
+                    </td>
+                    <td><span style="font-size: larger;">${bot.most_recent_kill.world_number}</span></td>
+                    <td>${new Date(bot.most_recent_kill.kill_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <br> ${calculateMinutesSinceKill(bot.most_recent_kill.kill_date)} ago</td>
+                    <td>${formatNumber(bot.most_recent_kill.loot_amount)}</td>
+                </tr>
+            `).join('');
 
-            // Add new rows to DataTable
-            dataTableInstance.rows.add(newRows).draw();
+            // Add new rows to the table
+            tableBody.innerHTML = newRows;
 
-            // Reattach event listeners for modal buttons
-            document.querySelectorAll('.update-bot-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    populateModal(this);
-                });
-            });
-            
-            // Displays the images for equipment sets
+            // Fetch and display equipment images for each bot
             bots.forEach(bot => {
                 fetchEquipmentSet(bot._id, bot.equipment_set_name);
             });
-            
+
             // Reinitialize row colors after table update
             initializeRowColors();
         } catch (error) {
             console.error('Error fetching latest bots:', error);
         }
 
-    // Apply filter after the table loads
-    filterBotsByCombatLevel(parseInt(localStorage.getItem('combatLevel')), parseInt(localStorage.getItem('combatRange')));
+        // Apply filter after the table loads
+        filterBotsByCombatLevel(parseInt(localStorage.getItem('combatLevel')), parseInt(localStorage.getItem('combatRange')));
     }
 
-   
     async function fetchEquipmentSet(botId, setName) {
         if (!setName) {
-            // console.warn(`No set name provided for bot ID: ${botId}`);
             return;
         }
         try {
@@ -121,35 +107,45 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Check if the container exists in the DOM
                 if (!equipmentImagesContainer) {
-                    // console.error(`Could not find container for bot ID: ${botId}`);
                     return;
                 }
 
                 // Add each equipment image if it exists
                 const equipmentPieces = [
+                    { key: 'neck', label: 'Neck' },
                     { key: 'head', label: 'Head' },
                     { key: 'cape', label: 'Cape' },
-                    { key: 'neck', label: 'Neck' },
-                    { key: 'ammunition', label: 'Ammunition' },
                     { key: 'left_hand', label: 'Left Hand' },
                     { key: 'torso', label: 'Torso' },
                     { key: 'right_hand', label: 'Right Hand' },
-                    { key: 'legs', label: 'Legs' },
                     { key: 'hands', label: 'Hands' },
-                    { key: 'feet', label: 'Feet' },
-                    { key: 'jewelry', label: 'Jewelry' }
+                    { key: 'legs', label: 'Legs' },
+                    { key: 'feet', label: 'Feet' }
                 ];
+
+                const grid = document.createElement('div');
+                grid.style.display = 'grid';
+                grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+                grid.style.gridGap = '2px';
 
                 equipmentPieces.forEach(piece => {
                     const imageUrl = equipmentSet[piece.key];
-                    if (imageUrl) {
-                        const img = document.createElement('img');
-                        img.src = imageUrl;
-                        img.alt = piece.label;
-                        img.style = "width: 30px; height: 30px; margin-right: 5px;";
-                        equipmentImagesContainer.appendChild(img);
-                    }
+                    const img = document.createElement('img');
+                    img.src = imageUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='; // Transparent placeholder
+                    img.alt = piece.label;
+                    img.style = "width: 30px; height: 30px;";
+                    grid.appendChild(img);
                 });
+
+                // Ensure all 9 grid slots are filled
+                while (grid.children.length < 9) {
+                    const placeholder = document.createElement('img');
+                    placeholder.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='; // Transparent placeholder
+                    placeholder.style = "width: 30px; height: 30px;";
+                    grid.appendChild(placeholder);
+                }
+
+                equipmentImagesContainer.appendChild(grid);
             } 
 
         } catch (error) {
@@ -165,9 +161,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize row colors on page load
     initializeRowColors();
-
-    
-
 });
 
 function formatNumber(number) {
@@ -283,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function filterBotsByCombatLevel(combatLevel, combatRange) {
         const rows = document.querySelectorAll('#week-kills-table tbody tr');
         rows.forEach(row => {
-            // Assuming the combat level is stored in parentheses in the second column
+            // Assuming the combat level is stored in parentheses in the first column
             const botCombatLevelText = row.querySelector('td:nth-child(1)')?.textContent.split('(')[1]?.split(')')[0];
             const botCombatLevel = parseInt(botCombatLevelText, 10);
 
@@ -306,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function filterBotsByCombatLevel(combatLevel, combatRange) {
     const rows = document.querySelectorAll('#week-kills-table tbody tr');
     rows.forEach(row => {
-        // Assuming the combat level is stored in parentheses in the second column
+        // Assuming the combat level is stored in parentheses in the first column
         const botCombatLevelText = row.querySelector('td:nth-child(1)')?.textContent.split('(')[1]?.split(')')[0];
         const botCombatLevel = parseInt(botCombatLevelText, 10);
 
