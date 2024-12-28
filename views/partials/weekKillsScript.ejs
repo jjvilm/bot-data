@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 equipmentPieces.forEach(piece => {
                     const imageUrl = equipmentSet[piece.key];
                     const img = document.createElement('img');
-                    img.src = imageUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='; // Transparent placeholder
+                    img.src = imageUrl || '/images/Bank_filler_transparant.png'; // Transparent placeholder
                     img.alt = piece.label;
                     img.style = "width: 30px; height: 30px;";
                     grid.appendChild(img);
