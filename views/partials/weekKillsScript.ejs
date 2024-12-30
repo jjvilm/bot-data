@@ -151,8 +151,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    // Fetch the latest bots every 1 minute
-    setInterval(fetchLatestBots, 60000);
+    // Function to check if any row is green
+    function hasGreenRow() {
+        const rows = tableBody.querySelectorAll('tr');
+        return Array.from(rows).some(row => row.style.backgroundColor === 'green');
+    }
+
+    // Fetch the latest bots every 1 minute if at least one row is green
+    setInterval(() => {
+        if (hasGreenRow()) {
+            fetchLatestBots();
+        }
+    }, 60000);
 
     // INITIAL fetch
     fetchLatestBots();
