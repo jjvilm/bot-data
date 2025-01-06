@@ -7,6 +7,8 @@ const moment = require('moment'); // Import moment for date manipulation
 const { NONAME } = require('dns');
 const axios = require('axios');
 
+const PAGE_SIZE = 10;
+let currentPage = 0;
 
 // methods for importing data
 exports.importCsv = async function(req, res) {
@@ -186,12 +188,43 @@ exports.getall = async function(req, res) {
   }
   
 };
+
+exports.getRecent10 = async function(req, res) {
+  try {
+    const next = req.query.next === 'true';
+    if (next) {
+      currentPage++;
+    } else if (currentPage > 0) {
+      currentPage--;
+    }
+    const latestBots = await Bot.find()
+      .sort({ _id: -1 })
+      .skip(currentPage * PAGE_SIZE)
+      .limit(PAGE_SIZE);
+    res.render('../views/dataEntry/botList', { bots: latestBots });
+  } catch (err) {
+    console.log(err);
+  }
+};
  
 // shows the data for the selected bot
 exports.get_world_kills = async function(req, res) {
   var bots = await Bot.findOne({ _id: req.query.id });
   res.render('../views/dataEntry/botKills', {bots: bots, formatNumber});
   
+};
+// shows the data for the selected bot by name
+exports.getBotNameHunts = async function(req, res) {
+  try {
+    var bot = await Bot.findOne({ bot_name: req.query.name });
+    if (!bot) {
+      return res.status(204).send(); // No content, clear the search bar
+    }
+    res.render('../views/dataEntry/botKills', { bots: bot, formatNumber });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Server error');
+  }
 };
 
 function formatNumber(number) {

@@ -4,7 +4,6 @@ var router = express.Router();
 const multer = require('multer');
 const upload = multer().single('csvFile'); // specify the field name of the file upload
 
-
 var botController = require('../controllers/botController'); 
 var equipmentController = require('../controllers/equipmentController'); 
 const authMiddleware = require('../middleware/auth');
@@ -17,18 +16,21 @@ router.get('/', authMiddleware.ensureAuthenticated,function (req, res, next) {
 
 // Displays the list of customers in the database
 router.get('/botList',authMiddleware.ensureAuthenticated, function (req, res, next) {
-  botController.getall(req, res);
+  botController.getRecent10(req, res);
 });
 
 // Displays the list of worlds for a specific bot in the database
 router.get('/botKills',authMiddleware.ensureAuthenticated, function (req, res, next) {
-  // botController.getRecentKills(req,res);
   botController.get_world_kills(req, res);
+});
+
+// Displays the list of worlds for a specific bot by name
+router.get('/getBotNameHunts',authMiddleware.ensureAuthenticated, function (req, res, next) {
+  botController.getBotNameHunts(req, res);
 });
 
 // Displays the list of worlds for a specific bot in the database
 router.get('/topWorlds',authMiddleware.ensureAuthenticated, function (req, res, next) {
-  // botController.getRecentKills(req,res);
   botController.getTopWorlds(req, res);
 });
 
@@ -96,7 +98,5 @@ router.post('/updateEquipmentSet', authMiddleware.ensureAuthenticated, function(
      return res.json({ success: false, message: 'Failed to update equipment set' });
    }
 });
-
-
 
 module.exports = router;
