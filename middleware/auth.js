@@ -1,10 +1,28 @@
-function ensureAuthenticated(req, res, next) {
-    // if user is authenticated in the session, carry on 
-    if (req.isAuthenticated())
-        return next();
+const User = require('../models/user');
 
-    // if they aren't redirect them to the home page
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+
+  // Check for remember_me cookie
+  if (req.cookies.remember_me) {
+    User.findById(req.cookies.remember_me, function(err, user) {
+      if (err || !user) {
+        res.redirect('/accountRoute/login');
+      } else {
+        req.login(user, function(err) {
+          if (err) {
+            res.redirect('/accountRoute/login');
+          } else {
+            return next();
+          }
+        });
+      }
+    });
+  } else {
     res.redirect('/accountRoute/login');
+  }
 }
 
 // Middleware to check if authenticated user has required role
@@ -18,6 +36,6 @@ function hasRole(role) {
 }
 
 module.exports = {
-    ensureAuthenticated: ensureAuthenticated,
-    hasRole: hasRole,
+  ensureAuthenticated: ensureAuthenticated,
+  hasRole: hasRole,
 }
