@@ -34,16 +34,6 @@ router.get('/logout', async function (req, res) {
   res.redirect('/');
 });
 
-router.get('/signup', authMiddleware.ensureAuthenticated, authMiddleware.hasRole('Admin'), function (req, res) {
-  res.render('../views/account/signup', { message: req.flash('signupMessage') });
-});
-
-router.post('/signup', passport.authenticate('local-signup', {
-  successRedirect: '/accountRoute/login', // redirect to the secure home page
-  failureRedirect: '/accountRoute/signup', // redirect back to the signup page if there is an error
-  failureFlash: true // allow flash messages
-}));
-
 // makes sure a user is logged in
 function isLoggedIn(req, res, next) {
   // if user is authenticated in the session, carry on 
