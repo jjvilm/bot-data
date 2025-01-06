@@ -80,3 +80,12 @@ exports.userDelete = async function(req, res) {
   }
 }
 
+exports.clearSession = async function(req, res) {
+    const userId = req.body.userId;
+    const users = req.body.users;
+    console.log('Clearing session for user:', userId);
+    await User.findByIdAndUpdate(userId, { activeSession: null });
+    // res.render('../views/admin/userList', { users: users })
+    res.redirect('/adminRoute/userList');
+};
+

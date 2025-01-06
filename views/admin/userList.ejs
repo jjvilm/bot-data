@@ -3,40 +3,52 @@
 
 <html lang="en">
 <%- include('../partials/headfile'); %>
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
   
   <body>
     <%- include('../partials/navbar'); %>
 
     <div class="container">
         <a href="/adminRoute/userCreate" class="btn btn-primary">Create</a>
-        <table class="table table-bordered" id="userTable">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Role</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <% for (var i=0; i<users.length; i++)  {%>
-                <tr>
-                    <td><%=users[i].username%></td>
-                    <td><%=users[i].role%></td>
-                    <td>
-                        <a href="/adminRoute/userUpdate?id=<%=users[i]._id%>" class="btn btn-primary">Update</a>
-                        <a href="/adminRoute/userDelete?id=<%=users[i]._id%>" class="btn btn-danger">Delete</a>
-                    </td>
-                </tr>
-            <% } %>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Online</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (var i=0; i<users.length; i++)  {%>
+                        <tr>
+                            <td>
+                                <% if (users[i].activeSession) { %>
+                                    <span class="online-indicator" style="color: green;">●</span>
+                                    <form action="/adminRoute/clearSession" method="POST" style="display: inline;">
+                                        <input type="hidden"  name="userId" value="<%= users[i]._id %>">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Clear</button>
+                                    </form>
+                                <% } else { %>
+                                    <span class="online-indicator" style="color: red;">●</span>
+                                <% } %>
+                            </td>
+                            <td><%=users[i].username%></td>
+                            <td><%=users[i].role%></td>
+                            <td>
+                                <a href="/adminRoute/userUpdate?id=<%=users[i]._id%>" class="btn btn-primary">Update</a>
+                                <a href="/adminRoute/userDelete?id=<%=users[i]._id%>" class="btn btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <%- include('../partials/scripts'); %>
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#userTable').DataTable();
-        })
-    </script>
-
   </body>
 </html>

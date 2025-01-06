@@ -5,6 +5,7 @@ var userController = require('../controllers/userController');
 var botController = require('../controllers/botController'); 
 var equipmentController = require('../controllers/equipmentController'); 
 const authMiddleware = require('../middleware/auth');
+const User = require('../models/user');
 
 /* GET home page. */
 router.get('/', authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), function (req, res, next) {
@@ -85,6 +86,16 @@ router.get('/updateBotLevels',authMiddleware.ensureAuthenticated,authMiddleware.
 });
 router.post('/updateEquipmentSetName',authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), function (req, res, next) {
   equipmentController.updateEquipmentSetName(req,res)
+});
+
+// Route to clear the active session
+router.post('/clearSession', authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), async (req, res, next) => {
+  try {
+    await userController.clearSession(req, res);
+  } catch (error) {
+    console.error('Error in /clearSession:', error);
+    res.status(500).json({ message: 'Error in /adminRoute/clearSession', error: error.message });
+  }
 });
 
 module.exports = router;
