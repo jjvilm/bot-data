@@ -2,6 +2,7 @@ let passport = require('passport');
 var express = require('express');
 var router = express.Router();
 const authMiddleware = require('../middleware/auth');
+const User = require('../models/user');
 
 router.get('/login', function (req, res) {
   res.render('../views/account/login', { message: req.flash('loginMessage') });
@@ -23,7 +24,11 @@ router.post('/login', passport.authenticate('local-login', {
   }
 });
 
-router.get('/logout', function (req, res) {
+router.get('/logout', async function (req, res) {
+  if (req.user) {
+    req.user.activeSession = null;
+    await req.user.save();
+  }
   res.clearCookie('remember_me');
   req.logout();
   res.redirect('/');

@@ -15,7 +15,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: ['DataEntry', 'Admin','QualityControl'] // Set the allowed roles
-  }
+  }, 
+  activeSession: { 
+    type: String, 
+    default: null } // Field to store the active session ID
   
 },
    { strict: false }
