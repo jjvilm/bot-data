@@ -43,22 +43,22 @@ module.exports = function(passport) {
     }
   }));
 
-  // Local strategy for signup
+  // Local strategy for creating users
   passport.use('local-signup', new LocalStrategy({
-    usernameField: 'email',
+    usernameField: 'username',
     passwordField: 'password',
     passReqToCallback: true
   },
-  async function(req, email, password, done) {
+  async function(req, username, password, done) {
     try {
-      const existingUser = await User.findOne({ 'email': email });
-      if (existingUser) return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
+      const existingUser = await User.findOne({ 'username': username });
+      if (existingUser) return done(null, false, req.flash('signupMessage', 'That username is already taken.'));
 
       // if there is no user with that email, create the user
       const newUser = new User();
 
       // set the user's local credentials
-      newUser.email = email;
+      newUser.username = username;
       newUser.password = newUser.generateHash(password);
       newUser.role = req.body.role;
 

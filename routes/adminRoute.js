@@ -24,9 +24,11 @@ router.get('/userCreate',authMiddleware.ensureAuthenticated,authMiddleware.hasRo
 });
 
 // router.post('/userCreate', authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), function (req, res, next) {
-//   userController.createUser(req,res);
-// });
-router.post('/userCreate',authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), passport.authenticate('local-signup', {
+  // userController.createUser(req,res);
+  // });
+
+  router.post('/userCreate',authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), passport.authenticate('local-signup', {
+    
     successRedirect: '/adminRoute/userList', //redirect to the secure home page
     failureRedirect: '/adminRoute/userCreate', // redirect back to the signup page if there is an error
     failureFlash: true // allow flash messages
