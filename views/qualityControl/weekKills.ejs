@@ -94,9 +94,14 @@
                         <th>Loot</th>
                     </tr>
                 </thead>
-                <tbody id="botTableBody"></tbody>
+                <tbody id="botTableBody">
+                    <!-- Placeholder for no bots message -->
+                </tbody>
             </table>
-
+            <!-- Container for no bots message -->
+            <div id="noBotsMessageContainer" style="display: none; text-align: center; font-size: 1.5rem; margin-top: 20px;">
+                No Recent Bot Hunts
+            </div>
             <!-- Modal -->
             <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -127,6 +132,10 @@
             </div>
 
             <%- include('../partials/weekKillsScript.ejs'); %>
+        </div>
+        <!-- Refresh button -->
+        <div id="refreshButtonContainer" style="display: none; text-align: center; margin-top: 20px;">
+            <button id="refreshPageBtn" class="btn btn-success">Refresh</button>
         </div>
     </div>
 </body>
@@ -170,4 +179,24 @@
             }
         }
     }
+
+    // Check if there are any bots to display after the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        const botTableBody = document.getElementById('botTableBody');
+        const noBotsMessageContainer = document.getElementById('noBotsMessageContainer');
+        const refreshButtonContainer = document.getElementById('refreshButtonContainer');
+        const hasBots = botTableBody.children.length > 0 && botTableBody.children[0].tagName === 'TR' && botTableBody.children[0].children.length > 0;
+        if (hasBots) {
+            noBotsMessageContainer.style.display = 'none';
+            refreshButtonContainer.style.display = 'none';
+        } else {
+            noBotsMessageContainer.style.display = 'block';
+            refreshButtonContainer.style.display = 'block';
+        }
+    });
+
+    // Refresh the page when the refresh button is clicked
+    document.getElementById('refreshPageBtn').addEventListener('click', function() {
+        location.reload();
+    });
 </script>
