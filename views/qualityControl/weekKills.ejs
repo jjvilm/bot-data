@@ -148,4 +148,26 @@
         }
     });
 
+    // Filter bots when the filter button is clicked
+    document.getElementById('filterBotsBtn').addEventListener('click', function() {
+        const combatLevel = document.getElementById('combatLevelInput').value;
+        const combatRange = document.getElementById('combatRangeInput').value;
+        // Add your filtering logic here
+        // Example: filterTable(combatLevel, combatRange);
+    });
+
+    // Function to filter the table based on combat level and range
+    function filterTable(combatLevel, combatRange) {
+        const table = document.getElementById('week-kills-table');
+        const rows = table.getElementsByTagName('tr');
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            const botCombatLevel = parseInt(cells[0].innerText);
+            if (Math.abs(botCombatLevel - combatLevel) <= combatRange) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    }
 </script>
