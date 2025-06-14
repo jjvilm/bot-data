@@ -201,7 +201,7 @@
                 
                 const $row = $(`
                     <tr data-bot-id="${botId}">
-                        <td>${botName}</td>
+                        <td><a href="/deRoute/botKills?id=${botId}" class="text-white">${botName}</a></td>
                         <td>${aliases}</td>
                         <td><span class="badge ${statusBadge}">${status}</span></td>
                         <td>${combatLevel}</td>
@@ -220,13 +220,19 @@
             
             // Re-bind modal handlers for the new buttons
             $('.update-alias-btn').off('click').on('click', function() {
-                const botId = $(this).data('id');
-                const alias = $(this).data('alias');
+                const $button = $(this);
+                const botId = $button.data('id');
+                // Get the bot name from the first cell in the same row
+                const botName = $button.closest('tr').find('td:first').text().trim();
                 
+                // Set the values in the modal
                 $('#aliasModal').data('bot-id', botId);
-                $('#alias').val(alias);
                 $('#botId').val(botId);
                 $('#banBotId').val(botId);
+                // Set the alias field value to the bot's name
+                setTimeout(() => {
+                    $('#alias').val(botName);
+                }, 0);
             });
         }
         
@@ -457,36 +463,101 @@
         $('#aliasModal').on('show.bs.modal', function(event) {
             const button = $(event.relatedTarget);
             const botId = button.data('id');
-            const alias = button.data('alias') || '';
+            const botName = button.closest('tr').find('td:first').text().trim();
             const modal = $(this);
+            
+            // Set bot ID in the form
             modal.find('.modal-body #botId').val(botId);
-            modal.find('.modal-body #alias').val(alias);
+            
+            // Set the alias input value to the bot's name
+            // This will be used as the default value for the alias
+            modal.find('.modal-body #alias').val(botName);
+            
+            // Clear any previous validation errors
+            $('#alias').removeClass('is-invalid');
+            $('.invalid-feedback').remove();
         });
 
         // Handle update alias form submission
         $('#updateAliasForm').on('submit', function(e) {
             e.preventDefault();
-            const botId = $('#botId').val();
-            const alias = $('#alias').val();
             
+            const botId = $('#botId').val();
+            const alias = $('#alias').val().trim();
+            
+            // Basic client-side validation
+            if (!alias) {
+                showError('Alias cannot be empty');
+                return;
+            }
+            
+            // Show loading state
+            const $submitBtn = $(this).find('button[type="submit"]');
+            const originalBtnText = $submitBtn.html();
+            $submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...');
+            
+            // Clear previous errors
+            $('#alias').removeClass('is-invalid');
+            $('.invalid-feedback').remove();
+            
+            // Make the API call
             $.ajax({
-                url: '/adminRoute/update_alias',
+                url: '/adminRoute/update-alias-and-fetch-combat',
                 method: 'POST',
-                data: { id: botId, alias: alias },
+                data: { 
+                    botId: botId, 
+                    alias: alias 
+                },
                 success: function(response) {
                     if (response.success) {
-                        // Update the alias in the table
-                        $('tr[data-bot-id="' + botId + '"] .alias-cell').text(alias);
+                        // Update the table row with the new data
+                        const $row = $('tr[data-bot-id="' + botId + '"]');
+                        $row.find('td:nth-child(2)').text(response.bot.alias); // Update alias column
+                        $row.find('td:nth-child(4)').text(response.bot.combat_lv); // Update combat level column
+                        
+                        // Update the status badge if needed
+                        if (response.bot.combat_lv > 0) {
+                            $row.find('.status-badge')
+                                .removeClass('bg-warning')
+                                .addClass('bg-success')
+                                .text('ACTIVE');
+                        }
+                        
+                        // Close the modal
                         $('#aliasModal').modal('hide');
+                        
+                        // Show success message
+                        showSuccess('Bot updated successfully!');
                     } else {
-                        alert('Error updating alias: ' + (response.message || 'Unknown error'));
+                        showError(response.message || 'Failed to update bot');
                     }
                 },
-                error: function() {
-                    alert('Error updating alias. Please try again.');
+                error: function(xhr) {
+                    let errorMessage = 'An error occurred while updating the bot';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    showError(errorMessage);
+                },
+                complete: function() {
+                    // Restore button state
+                    $submitBtn.prop('disabled', false).html('Fetch Combat Level');
                 }
             });
         });
+        
+        // Helper function to show error messages
+        function showError(message) {
+            const $aliasInput = $('#alias');
+            $aliasInput.addClass('is-invalid');
+            $aliasInput.after('<div class="invalid-feedback">' + message + '</div>');
+        }
+        
+        // Helper function to show success messages
+        function showSuccess(message) {
+            // You can replace this with a more sophisticated notification system if you have one
+            alert(message);
+        }
 
         // Handle delete bot
         $('.delete-bot').on('click', function() {

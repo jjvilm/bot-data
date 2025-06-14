@@ -39,8 +39,9 @@ const BotSchema = new Schema({
     unique: true, // Each bot_name should be unique
   },
   alias: {
-    type: [String],
-    default: []
+    type: String,
+    unique: true,
+    default: ''
   },
   status: {
     type: String,

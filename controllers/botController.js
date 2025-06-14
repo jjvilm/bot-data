@@ -48,6 +48,71 @@ exports.getEligibleBots = async function(req, res, next) {
   }
 };
 
+// Update bot alias and fetch combat level
+exports.updateAliasAndFetchCombat = async function(req, res) {
+  try {
+    const { botId, alias } = req.body;
+    
+    if (!botId || !alias) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Bot ID and alias are required' 
+      });
+    }
+
+    // Get combat level for the alias from OSRS Hiscores
+    const combatLevel = await exports.getPlayerCombatLevel(alias);
+    
+    if (!combatLevel) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Could not fetch combat level for the provided alias. Please check the name and try again.' 
+      });
+    }
+
+    // Find and update the bot
+    const bot = await Bot.findById(botId);
+    if (!bot) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Bot not found' 
+      });
+    }
+
+    // Update bot with new alias and combat level
+    bot.alias = alias;
+    bot.combat_lv = combatLevel;
+    
+    await bot.save();
+    
+    return res.json({ 
+      success: true, 
+      message: 'Bot updated successfully',
+      bot: {
+        id: bot._id,
+        alias: bot.alias,
+        combat_lv: bot.combat_lv
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error updating bot alias and combat level:', error);
+    
+    // Handle duplicate key error (unique alias constraint)
+    if (error.code === 11000) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'This alias is already in use by another bot' 
+      });
+    }
+    
+    return res.status(500).json({ 
+      success: false, 
+      message: 'An error occurred while updating the bot' 
+    });
+  }
+};
+
 // Update bot combat level and add alias
 exports.updateBotCombatAndAlias = async function(req, res) {
   try {
@@ -64,17 +129,13 @@ exports.updateBotCombatAndAlias = async function(req, res) {
       return res.redirect('/admin/update-bot-combat');
     }
 
-    // Add the new alias if it doesn't exist
-    if (!bot.alias.includes(searchedNameToAlias)) {
-      bot.alias.push(searchedNameToAlias);
-    }
-
-    // Update combat level
+    // Update alias and combat level
+    bot.alias = searchedNameToAlias;
     bot.combat_lv = parseInt(newCombatLevel, 10);
     
     await bot.save();
     
-    req.flash('success_msg', `Successfully updated ${bot.bot_name} - Added alias: ${searchedNameToAlias}, Set combat level: ${newCombatLevel}`);
+    req.flash('success_msg', `Successfully updated ${bot.bot_name} - Alias: ${searchedNameToAlias}, Combat level: ${newCombatLevel}`);
     res.redirect('/admin/update-bot-combat');
   } catch (error) {
     console.error('Error updating bot combat and alias:', error);
@@ -672,7 +733,7 @@ exports.fetchPlayerCombatLevel = async function (req, res) {
     const botId = req.body.id;
 
     // Fetch the new combat level
-    const combatLevel = await getPlayerCombatLevel(alias);
+    const combatLevel = await exports.getPlayerCombatLevel(alias);
 
     // Check if the combat level is valid and not 0
     if (combatLevel !== 0) {

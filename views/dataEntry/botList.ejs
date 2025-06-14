@@ -35,7 +35,7 @@
       <tbody>
         <% for (var i = 0; i < bots.length; i++) { %>
           <tr>
-            <td><%= bots[i].bot_name %></td>
+            <td><a href="/deRoute/botKills?id=<%= bots[i]._id %>" class="text-white"><%= bots[i].bot_name %></a></td>
             <td><%= bots[i].combat_lv %></td>
             <td><%= bots[i].comments %></td>
             <td>

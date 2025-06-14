@@ -26,6 +26,12 @@ router.post('/update-bot-combat-alias',
   botController.updateBotCombatAndAlias
 );
 
+router.post('/update-alias-and-fetch-combat', 
+  authMiddleware.ensureAuthenticated, 
+  authMiddleware.hasRole('Admin'), 
+  botController.updateAliasAndFetchCombat
+);
+
 /* GET home page. */
 router.get('/', authMiddleware.ensureAuthenticated,authMiddleware.hasRole('Admin'), function (req, res, next) {
   res.render('../views/admin/dashboard');
