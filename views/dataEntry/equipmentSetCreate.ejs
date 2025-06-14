@@ -500,6 +500,23 @@ function extractItemNameFromUrl(url) {
     }
 }
 
+// Helper function to format item name (capitalize first letter of first word, keep rest lowercase, and replace spaces with underscores)
+function formatItemName(itemName) {
+    if (!itemName) return '';
+    
+    // Convert to lowercase
+    const lowerName = itemName.toLowerCase();
+    
+    // Capitalize first letter of the entire string
+    if (lowerName.length === 0) return '';
+    
+    const firstChar = lowerName.charAt(0).toUpperCase();
+    const restOfString = lowerName.slice(1);
+    
+    // Replace all spaces with underscores in the result
+    return (firstChar + restOfString).replace(/ /g, '_');
+}
+
 // Helper function to construct full image URL from item name
 function getItemImageUrl(itemName) {
     if (!itemName) return '/images/Bank_filler.png';
@@ -509,8 +526,9 @@ function getItemImageUrl(itemName) {
         return itemName;
     }
     
-    // Construct the OSRS Wiki image URL
-    return `https://oldschool.runescape.wiki/images/${itemName}.png`;
+    // Format the item name and construct the OSRS Wiki image URL
+    const formattedName = formatItemName(itemName);
+    return `https://oldschool.runescape.wiki/images/${formattedName}.png`;
 }
 
 // Function to handle clicking on an equipment slot
@@ -536,40 +554,45 @@ async function findItem(slot) {
     slotElement.style.opacity = '0.7';
     
     try {
-        // Step 1: Search for the item on the OSRS Wiki
-        const searchUrl = `https://oldschool.runescape.wiki/api.php?action=opensearch&search=${encodeURIComponent(itemName)}&limit=1&namespace=0&format=json`;
-        const searchResponse = await fetch(searchUrl);
-        const searchData = await searchResponse.json();
+        // First, try with the exact name (case-sensitive)
+        let formattedItemName = itemName;
+        let imageUrl = `https://oldschool.runescape.wiki/images/${formattedItemName}.png`;
+        let imageExists = await checkImageExists(imageUrl);
         
-        if (!searchData || !searchData[1] || searchData[1].length === 0) {
-            throw new Error(`No item found for "${itemName}"`);
-        }
-        
-        const itemNameFromWiki = searchData[1][0];
-        
-        // Step 2: Get the image URL for the item
-        const imageName = itemNameFromWiki.replace(/ /g, '_');
-        const imageUrl = `https://oldschool.runescape.wiki/images/${imageName}.png`;
-        
-        // Step 3: Verify the image exists
-        const imageExists = await checkImageExists(imageUrl);
+        // If that fails, try with formatted name (first letter capitalized, rest lowercase, spaces to underscores)
         if (!imageExists) {
-            throw new Error(`Could not find image for "${itemNameFromWiki}"`);
+            formattedItemName = formatItemName(itemName);
+            imageUrl = `https://oldschool.runescape.wiki/images/${formattedItemName}.png`;
+            imageExists = await checkImageExists(imageUrl);
+            
+            // If still not found, try with all words capitalized (for items like 'Amulet of glory')
+            if (!imageExists) {
+                const allWordsCapitalized = itemName.toLowerCase()
+                    .split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join('_');
+                imageUrl = `https://oldschool.runescape.wiki/images/${allWordsCapitalized}.png`;
+                imageExists = await checkImageExists(imageUrl);
+                if (imageExists) {
+                    formattedItemName = allWordsCapitalized;
+                }
+            }
         }
         
-        // Step 4: Cache the image
-        await cacheImage(imageUrl, imageUrl);
+        if (!imageExists) {
+            throw new Error(`Could not find image for "${itemName}". Tried: ${formattedItemName}`);
+        }
         
-        // Extract and store just the item name
-        const itemName = extractItemNameFromUrl(imageUrl);
+        // Cache the image
+        await cacheImage(imageUrl, imageUrl);
         
         // Update the slot with the new item
         slotElement.src = imageUrl;
         slotElement.style.opacity = '1';
-        slotElement.setAttribute('data-item-name', itemName);
+        slotElement.setAttribute('data-item-name', formattedItemName);
         slotElement.setAttribute('data-item-url', imageUrl); // Keep for backward compatibility
         
-        showToast(`Added ${itemNameFromWiki} to ${slot.replace('_', ' ')}`, 'success');
+        showToast(`Added ${formattedItemName.replace(/_/g, ' ')} to ${slot.replace('_', ' ')}`, 'success');
         
     } catch (error) {
         console.error('Error finding item:', error);
@@ -630,6 +653,7 @@ async function updateEquipmentSlot(slot, itemNameOrUrl) {
 async function checkImageExists(url) {
     try {
         const response = await fetch(url, { method: 'HEAD' });
+        console.log(response);
         return response.ok;
     } catch (error) {
         console.error('Error checking image:', error);
@@ -646,25 +670,46 @@ async function createEquipmentSet() {
         return;
     }
     
-    // Collect equipment data with just item names
-    const equipmentData = {};
-    const slots = ['head', 'cape', 'neck', 'ammunition', 'torso', 'left_hand', 'right_hand', 'legs', 'hands', 'feet', 'jewelry'];
-    
-    for (const slot of slots) {
-        const imgElement = document.getElementById(`${slot}-img`);
-        if (imgElement && imgElement.getAttribute('data-item-name')) {
-            // Use the item name from data-item-name attribute
-            equipmentData[slot] = imgElement.getAttribute('data-item-name');
-        } else if (imgElement && imgElement.src && !imgElement.src.endsWith('Bank_filler.png')) {
-            // Fallback: Extract name from URL if data-item-name is not available
-            equipmentData[slot] = extractItemNameFromUrl(imgElement.src);
-        } else {
-            // Empty slot
-            equipmentData[slot] = '';
-        }
-    }
+    // Show loading state
+    const saveButton = document.querySelector('#createSetModal .btn-primary');
+    const originalButtonText = saveButton.innerHTML;
+    saveButton.disabled = true;
+    saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
     
     try {
+        // Collect equipment data with just item names and verify images
+        const equipmentData = {};
+        const slots = ['head', 'cape', 'neck', 'ammunition', 'torso', 'left_hand', 'right_hand', 'legs', 'hands', 'feet', 'jewelry'];
+        
+        // First, verify all images exist
+        for (const slot of slots) {
+            const imgElement = document.getElementById(`${slot}-img`);
+            let itemName = '';
+            
+            if (imgElement && imgElement.getAttribute('data-item-name')) {
+                itemName = imgElement.getAttribute('data-item-name');
+            } else if (imgElement && imgElement.src && !imgElement.src.endsWith('Bank_filler.png')) {
+                itemName = extractItemNameFromUrl(imgElement.src);
+            }
+            
+            if (itemName) {
+                // Format the item name
+                const formattedName = formatItemName(itemName);
+                const imageUrl = `https://oldschool.runescape.wiki/images/${formattedName}.png`;
+                
+                // Verify the image exists
+                const imageExists = await checkImageExists(imageUrl);
+                if (!imageExists) {
+                    throw new Error(`Could not verify image for ${formattedName.replace(/_/g, ' ')}`);
+                }
+                
+                equipmentData[slot] = formattedName;
+            } else {
+                equipmentData[slot] = '';
+            }
+        }
+        
+        // If we get here, all images are valid - proceed with save
         const response = await fetch('/deRoute/createEquipmentSet', {
             method: 'POST',
             headers: {
@@ -700,6 +745,12 @@ async function createEquipmentSet() {
     } catch (error) {
         console.error('Error creating equipment set:', error);
         showToast(`Error: ${error.message}`, 'error');
+    } finally {
+        // Reset button state
+        if (saveButton) {
+            saveButton.disabled = false;
+            saveButton.innerHTML = originalButtonText;
+        }
     }
 }
 

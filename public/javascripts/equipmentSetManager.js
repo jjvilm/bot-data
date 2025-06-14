@@ -46,6 +46,23 @@ function getCachedImage(key) {
     }
 }
 
+// Helper function to format item name (capitalize first letter of first word, keep rest lowercase, and replace spaces with underscores)
+function formatItemName(itemName) {
+    if (!itemName) return '';
+    
+    // Convert to lowercase
+    const lowerName = itemName.toLowerCase();
+    
+    // Capitalize first letter of the entire string
+    if (lowerName.length === 0) return '';
+    
+    const firstChar = lowerName.charAt(0).toUpperCase();
+    const restOfString = lowerName.slice(1);
+    
+    // Replace all spaces with underscores in the result
+    return (firstChar + restOfString).replace(/ /g, '_');
+}
+
 // Function to extract item name from URL (for backward compatibility)
 function extractItemNameFromUrl(url) {
     if (!url) return '';
@@ -383,22 +400,30 @@ function filterEquipmentSets() {
 
 // Function to handle editing an equipment set
 function editEquipmentSet(set) {
-    if (!set) return;
-    
-    // Set the set ID in the hidden field
+    // Set the set ID and name
+    const nameInput = document.getElementById('edit_set_name');
     document.getElementById('edit_set_id').value = set._id;
+    nameInput.value = set.set_name;
+    nameInput.setAttribute('data-original-name', set.set_name);
     
-    // Set the set name
-    document.getElementById('edit_set_name').value = set.set_name || '';
-    
-    // Set equipment slot values
+    // Clear all input fields first and store original values
     const slots = ['head', 'cape', 'neck', 'ammunition', 'torso', 'left_hand', 'right_hand', 'legs', 'hands', 'feet', 'jewelry'];
     slots.forEach(slot => {
         const input = document.getElementById(`edit_${slot}`);
-        if (input && set[slot]) {
-            input.value = set[slot];
-        } else if (input) {
+        if (input) {
             input.value = '';
+            input.removeAttribute('data-original-value');
+        }
+    });
+    
+    // Set the values from the set and store original values
+    Object.entries(set).forEach(([key, value]) => {
+        if (key === '_id' || key === 'set_name') return;
+        const input = document.getElementById(`edit_${key}`);
+        if (input && value) {
+            input.value = value;
+            // Store the original value for change detection
+            input.setAttribute('data-original-value', value);
         }
     });
     
@@ -409,35 +434,75 @@ function editEquipmentSet(set) {
 
 // Function to update an equipment set
 async function updateEquipmentSet() {
-    const setId = document.getElementById('edit_set_id').value;
-    const setName = document.getElementById('edit_set_name').value.trim();
-    
-    if (!setName) {
-        showToast('Please enter a name for the equipment set', 'error');
-        return;
-    }
-    
-    // Collect equipment data with just item names
-    const equipmentData = {};
-    const slots = ['head', 'cape', 'neck', 'ammunition', 'torso', 'left_hand', 'right_hand', 'legs', 'hands', 'feet', 'jewelry'];
-    
-    for (const slot of slots) {
-        const input = document.getElementById(`edit_${slot}`);
-        if (input) {
-            const value = input.value.trim();
-            // Extract just the item name if it's a full URL
-            equipmentData[slot] = value.includes('://') ? extractItemNameFromUrl(value) : value;
-        }
-    }
+    const saveButton = document.querySelector('#editSetModal .btn-primary');
+    const originalButtonText = saveButton.innerHTML;
     
     try {
+        const setId = document.getElementById('edit_set_id').value;
+        const originalSetName = document.getElementById('edit_set_name').getAttribute('data-original-name');
+        const currentSetName = document.getElementById('edit_set_name').value.trim();
+        
+        if (!currentSetName) {
+            showToast('Please enter a name for the equipment set', 'error');
+            return;
+        }
+        
+        // Show loading state
+        saveButton.disabled = true;
+        saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+        
+        // Collect equipment data with formatted item names
+        const equipmentData = {};
+        const slots = ['head', 'cape', 'neck', 'ammunition', 'torso', 'left_hand', 'right_hand', 'legs', 'hands', 'feet', 'jewelry'];
+        
+        // Verify only new or changed items
+        for (const slot of slots) {
+            const input = document.getElementById(`edit_${slot}`);
+            if (input) {
+                const originalValue = input.getAttribute('data-original-value') || '';
+                const currentValue = input.value.trim();
+                
+                // Skip if the value hasn't changed
+                if (currentValue === originalValue) {
+                    equipmentData[slot] = originalValue;
+                    continue;
+                }
+                
+                // Process new or changed items
+                if (currentValue) {
+                    let itemName = currentValue;
+                    
+                    // Extract item name if it's a URL
+                    if (itemName.includes('://')) {
+                        itemName = extractItemNameFromUrl(itemName);
+                    }
+                    
+                    // Format the item name (capitalize first letter only)
+                    const formattedName = formatItemName(itemName);
+                    
+                    // Only verify image for new/changed items
+                    const imageUrl = `https://oldschool.runescape.wiki/images/${formattedName}.png`;
+                    const imageExists = await checkImageExists(imageUrl);
+                    
+                    if (!imageExists) {
+                        throw new Error(`Could not verify image for ${formattedName.replace(/_/g, ' ')}`);
+                    }
+                    
+                    equipmentData[slot] = formattedName;
+                } else {
+                    equipmentData[slot] = '';
+                }
+            }
+        }
+        
+        // If we get here, all images are valid - proceed with update
         const response = await fetch(`/deRoute/updateEquipmentSet/${setId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                set_name: setName,
+                set_name: currentSetName,
                 ...equipmentData
             })
         });
@@ -463,6 +528,12 @@ async function updateEquipmentSet() {
     } catch (error) {
         console.error('Error updating equipment set:', error);
         showToast(`Error: ${error.message}`, 'error');
+    } finally {
+        // Reset button state
+        if (saveButton) {
+            saveButton.disabled = false;
+            saveButton.innerHTML = originalButtonText;
+        }
     }
 }
 
