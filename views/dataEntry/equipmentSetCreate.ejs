@@ -1,131 +1,436 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-bs-theme="dark">
 <head>
-  <title>Equipment Sets</title>
-  <!-- Latest compiled and minified CSS -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Equipment Sets Manager | AETHERBORNE</title>
   <link rel="stylesheet" href="/stylesheets/equipmentCreate.css" />
-    <%- include('../partials/headfile') %>
+  <%- include('../partials/headfile') %>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <script>
+    // Check for saved theme preference or use system preference
+    function setThemePreference() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-bs-theme', savedTheme);
+      document.body.className = savedTheme + '-mode';
+      
+      // Update toggle switch
+      const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+      if (toggleSwitch) {
+        toggleSwitch.checked = savedTheme === 'light';
+      }
+    }
+
+    // Toggle between light and dark theme
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      // Update theme
+      document.documentElement.setAttribute('data-bs-theme', newTheme);
+      document.body.className = newTheme + '-mode';
+      
+      // Save preference
+      localStorage.setItem('theme', newTheme);
+    }
+
+    // Initialize theme on page load
+    document.addEventListener('DOMContentLoaded', setThemePreference);
+  </script>
   <style>
-    .full-page-container {
-      width: 100%;
-      padding: 0 15px;
+    .equipment-slot {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.8);
+      border: 2px dashed #ced4da;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .equipment-slot:hover {
+      border-color: var(--primary-color);
+      background: rgba(52, 152, 219, 0.1);
+    }
+    
+    .equipment-slot img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+    
+    .equipment-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
       margin: 0 auto;
+      max-width: 400px;
+    }
+    
+    .set-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
+    }
+    
+    .set-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .item-icon {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
     }
   </style>
 </head>
-<body>
-  <%- include('../partials/navbar'); %>
-  <a href="/qcRoute/" class="btn btn-dark">Recent Hunts</a>
-  <a href="/deRoute/botList" class="btn btn-success">All Bots</a>
-    <a href="/deRoute/topWorlds" class="btn btn-secondary">World Kills</a>
-    <a href="/qcRoute/commonlyVisitedWorlds" class="btn btn-danger">Top Worlds</a>
+<body class="bg-light">
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold d-flex align-items-center" href="/qcRoute/">
+        <i class="bi bi-brightness-high me-2"></i>
+        <span class="d-none d-sm-inline">AETHERBORNE</span>
+      </a>
+      
+      <!-- Mobile Toggle Button -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-<!-- Main container with the equipment background -->
-<div class="full-page-container">
-  <div class="row">
-    <div class="col-md-6">
-      <h1 style="
-        color: rgb(52, 51, 51);
-        padding: 0px;
-        text-shadow: 1px 1px 0 white,-1px -1px 0 white,-1px 1px 0 white,1px -1px 0 white;">
-        Equipment Sets</h1>
-      <div class="equipment-container">
-        <!-- slots in the grid -->
-        <div class="grid-container">
-          <!-- Left column -->
-          <div class="left-column">
-            <div class="slot cape-slot"> <!-- Added class name -->
-              <img id="cape-img" src="/images/Bank_filler.png" class="slot-img" alt="Cape" onclick="findItem('cape')">
+      <!-- Desktop Menu -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="/qcRoute/">
+              <i class="bi bi-clock me-1"></i>
+              <span>Recent Hunts</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="/deRoute/botList">
+              <i class="bi bi-robot me-1"></i>
+              <span>All Bots</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="/deRoute/topWorlds">
+              <i class="bi bi-graph-up me-1"></i>
+              <span>World Kills</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active d-flex align-items-center" href="#">
+              <i class="bi bi-collection me-1"></i>
+              <span>Equipment Sets</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="/qcRoute/commonlyVisitedWorlds">
+              <i class="bi bi-trophy me-1"></i>
+              <span>Top Worlds</span>
+            </a>
+          </li>
+        </ul>
+        <div class="d-flex align-items-center">
+          <div class="theme-switch me-3">
+            <i class="bi bi-sun-fill"></i>
+            <label class="switch">
+              <input type="checkbox" onclick="toggleTheme()" aria-label="Toggle dark/light mode">
+              <span class="slider"></span>
+            </label>
+            <i class="bi bi-moon-stars-fill"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Offcanvas Mobile Menu -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+    <div class="offcanvas-header bg-primary text-white">
+      <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body bg-dark">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center text-white" href="/qcRoute/">
+            <i class="bi bi-clock me-2"></i>
+            <span>Recent Hunts</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center text-white" href="/deRoute/botList">
+            <i class="bi bi-robot me-2"></i>
+            <span>All Bots</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center text-white" href="/deRoute/topWorlds">
+            <i class="bi bi-graph-up me-2"></i>
+            <span>World Kills</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active d-flex align-items-center text-white" href="#">
+            <i class="bi bi-collection me-2"></i>
+            <span>Equipment Sets</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center text-white" href="/qcRoute/commonlyVisitedWorlds">
+            <i class="bi bi-trophy me-2"></i>
+            <span>Top Worlds</span>
+          </a>
+        </li>
+      </ul>
+      <div class="mt-3 pt-3 border-top border-secondary">
+        <div class="theme-switch d-flex align-items-center justify-content-between px-2">
+          <span class="text-white me-2">Theme:</span>
+          <div class="d-flex align-items-center">
+            <i class="bi bi-sun-fill text-warning me-2"></i>
+            <label class="switch">
+              <input type="checkbox" onclick="toggleTheme()" aria-label="Toggle dark/light mode">
+              <span class="slider"></span>
+            </label>
+            <i class="bi bi-moon-stars-fill text-info ms-2"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Main Content -->
+<!-- Theme Toggle Moved to Navbar -->
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-12 mb-4 text-center">
+      <h1 class="page-title">Equipment Set Manager</h1>
+      <p class="text-muted">Create and manage equipment sets for your bots</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Equipment Builder Card -->
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0"><i class="bi bi-grid-3x3-gap me-2"></i>Equipment Builder</h5>
+          <button class="btn btn-sm btn-outline-primary" onclick="clearAllSlots()">
+            <i class="bi bi-trash me-1"></i> Clear All
+          </button>
+        </div>
+        <div class="card-body text-center">
+          <div class="equipment-grid mb-4">
+            <!-- Row 1 -->
+            <div></div>
+            <div class="equipment-slot" onclick="findItem('head')" title="Head">
+              <img id="head-img" src="/images/Bank_filler.png" alt="Head">
             </div>
-            <div class="slot left-hand-slot"> <!-- Added class name -->
-              <img id="left_hand-img" src="/images/Bank_filler.png" alt="Left-Hand" class="slot-img" onclick="findItem('left_hand')">
+            <div></div>
+            
+            <!-- Row 2 -->
+            <div class="equipment-slot" onclick="findItem('cape')" title="Cape">
+              <img id="cape-img" src="/images/Bank_filler.png" alt="Cape">
             </div>
-            <div class="slot hands-slot"> <!-- Added class name -->
-              <img id="hands-img" src="/images/Bank_filler.png" alt="Hands" class="slot-img" onclick="findItem('hands')">
+            <div class="equipment-slot" onclick="findItem('neck')" title="Neck">
+              <img id="neck-img" src="/images/Bank_filler.png" alt="Neck">
+            </div>
+            <div class="equipment-slot" onclick="findItem('ammunition')" title="Ammunition">
+              <img id="ammunition-img" src="/images/Bank_filler.png" alt="Ammunition">
+            </div>
+            
+            <!-- Row 3 -->
+            <div class="equipment-slot" onclick="findItem('left_hand')" title="Left Hand">
+              <img id="left_hand-img" src="/images/Bank_filler.png" alt="Left Hand">
+            </div>
+            <div class="equipment-slot" onclick="findItem('torso')" title="Torso">
+              <img id="torso-img" src="/images/Bank_filler.png" alt="Torso">
+            </div>
+            <div class="equipment-slot" onclick="findItem('right_hand')" title="Right Hand">
+              <img id="right_hand-img" src="/images/Bank_filler.png" alt="Right Hand">
+            </div>
+            
+            <!-- Row 4 -->
+            <div></div>
+            <div class="equipment-slot" onclick="findItem('legs')" title="Legs">
+              <img id="legs-img" src="/images/Bank_filler.png" alt="Legs">
+            </div>
+            <div></div>
+            
+            <!-- Row 5 -->
+            <div class="equipment-slot" onclick="findItem('hands')" title="Hands">
+              <img id="hands-img" src="/images/Bank_filler.png" alt="Hands">
+            </div>
+            <div class="equipment-slot" onclick="findItem('feet')" title="Feet">
+              <img id="feet-img" src="/images/Bank_filler.png" alt="Feet">
+            </div>
+            <div class="equipment-slot" onclick="findItem('jewelry')" title="Jewelry">
+              <img id="jewelry-img" src="/images/Bank_filler.png" alt="Jewelry">
             </div>
           </div>
-
-          <!-- Middle column -->
-          <div class="middle-column">
-            <div class="slot head-slot"> <!-- Added class name -->
-              <img id="head-img" src="/images/Bank_filler.png" alt="Head" class="slot-img" onclick="findItem('head')">
-            </div>
-            <div class="slot neck-slot"> <!-- Added class name -->
-              <img id="neck-img" src="/images/Bank_filler.png" alt="Neck" class="slot-img" onclick="findItem('neck')">
-            </div>
-            <div class="slot torso-slot"> <!-- Added class name -->
-              <img id="torso-img" src="/images/Bank_filler.png" alt="Torso" class="slot-img" onclick="findItem('torso')">
-            </div>
-            <div class="slot legs-slot"> <!-- Added class name -->
-              <img id="legs-img" src="/images/Bank_filler.png" alt="Legs" class="slot-img" onclick="findItem('legs')">
-            </div>
-            <div class="slot feet-slot"> <!-- Added class name -->
-              <img id="feet-img" src="/images/Bank_filler.png" alt="Feet" class="slot-img" onclick="findItem('feet')">
-            </div>
+          
+          <button class="btn btn-primary" onclick="openCreateModal()">
+            <i class="bi bi-save me-1"></i> Save Equipment Set
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Equipment Sets Card -->
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0"><i class="bi-collection me-2"></i>My Equipment Sets</h5>
+          <div class="input-group input-group-sm" style="width: 200px;">
+            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+            <input type="text" id="set-search" class="form-control" placeholder="Search sets...">
           </div>
-
-          <!-- Right column -->
-          <div class="right-column">
-            <div class="slot ammunition-slot"> <!-- Added class name -->
-              <img id="ammunition-img" src="/images/Bank_filler.png" alt="Ammunition" class="slot-img" onclick="findItem('ammunition')">
-            </div>
-            <div class="slot right-hand-slot"> <!-- Added class name -->
-              <img id="right_hand-img" src="/images/Bank_filler.png" alt="Right-Hand" class="slot-img" onclick="findItem('right_hand')">
-            </div>
-            <div class="slot jewelry-slot"> <!-- Added class name -->
-              <img id="jewelry-img" src="/images/Bank_filler.png" alt="Jewelry" class="slot-img" onclick="findItem('jewelry')">
+        </div>
+        <div class="card-body p-0">
+          <div id="equipment-sets-container" style="max-height: 500px; overflow-y: auto;">
+            <div id="equipment-sets" class="p-3">
+              <!-- Equipment sets will be loaded here -->
+              <div class="text-center py-5" id="loading-sets">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">Loading equipment sets...</p>
+              </div>
+              <div id="no-sets" class="text-center py-5 d-none">
+                <i class="bi bi-inbox text-muted" style="font-size: 2.5rem;"></i>
+                <p class="mt-2 text-muted">No equipment sets found. Create one to get started!</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="col-md-6">
-      <h1 style="
-        color: rgb(52, 51, 51);
-        padding: 0px;
-        text-shadow: 1px 1px 0 white,-1px -1px 0 white,-1px 1px 0 white,1px -1px 0 white;">
-        Apply Equipment Sets</h1>
-      <div id="bot-selection-container">
-        <!-- Dropdown to select a bot -->
-        <label for="bot-select"></label>
-        <select id="bot-select">
-          <option value="" disabled selected>Select a bot</option>
-        </select>
-      
-        <!-- Apply button -->
-        <button id="apply-button">Apply</button>
-      
-        <!-- Success message -->
-        <label id="apply-success-message" style="display: none; color: green;">Successfully applied!</label>
-      </div>
-
-      <br>
-      <!-- Second container for existing equipment sets -->
-      <!-- Button to create a new equipment set -->
-      <button onclick="openCreateModal()">New Set</button>
-      <div id="createModal" style="display:none;">
-          <!-- Modal content -->
-        <h2>Create New Equipment Set</h2>
-        
-        <label for="set_name">Set Name:</label>
-        <input type="text" id="set_name">
-        
-        <button onclick="createEquipmentSet()">Save</button>
-      </div>
-      <!-- Success label to display after successful save -->
-      <div id="success-label" style="display: none; color: green; font-weight: bold;"></div>
-      <h2 style="color: rgb(52, 51, 51);padding: 0px;text-shadow: 1px 1px 0 white,-1px -1px 0 white,-1px 1px 0 white,1px -1px 0 white;">
-      Existing Equipment Sets</h2>
-      <div id="equipment-sets-container" style="max-height: 400px; overflow-y: auto;">
-        <div id="equipment-sets">
-          <!-- Fetched sets will be displayed here -->
+  </div>
+  
+  <!-- Apply to Bot Section -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="bi bi-robot me-2"></i>Apply Equipment Set to Bot</h5>
+        </div>
+        <div class="card-body">
+          <div class="row g-3 align-items-center">
+            <div class="col-md-4">
+              <label for="bot-select" class="form-label">Select Bot</label>
+              <select id="bot-select" class="form-select">
+                <option value="" disabled selected>Choose a bot...</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="set-select" class="form-label">Select Equipment Set</label>
+              <select id="set-select" class="form-select" disabled>
+                <option value="" disabled selected>Select a set...</option>
+              </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <button id="apply-button" class="btn btn-primary w-100" disabled>
+                <i class="bi bi-check-circle me-1"></i> Apply
+              </button>
+            </div>
+            <div class="col-12">
+              <div id="apply-success-message" class="alert alert-success mt-2 mb-0 py-2 d-none" role="alert">
+                <i class="bi bi-check-circle-fill me-1"></i> Equipment set applied successfully!
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-</body>
+<!-- Create New Set Modal -->
+<div class="modal fade" id="createSetModal" tabindex="-1" aria-labelledby="createSetModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="createSetModalLabel"><i class="bi bi-plus-circle me-2"></i>New Equipment Set</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="set_name" class="form-label">Set Name</label>
+          <input type="text" class="form-control" id="set_name" placeholder="e.g., Melee Tank, Range DPS">
+          <div class="form-text">Give your equipment set a descriptive name</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="createEquipmentSet()">
+          <i class="bi bi-save me-1"></i> Save Set
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Custom Scripts -->
 <%- include('../partials/equipmentSetCreateScript.ejs'); %>
+
+<script>
+// Initialize tooltips
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl);
+});
+
+// Handle set search
+const setSearch = document.getElementById('set-search');
+if (setSearch) {
+  setSearch.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const setItems = document.querySelectorAll('.set-item');
+    
+    setItems.forEach(item => {
+      const setName = item.querySelector('.set-name').textContent.toLowerCase();
+      if (setName.includes(searchTerm)) {
+        item.style.display = 'flex';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+}
+
+// Function to open create modal
+function openCreateModal() {
+  const modal = new bootstrap.Modal(document.getElementById('createSetModal'));
+  modal.show();
+}
+
+// Function to clear all equipment slots
+function clearAllSlots() {
+  if (confirm('Are you sure you want to clear all equipment slots?')) {
+    const slots = ['head', 'cape', 'neck', 'ammunition', 'torso', 'left_hand', 'right_hand', 'legs', 'hands', 'feet', 'jewelry'];
+    slots.forEach(slot => {
+      document.getElementById(`${slot}-img`).src = '/images/Bank_filler.png';
+      // You might want to clear the associated data as well
+    });
+  }
+}
+</script>
+</body>
 </html>
