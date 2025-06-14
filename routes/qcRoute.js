@@ -8,7 +8,7 @@ router.get('/', authMiddleware.ensureAuthenticated,function (req, res, next) {
   res.render('../views/qualityControl/weekKills');
 });
 
-// Displays the list of customers in the database
+// Displays the list of bots in the database
 router.get('/botList',authMiddleware.ensureAuthenticated, function (req, res, next) {
   botController.getall(req, res);
 });

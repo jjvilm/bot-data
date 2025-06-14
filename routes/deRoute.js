@@ -90,6 +90,16 @@ router.get('/getEquipmentSetByName',authMiddleware.ensureAuthenticated, function
   equipmentController.getEquipmentSetByName(req, res);
 });
 
+// Get all equipment sets
+router.get('/getEquipmentSets', authMiddleware.ensureAuthenticated, function(req, res, next) {
+  equipmentController.getEquipmentSets(req, res);
+});
+
+// Update equipment set name
+router.put('/updateEquipmentSetName/:setId', authMiddleware.ensureAuthenticated, function(req, res, next) {
+  equipmentController.updateEquipmentSetName(req, res);
+});
+
 // get equipment sets
 router.get('/getEquipmentSets',authMiddleware.ensureAuthenticated, function(req, res, next) {
   equipmentController.getEquipmentSets(req, res);
@@ -98,16 +108,9 @@ router.get('/getEquipmentSets',authMiddleware.ensureAuthenticated, function(req,
 router.post('/createEquipmentSet',authMiddleware.ensureAuthenticated, function(req, res, next) {
   equipmentController.createEquipmentSet(req, res);
 });
-// save set
-router.post('/updateEquipmentSet', authMiddleware.ensureAuthenticated, function(req, res, next) {
-   // Assuming you update the set here successfully
-   const updateResult = equipmentController.updateEquipmentSet(req,res); // Pseudo-code for your database update logic
-  
-   if (updateResult.success) {
-     return res.json({ success: true });
-   } else {
-     return res.json({ success: false, message: 'Failed to update equipment set' });
-   }
+// update equipment set
+router.put('/updateEquipmentSet/:setId', authMiddleware.ensureAuthenticated, function(req, res, next) {
+  equipmentController.updateEquipmentSet(req, res);
 });
 
 

@@ -49,45 +49,96 @@ exports.getEquipmentSetByName = async function(req, res) {
   };
 exports.updateEquipmentSet = async function(req, res) {
     try {
-        const updateData = {
-            head: req.body.head,
-            torso: req.body.torso,
-            legs: req.body.legs,
-            neck: req.body.neck,
-            right_hand: req.body.right_hand,
-            left_hand: req.body.left_hand,
-            cape: req.body.cape,
-            jewelry: req.body.jewelry,
-            ammunition: req.body.ammunition,
-            feet: req.body.feet,
-            hands: req.body.hands,
-          };
+        const { setId } = req.params;
+        const { set_name, ...equipmentData } = req.body;
         
-          await Equipment.findOneAndUpdate({ _id: req.body._id }, updateData)
+        // Prepare the update data
+        const updateData = {
+            ...equipmentData,
+            ...(set_name && { set_name }) // Include set_name if provided
+        };
+        
+        // Update the equipment set
+        const updatedSet = await Equipment.findByIdAndUpdate(
+            setId,
+            { $set: updateData },
+            { new: true, runValidators: true }
+        );
+        
+        if (!updatedSet) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Equipment set not found' 
+            });
+        }
+        
+        // Send success response
+        res.status(200).json({
+            success: true,
+            message: 'Equipment set updated successfully',
+            set: updatedSet
+        });
+        
     } catch (err) {
-      console.log(err);
+        console.error('Error updating equipment set:', err);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to update equipment set',
+            error: err.message
+        });
     }
-    
-  };
+};
 exports.updateEquipmentSetName = async function(req, res) {
   try {
-    const updateData = {
-      set_name: req.body.set_name,
-    };
-    // Update the equipment set by _id
-    await Equipment.findOneAndUpdate({ _id: req.body._id }, updateData);
-
-    // Optionally, you can add logic here to update the set_name within the bots data if needed
-    await Bot.updateMany({ equipment_set_name: req.body.previous_set_name }, {$set: {equipment_set_name: req.body.set_name} });
-    // need all _id from bot who have set_name as their equipment_set_name
-
-    res.status(200).send('Equipment set name updated successfully.');
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error updating equipment set name.');
-  }
+    const { name } = req.body;
+    const { setId } = req.params;
     
-  };
+    if (!name || !setId) {
+      return res.status(400).json({ success: false, message: 'Missing required fields' });
+    }
+    
+    // Find the current set to get the previous name
+    const currentSet = await Equipment.findById(setId);
+    if (!currentSet) {
+      return res.status(404).json({ success: false, message: 'Equipment set not found' });
+    }
+    
+    const previousName = currentSet.set_name;
+    
+    // Update the equipment set name
+    const updatedSet = await Equipment.findByIdAndUpdate(
+      setId,
+      { set_name: name },
+      { new: true, runValidators: true }
+    );
+    
+    if (!updatedSet) {
+      throw new Error('Failed to update equipment set');
+    }
+    
+    // Update any bots that were using this equipment set
+    if (previousName && previousName !== name) {
+      await Bot.updateMany(
+        { equipment_set_name: previousName },
+        { $set: { equipment_set_name: name } }
+      );
+    }
+    
+    res.status(200).json({ 
+      success: true, 
+      message: 'Equipment set name updated successfully',
+      data: updatedSet
+    });
+    
+  } catch (error) {
+    console.error('Error updating equipment set name:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error updating equipment set name',
+      error: error.message 
+    });
+  }
+};
 exports.deleteEquipmentSet = async function(req, res) {
   try {
     await Equipment.findOneAndDelete({ _id: req.body._id });  // Get _id from params

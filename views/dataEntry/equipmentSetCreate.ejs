@@ -108,27 +108,7 @@
   <!-- Navigation -->
   <%- include('../partials/navbar') %>
   
-  <!-- Alert Container -->
-  <div class="container mt-3">
-    <div class="alert-container"></div>
-  </div>
-        </li>
-      </ul>
-      <div class="mt-3 pt-3 border-top border-secondary">
-        <div class="theme-switch d-flex align-items-center justify-content-between px-2">
-          <span class="text-white me-2">Theme:</span>
-          <div class="d-flex align-items-center">
-            <i class="bi bi-sun-fill text-warning me-2"></i>
-            <label class="switch">
-              <input type="checkbox" onclick="toggleTheme()" aria-label="Toggle dark/light mode">
-              <span class="slider"></span>
-            </label>
-            <i class="bi bi-moon-stars-fill text-info ms-2"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+ 
 
 <!-- Main Content -->
 <!-- Theme Toggle Moved to Navbar -->
@@ -155,7 +135,7 @@
           <div class="equipment-builder">
             <!-- Row 1: Head -->
             <div class="empty-slot"></div>
-            <div class="equipment-slot" onclick="findItem('head')" title="Head">
+            <div class="equipment-slot" data-slot="head" title="Head">
               <img id="head-img" src="/images/Bank_filler.png" alt="Head" class="img-fluid">
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                 Head
@@ -164,19 +144,19 @@
             <div class="empty-slot"></div>
             
             <!-- Row 2: Cape, Neck, Ammo -->
-            <div class="equipment-slot" onclick="findItem('cape')" title="Cape">
+            <div class="equipment-slot" data-slot="cape" title="Cape">
               <img id="cape-img" src="/images/Bank_filler.png" alt="Cape" class="img-fluid">
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                 Cape
               </span>
             </div>
-            <div class="equipment-slot" onclick="findItem('neck')" title="Neck">
+            <div class="equipment-slot" data-slot="neck" title="Neck">
               <img id="neck-img" src="/images/Bank_filler.png" alt="Neck" class="img-fluid">
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                 Neck
               </span>
             </div>
-            <div class="equipment-slot" onclick="findItem('ammunition')" title="Ammunition">
+            <div class="equipment-slot" data-slot="ammunition" title="Ammunition">
               <img id="ammunition-img" src="/images/Bank_filler.png" alt="Ammunition" class="img-fluid">
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                 Ammo
@@ -184,19 +164,19 @@
             </div>
             
             <!-- Row 3: Weapon, Body, Shield -->
-            <div class="equipment-slot" onclick="findItem('left_hand')" title="Left Hand">
+            <div class="equipment-slot" data-slot="left_hand" title="Left Hand">
               <img id="left_hand-img" src="/images/Bank_filler.png" alt="Left Hand" class="img-fluid">
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                 Weapon
               </span>
             </div>
-            <div class="equipment-slot" onclick="findItem('torso')" title="Body">
+            <div class="equipment-slot" data-slot="torso" title="Body">
               <img id="torso-img" src="/images/Bank_filler.png" alt="Body" class="img-fluid">
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                 Body
               </span>
             </div>
-            <div class="equipment-slot" onclick="findItem('right_hand')" title="Right Hand">
+            <div class="equipment-slot" data-slot="right_hand" title="Right Hand">
               <img id="right_hand-img" src="/images/Bank_filler.png" alt="Shield" class="img-fluid">
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                 Shield
@@ -205,7 +185,7 @@
             
             <!-- Row 4: Legs -->
             <div class="empty-slot"></div>
-            <div class="equipment-slot" onclick="findItem('legs')" title="Legs">
+            <div class="equipment-slot" data-slot="legs" title="Legs">
               <img id="legs-img" src="/images/Bank_filler.png" alt="Legs" class="img-fluid">
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                 Legs
@@ -214,19 +194,19 @@
             <div class="empty-slot"></div>
             
             <!-- Row 5: Gloves, Boots, Ring -->
-            <div class="equipment-slot" onclick="findItem('hands')" title="Gloves">
+            <div class="equipment-slot" data-slot="hands" title="Gloves">
               <img id="hands-img" src="/images/Bank_filler.png" alt="Gloves" class="img-fluid">
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                 Gloves
               </span>
             </div>
-            <div class="equipment-slot" onclick="findItem('feet')" title="Boots">
+            <div class="equipment-slot" data-slot="feet" title="Boots">
               <img id="feet-img" src="/images/Bank_filler.png" alt="Boots" class="img-fluid">
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                 Boots
               </span>
             </div>
-            <div class="equipment-slot" onclick="findItem('jewelry')" title="Ring">
+            <div class="equipment-slot" data-slot="jewelry" title="Ring">
               <img id="jewelry-img" src="/images/Bank_filler.png" alt="Ring" class="img-fluid">
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                 Ring
@@ -335,6 +315,105 @@
   </div>
 </div>
 
+<!-- Edit Equipment Set Modal -->
+<div class="modal fade" id="editSetModal" tabindex="-1" aria-labelledby="editSetModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="editSetModalLabel"><i class="bi bi-pencil-square me-2"></i>Edit Equipment Set</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit_set_id">
+        <div class="mb-3">
+          <label for="edit_set_name" class="form-label">Set Name</label>
+          <input type="text" class="form-control" id="edit_set_name" placeholder="Enter set name">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Equipment Slots</label>
+          <div class="row g-2">
+            <div class="col-6">
+              <div class="input-group mb-2">
+                <span class="input-group-text">Head</span>
+                <input type="text" class="form-control" id="edit_head" placeholder="Item ID or URL">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group mb-2">
+                <span class="input-group-text">Cape</span>
+                <input type="text" class="form-control" id="edit_cape" placeholder="Item ID or URL">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group mb-2">
+                <span class="input-group-text">Neck</span>
+                <input type="text" class="form-control" id="edit_neck" placeholder="Item ID or URL">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group mb-2">
+                <span class="input-group-text">Ammo</span>
+                <input type="text" class="form-control" id="edit_ammunition" placeholder="Item ID or URL">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group mb-2">
+                <span class="input-group-text">Torso</span>
+                <input type="text" class="form-control" id="edit_torso" placeholder="Item ID or URL">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group mb-2">
+                <span class="input-group-text">Left Hand</span>
+                <input type="text" class="form-control" id="edit_left_hand" placeholder="Item ID or URL">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group mb-2">
+                <span class="input-group-text">Right Hand</span>
+                <input type="text" class="form-control" id="edit_right_hand" placeholder="Item ID or URL">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group mb-2">
+                <span class="input-group-text">Legs</span>
+                <input type="text" class="form-control" id="edit_legs" placeholder="Item ID or URL">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group mb-2">
+                <span class="input-group-text">Hands</span>
+                <input type="text" class="form-control" id="edit_hands" placeholder="Item ID or URL">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group mb-2">
+                <span class="input-group-text">Feet</span>
+                <input type="text" class="form-control" id="edit_feet" placeholder="Item ID or URL">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group mb-2">
+                <span class="input-group-text">Jewelry</span>
+                <input type="text" class="form-control" id="edit_jewelry" placeholder="Item ID or URL">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger me-auto" onclick="deleteEquipmentSet(document.getElementById('edit_set_id').value)">
+          <i class="bi bi-trash me-1"></i> Delete
+        </button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="updateEquipmentSet()">
+          <i class="bi bi-save me-1"></i> Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Include scripts partial which contains Bootstrap JS and other common scripts -->
 <%- include('../partials/scripts') %>
 
@@ -346,6 +425,16 @@
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl);
+});
+
+// Add event listeners to equipment slots
+document.querySelectorAll('.equipment-slot').forEach(slot => {
+    slot.addEventListener('click', function() {
+        const slotName = this.getAttribute('data-slot');
+        if (slotName) {
+            findItem(slotName);
+        }
+    });
 });
 
 // Handle set search
@@ -382,6 +471,270 @@ function clearAllSlots() {
     });
   }
 }
+
+// Helper function to extract item name from URL
+function extractItemNameFromUrl(url) {
+    if (!url) return '';
+    
+    // If it's already just an item name, return as is
+    if (!url.includes('://')) {
+        return url;
+    }
+    
+    // Extract the filename from URL and remove query parameters
+    try {
+        const urlObj = new URL(url);
+        const pathParts = urlObj.pathname.split('/');
+        let filename = pathParts[pathParts.length - 1];
+        
+        // Remove file extension if present
+        const dotIndex = filename.lastIndexOf('.');
+        if (dotIndex > 0) {
+            filename = filename.substring(0, dotIndex);
+        }
+        
+        return filename;
+    } catch (e) {
+        console.error('Error parsing URL:', e);
+        return url; // Return original if parsing fails
+    }
+}
+
+// Helper function to construct full image URL from item name
+function getItemImageUrl(itemName) {
+    if (!itemName) return '/images/Bank_filler.png';
+    
+    // If it's already a full URL, return as is (for backward compatibility)
+    if (itemName.startsWith('http')) {
+        return itemName;
+    }
+    
+    // Construct the OSRS Wiki image URL
+    return `https://oldschool.runescape.wiki/images/${itemName}.png`;
+}
+
+// Function to handle clicking on an equipment slot
+async function findItem(slot) {
+    // Show a styled prompt for better UX
+    const itemName = prompt(`Enter the name of the item for ${slot.replace('_', ' ')}:`, '');
+    
+    if (!itemName || !itemName.trim()) {
+        showToast('No item name provided', 'warning');
+        return;
+    }
+    
+    const slotElement = document.getElementById(`${slot}-img`);
+    if (!slotElement) {
+        console.error(`Could not find element with ID: ${slot}-img`);
+        return;
+    }
+    
+    console.log(`Searching for item: ${itemName} in slot: ${slot}`);
+    
+    // Show loading state
+    slotElement.src = '/images/loading.gif';
+    slotElement.style.opacity = '0.7';
+    
+    try {
+        // Step 1: Search for the item on the OSRS Wiki
+        const searchUrl = `https://oldschool.runescape.wiki/api.php?action=opensearch&search=${encodeURIComponent(itemName)}&limit=1&namespace=0&format=json`;
+        const searchResponse = await fetch(searchUrl);
+        const searchData = await searchResponse.json();
+        
+        if (!searchData || !searchData[1] || searchData[1].length === 0) {
+            throw new Error(`No item found for "${itemName}"`);
+        }
+        
+        const itemNameFromWiki = searchData[1][0];
+        
+        // Step 2: Get the image URL for the item
+        const imageName = itemNameFromWiki.replace(/ /g, '_');
+        const imageUrl = `https://oldschool.runescape.wiki/images/${imageName}.png`;
+        
+        // Step 3: Verify the image exists
+        const imageExists = await checkImageExists(imageUrl);
+        if (!imageExists) {
+            throw new Error(`Could not find image for "${itemNameFromWiki}"`);
+        }
+        
+        // Step 4: Cache the image
+        await cacheImage(imageUrl, imageUrl);
+        
+        // Extract and store just the item name
+        const itemName = extractItemNameFromUrl(imageUrl);
+        
+        // Update the slot with the new item
+        slotElement.src = imageUrl;
+        slotElement.style.opacity = '1';
+        slotElement.setAttribute('data-item-name', itemName);
+        slotElement.setAttribute('data-item-url', imageUrl); // Keep for backward compatibility
+        
+        showToast(`Added ${itemNameFromWiki} to ${slot.replace('_', ' ')}`, 'success');
+        
+    } catch (error) {
+        console.error('Error finding item:', error);
+        slotElement.src = '/images/Bank_filler.png';
+        slotElement.style.opacity = '1';
+        showToast(error.message || 'Failed to find item', 'error');
+    }
+}
+
+// Helper function to check if a string is a valid URL
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
+
+// Function to update an equipment slot with a new item
+async function updateEquipmentSlot(slot, itemNameOrUrl) {
+    const imgElement = document.getElementById(`${slot}-img`);
+    if (!imgElement) return;
+    
+    try {
+        // Show loading state
+        imgElement.src = '/images/loading.gif';
+        
+        // Convert to full URL if it's just an item name
+        const imageUrl = itemNameOrUrl.startsWith('http') ? itemNameOrUrl : 
+                        `https://oldschool.runescape.wiki/images/${itemNameOrUrl}.png`;
+        
+        // Check if the image exists
+        const imageExists = await checkImageExists(imageUrl);
+        
+        if (imageExists) {
+            // Extract and store just the item name
+            const itemName = extractItemNameFromUrl(imageUrl);
+            
+            // Update the image source
+            imgElement.src = imageUrl;
+            imgElement.style.opacity = '1';
+            imgElement.setAttribute('data-item-name', itemName);
+            imgElement.setAttribute('data-item-url', imageUrl); // Keep for backward compatibility
+        } else {
+            // If image doesn't exist, show a placeholder
+            imgElement.src = '/images/Bank_filler.png';
+            showToast('Could not load the specified item. Please check the name and try again.', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating equipment slot:', error);
+        imgElement.src = '/images/Bank_filler.png';
+        alert('An error occurred while updating the equipment slot.');
+    }
+}
+
+// Function to check if an image exists at the given URL
+async function checkImageExists(url) {
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        return response.ok;
+    } catch (error) {
+        console.error('Error checking image:', error);
+        return false;
+    }
+}
+
+// Function to create a new equipment set
+async function createEquipmentSet() {
+    const setName = document.getElementById('set_name').value.trim();
+    
+    if (!setName) {
+        showToast('Please enter a name for the equipment set', 'error');
+        return;
+    }
+    
+    // Collect equipment data with just item names
+    const equipmentData = {};
+    const slots = ['head', 'cape', 'neck', 'ammunition', 'torso', 'left_hand', 'right_hand', 'legs', 'hands', 'feet', 'jewelry'];
+    
+    for (const slot of slots) {
+        const imgElement = document.getElementById(`${slot}-img`);
+        if (imgElement && imgElement.getAttribute('data-item-name')) {
+            // Use the item name from data-item-name attribute
+            equipmentData[slot] = imgElement.getAttribute('data-item-name');
+        } else if (imgElement && imgElement.src && !imgElement.src.endsWith('Bank_filler.png')) {
+            // Fallback: Extract name from URL if data-item-name is not available
+            equipmentData[slot] = extractItemNameFromUrl(imgElement.src);
+        } else {
+            // Empty slot
+            equipmentData[slot] = '';
+        }
+    }
+    
+    try {
+        const response = await fetch('/deRoute/createEquipmentSet', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                set_name: setName,
+                ...equipmentData
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to create equipment set');
+        }
+        
+        // Close the modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('createSetModal'));
+        if (modal) {
+            modal.hide();
+        }
+        
+        // Reset the form
+        document.getElementById('set_name').value = '';
+        
+        // Reload the equipment sets to show the new one
+        loadEquipmentSets();
+        
+        // Show success message
+        showToast('Equipment set created successfully!', 'success');
+        
+    } catch (error) {
+        console.error('Error creating equipment set:', error);
+        showToast(`Error: ${error.message}`, 'error');
+    }
+}
+
+// Function to cache an image
+async function cacheImage(key, url) {
+    try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64data = reader.result;
+                const cacheItem = {
+                    url: base64data,
+                    timestamp: new Date().getTime()
+                };
+                localStorage.setItem(`equipment_${key}`, JSON.stringify(cacheItem));
+                resolve();
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    } catch (error) {
+        console.error('Error caching image:', error);
+        throw error;
+    }
+}
 </script>
+
+<!-- Toast Container -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+  <div id="toastContainer" class="toast-container">
+    <!-- Toasts will be dynamically inserted here -->
+  </div>
+</div>
+
 </body>
 </html>
