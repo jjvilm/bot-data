@@ -1,45 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Equipment Sets Manager | AETHERBORNE</title>
-  <link rel="stylesheet" href="/stylesheets/equipmentCreate.css" />
   <%- include('../partials/headfile') %>
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-  <script>
-    // Check for saved theme preference or use system preference
-    function setThemePreference() {
-      const savedTheme = localStorage.getItem('theme') || 'dark';
-      document.documentElement.setAttribute('data-bs-theme', savedTheme);
-      document.body.className = savedTheme + '-mode';
-      
-      // Update toggle switch
-      const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
-      if (toggleSwitch) {
-        toggleSwitch.checked = savedTheme === 'light';
-      }
-    }
-
-    // Toggle between light and dark theme
-    function toggleTheme() {
-      const currentTheme = document.documentElement.getAttribute('data-bs-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      
-      // Update theme
-      document.documentElement.setAttribute('data-bs-theme', newTheme);
-      document.body.className = newTheme + '-mode';
-      
-      // Save preference
-      localStorage.setItem('theme', newTheme);
-    }
-
-    // Initialize theme on page load
-    document.addEventListener('DOMContentLoaded', setThemePreference);
-  </script>
+  <link rel="stylesheet" href="/stylesheets/equipmentCreate.css" />
   <style>
     .equipment-slot {
       width: 60px;
@@ -47,8 +11,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.8);
-      border: 2px dashed #ced4da;
+      background: var(--card-bg);
+      border: 2px solid var(--border-color);
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -56,7 +20,8 @@
     
     .equipment-slot:hover {
       border-color: var(--primary-color);
-      background: rgba(52, 152, 219, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     
     .equipment-slot img {
@@ -67,26 +32,28 @@
     
     .equipment-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
       margin: 0 auto;
-      max-width: 400px;
+      padding: 10px;
     }
     
     .set-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      background: white;
-      padding: 8px 12px;
-      border-radius: 6px;
+      gap: 10px;
+      background: var(--card-bg);
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
       transition: all 0.2s ease;
     }
     
     .set-item:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-color: var(--primary-color);
     }
     
     .item-icon {
@@ -94,107 +61,57 @@
       height: 24px;
       object-fit: contain;
     }
+    
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    
+    .card-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+    
+    .form-control, .form-select {
+      background-color: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: var(--text-primary);
+    }
+    
+    .form-control:focus, .form-select:focus {
+      background-color: var(--input-bg);
+      border-color: var(--primary-color);
+      color: var(--text-primary);
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
   </style>
 </head>
-<body class="bg-light">
+<body>
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold d-flex align-items-center" href="/qcRoute/">
-        <i class="bi bi-brightness-high me-2"></i>
-        <span class="d-none d-sm-inline">AETHERBORNE</span>
-      </a>
-      
-      <!-- Mobile Toggle Button -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <!-- Desktop Menu -->
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link d-flex align-items-center" href="/qcRoute/">
-              <i class="bi bi-clock me-1"></i>
-              <span>Recent Hunts</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link d-flex align-items-center" href="/deRoute/botList">
-              <i class="bi bi-robot me-1"></i>
-              <span>All Bots</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link d-flex align-items-center" href="/deRoute/topWorlds">
-              <i class="bi bi-graph-up me-1"></i>
-              <span>World Kills</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active d-flex align-items-center" href="#">
-              <i class="bi bi-collection me-1"></i>
-              <span>Equipment Sets</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link d-flex align-items-center" href="/qcRoute/commonlyVisitedWorlds">
-              <i class="bi bi-trophy me-1"></i>
-              <span>Top Worlds</span>
-            </a>
-          </li>
-        </ul>
-        <div class="d-flex align-items-center">
-          <div class="theme-switch me-3">
-            <i class="bi bi-sun-fill"></i>
-            <label class="switch">
-              <input type="checkbox" onclick="toggleTheme()" aria-label="Toggle dark/light mode">
-              <span class="slider"></span>
-            </label>
-            <i class="bi bi-moon-stars-fill"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Offcanvas Mobile Menu -->
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-    <div class="offcanvas-header bg-primary text-white">
-      <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
-      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body bg-dark">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link d-flex align-items-center text-white" href="/qcRoute/">
-            <i class="bi bi-clock me-2"></i>
-            <span>Recent Hunts</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link d-flex align-items-center text-white" href="/deRoute/botList">
-            <i class="bi bi-robot me-2"></i>
-            <span>All Bots</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link d-flex align-items-center text-white" href="/deRoute/topWorlds">
-            <i class="bi bi-graph-up me-2"></i>
-            <span>World Kills</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active d-flex align-items-center text-white" href="#">
-            <i class="bi bi-collection me-2"></i>
-            <span>Equipment Sets</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link d-flex align-items-center text-white" href="/qcRoute/commonlyVisitedWorlds">
-            <i class="bi bi-trophy me-2"></i>
-            <span>Top Worlds</span>
-          </a>
+  <%- include('../partials/navbar') %>
+  
+  <!-- Alert Container -->
+  <div class="container mt-3">
+    <div class="alert-container"></div>
+  </div>
         </li>
       </ul>
       <div class="mt-3 pt-3 border-top border-secondary">
@@ -385,11 +302,10 @@
   </div>
 </div>
 
-<!-- Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Custom Scripts -->
-<%- include('../partials/equipmentSetCreateScript.ejs'); %>
+<!-- Include scripts partial which contains Bootstrap JS and other common scripts -->
+<%- include('../partials/scripts') %>
 
+<!-- Page-specific scripts -->
 <script>
 // Initialize tooltips
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

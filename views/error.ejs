@@ -1,3 +1,107 @@
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/headfile') %>
+  <title>Error <%= error.status || 500 %> | AETHERBORNE</title>
+  <style>
+    .error-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background-color: var(--body-bg);
+      color: var(--text-primary);
+    }
+    .error-card {
+      max-width: 600px;
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    .error-header {
+      background: var(--primary-color);
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .error-body {
+      padding: 2rem;
+    }
+    .error-code {
+      font-size: 5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin: 0 0 1rem;
+      line-height: 1;
+    }
+    .error-message {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+    }
+    .error-stack {
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.875rem;
+      max-height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .btn-home {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 6px;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 1.5rem;
+      transition: background-color 0.2s;
+    }
+    .btn-home:hover {
+      background: var(--primary-hover);
+      color: white;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <div class="error-container">
+    <div class="error-card">
+      <div class="error-header">
+        <h1 class="h3 mb-0">AETHERBORNE</h1>
+      </div>
+      <div class="error-body text-center">
+        <div class="error-code"><%= error.status || 500 %></div>
+        <h2 class="error-message"><%= message %></h2>
+        
+        <% if (process.env.NODE_ENV === 'development') { %>
+          <div class="text-start">
+            <h3 class="h5 mb-2">Error Details:</h3>
+            <div class="error-stack">
+              <strong>Status:</strong> <%= error.status || 500 %><br>
+              <strong>Message:</strong> <%= message %><br>
+              <% if (error.stack) { %>
+                <strong>Stack:</strong><br>
+                <%= error.stack.replace(/\n/g, '<br>') %>
+              <% } %>
+            </div>
+          </div>
+        <% } %>
+        
+        <a href="/" class="btn-home">
+          <i class="bi bi-house-door me-2"></i>Return to Home
+        </a>
+      </div>
+    </div>
+  </div>
+  <%- include('partials/scripts') %>
+</body>
+</html>

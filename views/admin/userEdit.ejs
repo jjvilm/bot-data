@@ -1,52 +1,242 @@
 <!DOCTYPE html>
-<html lang="en">
-   <link rel="stylesheet" href="/stylesheets/userEdit.css" />
-  <head>
+<html lang="en" data-bs-theme="light">
+<head>
     <%- include('../partials/headfile') %>
-  </head>
-  <%- include('../partials/navbar') %>
-  <h1> Update User</h1>
-  <body>
-    <form action="/adminRoute/userUpdate?id=<%=user._id%>" method="POST">    
-      <label for="username">username:</label>
-      <input type="username" id="username" name="username" value="<%= user.username %>" required><br>
-
-      <label for="password">Password:</label>
-      <label class="switch">
-        <input type="checkbox" id="passwordSwitch">
-        <span class="slider round"></span>
-      </label>
-      <input type="password" id="passwordInput" name="password"  disabled required><br>
-      <input type="hidden" name="updatePassword" id="updatePasswordField" value=False>
-
-      <label for="role">Role:</label>
-      <select id="role" name="role" required>
-        <option value="DataEntry" <%= user.role === 'DataEntry' ? 'selected' : '' %>>Data Entry</option>
-        <option value="Admin" <%= user.role === 'Admin' ? 'selected' : '' %>>Admin</option>
-        <option value="QualityControl" <%= user.role === 'QualityControl' ? 'selected' : '' %>>Quality Control</option>
-        <option value="" disabled <%= user.role === '' ? 'selected' : '' %> >Select a role</option>
-      </select><br>
-      
-      <input type="hidden" name="id" value="<%= user._id %>">
-      <button type="submit">Update User</button>
-    </form>
-
+    <title>Edit User | AETHERBORNE</title>
     <style>
-      #role option:disabled {
-        color: #999;
-      }
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .form-title {
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .form-label {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .form-control, .form-select {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: var(--input-bg);
+            border-color: var(--primary-color);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 0.25rem rgba(var(--primary-rgb), 0.25);
+        }
+        .password-toggle {
+            cursor: pointer;
+            padding: 0.375rem 0.75rem;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            display: flex;
+            align-items: center;
+            border-left: none;
+        }
+        .password-toggle i {
+            font-size: 1.25rem;
+        }
+        .form-text {
+            color: var(--text-muted);
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
+        .btn-update {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+        }
+        .btn-update:hover {
+            background-color: var(--primary-dark);
+        }
     </style>
+</head>
 
+<body class="d-flex flex-column min-vh-100">
+    <%- include('../partials/navbar') %>
+
+    <div class="container py-4 flex-grow-1">
+        <div class="form-container">
+            <h2 class="form-title">
+                <i class="bi bi-person-gear me-2"></i>Edit User: <%= user.username %>
+            </h2>
+            
+            <form id="user-edit-form" action="/adminRoute/userUpdate" method="POST" novalidate>
+                <input type="hidden" name="id" value="<%= user._id %>">
+                
+                <!-- Username Field -->
+                <div class="mb-4">
+                    <label for="username" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="username" 
+                            name="username" 
+                            value="<%= user.username %>"
+                            required
+                            pattern="[A-Za-z0-9_]{3,20}"
+                            title="Username must be 3-20 characters long and can only contain letters, numbers, and underscores.">
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="mb-4">
+                    <label class="form-label">Password</label>
+                    <div class="input-group mb-2">
+                        <span class="input-group-text"><i class="bi bi-key"></i></span>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="passwordInput" 
+                            name="password" 
+                            disabled
+                            minlength="8"
+                            aria-describedby="passwordHelp">
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" role="switch" id="passwordSwitch">
+                        <label class="form-check-label" for="passwordSwitch">Update password</label>
+                    </div>
+                    <div id="passwordHelp" class="form-text">
+                        Leave blank to keep current password. If updating, password must be at least 8 characters long.
+                    </div>
+                    <input type="hidden" name="updatePassword" id="updatePasswordField" value="false">
+                </div>
+
+                <!-- Role Selection -->
+                <div class="mb-4">
+                    <label for="role" class="form-label">Role</label>
+                    <select class="form-select" id="role" name="role" required>
+                        <option value="DataEntry" <%= user.role === 'DataEntry' ? 'selected' : '' %>>Data Entry</option>
+                        <option value="Admin" <%= user.role === 'Admin' ? 'selected' : '' %>>Admin</option>
+                        <option value="QualityControl" <%= user.role === 'QualityControl' ? 'selected' : '' %>>Quality Control</option>
+                    </select>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4 pt-3 border-top">
+                    <a href="/adminRoute/userList" class="btn btn-outline-secondary me-md-2">
+                        <i class="bi bi-arrow-left me-1"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-update">
+                        <i class="bi bi-save me-1"></i> Update User
+                    </button>
+                </div>
+            </form>
+
+            <!-- Message Container -->
+            <div id="message-container" class="mt-4"></div>
+        </div>
+    </div>
+
+    <%- include('../partials/scripts') %>
+    
     <script>
-      const passwordSwitch = document.getElementById("passwordSwitch");
-      const passwordInput = document.getElementById("passwordInput");
-      const updatePasswordField = document.getElementById("updatePasswordField");
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordSwitch = document.getElementById('passwordSwitch');
+            const passwordInput = document.getElementById('passwordInput');
+            const togglePassword = document.getElementById('togglePassword');
+            const updatePasswordField = document.getElementById('updatePasswordField');
+            const form = document.getElementById('user-edit-form');
+            const messageContainer = document.getElementById('message-container');
 
-      passwordSwitch.addEventListener("change", () => {
-        passwordInput.disabled = !passwordInput.disabled;
-        // Update the hidden field value
-        updatePasswordField.value = passwordInput.disabled ? false : true;
-      });
+            // Toggle password visibility
+            togglePassword.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye');
+                }
+            });
+
+            // Toggle password field
+            passwordSwitch.addEventListener('change', function() {
+                passwordInput.disabled = !this.checked;
+                updatePasswordField.value = this.checked ? 'true' : 'false';
+                if (this.checked) {
+                    passwordInput.focus();
+                }
+            });
+
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Show loading state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Updating...';
+                
+                // Get form data
+                const formData = new FormData(this);
+                
+                // Send form data
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    messageContainer.className = 'alert';
+                    
+                    if (data.success) {
+                        messageContainer.classList.add('alert-success');
+                        messageContainer.innerHTML = `
+                            <i class="bi bi-check-circle me-2"></i>
+                            User updated successfully! Redirecting...
+                        `;
+                        // Redirect to user list after a short delay
+                        setTimeout(() => {
+                            window.location.href = '/adminRoute/userList';
+                        }, 1500);
+                    } else {
+                        messageContainer.classList.add('alert-danger');
+                        messageContainer.innerHTML = `
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            ${data.message || 'An error occurred while updating the user.'}
+                        `;
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    messageContainer.className = 'alert alert-danger';
+                    messageContainer.innerHTML = `
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        An error occurred while processing your request. Please try again.
+                    `;
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                });
+            });
+        });
     </script>
-  </body>
+</body>
 </html>

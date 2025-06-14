@@ -1,4 +1,121 @@
-<!-- <script src="/javascripts/nav.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
- <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<!-- jQuery (slim build for Bootstrap 5) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables (if needed) -->
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- Custom Scripts -->
+<script>
+  // Initialize DataTables with theme support
+  $(document).ready(function() {
+    // Initialize DataTables if any tables have the 'datatable' class
+    $('.datatable').DataTable({
+      responsive: true,
+      pageLength: 25,
+      language: {
+        search: "_INPUT_",
+        searchPlaceholder: "Search...",
+      },
+      dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+           "<'row'<'col-sm-12'tr>>" +
+           "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+      drawCallback: function() {
+        // Update tooltips after table redraw
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+      }
+    });
+
+    // Initialize popovers
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+      return new bootstrap.Popover(popoverTriggerEl);
+    });
+
+    // Initialize tooltips (in case they weren't initialized by DataTables)
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  });
+
+  // Handle form submissions with loading states
+  $(document).on('submit', 'form[data-loading]', function() {
+    const $form = $(this);
+    const $submitBtn = $form.find('button[type="submit"]');
+    const originalText = $submitBtn.html();
+    
+    // Disable submit button and show loading state
+    $submitBtn.prop('disabled', true);
+    $submitBtn.html('<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Processing...');
+    
+    // Re-enable button if there's an error
+    setTimeout(function() {
+      if ($form.find('.is-invalid').length === 0) {
+        $submitBtn.prop('disabled', false);
+        $submitBtn.html(originalText);
+      }
+    }, 5000);
+  });
+
+  // Handle AJAX form submissions
+  $(document).on('submit', 'form[data-ajax]', function(e) {
+    e.preventDefault();
+    const $form = $(this);
+    const $submitBtn = $form.find('button[type="submit"]');
+    const originalText = $submitBtn.html();
+    
+    // Disable submit button and show loading state
+    $submitBtn.prop('disabled', true);
+    $submitBtn.html('<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Processing...');
+    
+    // Submit form via AJAX
+    $.ajax({
+      url: $form.attr('action'),
+      method: $form.attr('method') || 'POST',
+      data: $form.serialize(),
+      success: function(response) {
+        // Handle success response
+        if (response.redirect) {
+          window.location.href = response.redirect;
+        } else if (response.message) {
+          showAlert(response.message, 'success');
+        }
+      },
+      error: function(xhr) {
+        // Handle error response
+        let errorMessage = 'An error occurred. Please try again.';
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMessage = xhr.responseJSON.message;
+        }
+        showAlert(errorMessage, 'danger');
+      },
+      complete: function() {
+        // Re-enable submit button
+        $submitBtn.prop('disabled', false);
+        $submitBtn.html(originalText);
+      }
+    });
+  });
+
+  // Show alert message
+  function showAlert(message, type = 'info') {
+    const alertHtml = `
+      <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    `;
+    
+    // Prepend to the main content area or a specific alert container
+    $('.alert-container').prepend(alertHtml);
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+      $('.alert').alert('close');
+    }, 5000);
+  }
+</script>

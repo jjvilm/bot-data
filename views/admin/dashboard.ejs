@@ -1,100 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <link rel="stylesheet" href="/stylesheets/admindashboard.css" />
-  <%- include('../partials/headfile') %> 
-  <title>Admin Dashboard</title>
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <%- include('../partials/headfile') %>
+  <title>Admin Dashboard | AETHERBORNE</title>
+  <style>
+    .dashboard-card {
+      height: 100%;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-primary);
+      text-decoration: none;
+      display: block;
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+    
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      text-decoration: none;
+      border-color: var(--primary-color);
+    }
+    
+    .card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+    
+    .card-title {
+      color: var(--text-primary);
+      font-weight: 500;
+      margin-bottom: 0;
+    }
+    
+    .card-description {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+    }
+    
+    .section-title {
+      color: var(--text-primary);
+      font-weight: 600;
+      margin: 2rem 0 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+      text-align: center;
+    }
+  </style>
 </head>
-<body>
-  <%- include('../partials/navbar'); %>
-  <div class="container">
-    <h3><b>Administrator Dashboard</b></h3>
-    <div class="row">
-      <div class="col-md-3">
-        <a href="/adminRoute/userCreate">
-          <div class="card">
-            <div class="card-body">
-              <i class="fas fa-user-plus fa-5x"></i>
-              <h5 class="card-title">Add User</h5>
+<body class="d-flex flex-column min-vh-100">
+  <%- include('../partials/navbar') %>
+  
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h3 mb-0">Admin Dashboard</h1>
+    </div>
+    
+    <h3 class="section-title">User Management</h3>
+    <div class="row g-4 mb-4">
+      <div class="col-md-6 col-lg-3">
+        <a href="/adminRoute/userCreate" class="dashboard-card">
+          <div class="card-body">
+            <div class="card-icon">
+              <i class="bi bi-person-plus"></i>
             </div>
+            <h5 class="card-title">Add User</h5>
+            <p class="card-description">Create new user accounts</p>
           </div>
         </a>
       </div>
-      <div class="col-md-3">
-        <a href="/adminRoute/userList">
-          <div class="card">
-            <div class="card-body">
-              <i class="fas fa-user-edit fa-5x"></i>
-              <h5 class="card-title">Edit Users</h5>
+      
+      <div class="col-md-6 col-lg-3">
+        <a href="/adminRoute/userList" class="dashboard-card">
+          <div class="card-body">
+            <div class="card-icon">
+              <i class="bi bi-people"></i>
             </div>
+            <h5 class="card-title">Manage Users</h5>
+            <p class="card-description">View and edit user accounts</p>
           </div>
         </a>
       </div>
-      <div class="col-md-3">
-        <a href="/deRoute/botList">
-          <div class="card">
-            <div class="card-body">
-              <i class="fas fa-database fa-5x"></i>
-              <h5 class="card-title">Bot Database</h5>
+      
+      <div class="col-md-6 col-lg-3">
+        <a href="/adminRoute/updateBotLevels" class="dashboard-card">
+          <div class="card-body">
+            <div class="card-icon">
+              <i class="bi bi-tools"></i>
             </div>
+            <h5 class="card-title">Update Bot CB</h5>
+            <p class="card-description">Manage bot combat levels</p>
           </div>
         </a>
       </div>
-      <div class="col-md-3">
-        <a href="/qcRoute">
-          <div class="card">
-            <div class="card-body">
-              <i class="fas fa-database fa-5x"></i>
-              <h5 class="card-title">Recent Kills</h5>
+      
+      <div class="col-md-6 col-lg-3">
+        <a href="/deRoute/EquipmentSets" class="dashboard-card">
+          <div class="card-body">
+            <div class="card-icon">
+              <i class="bi bi-collection"></i>
             </div>
+            <h5 class="card-title">Equipment Sets</h5>
+            <p class="card-description">Manage bot equipment sets</p>
           </div>
         </a>
       </div>
     </div>
-      <div class="row">
-      <div class="col-md-3">
-        <a href="/deRoute">
-          <div class="card">
-            <div class="card-body">
-              <i class="fas fa-chart-line fa-5x"></i>
-              <h5 class="card-title">DataEntry Dashboard</h5>
+    
+    <h3 class="section-title">System Modules</h3>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <a href="/deRoute/botList" class="dashboard-card">
+          <div class="card-body">
+            <div class="card-icon">
+              <i class="bi bi-robot"></i>
             </div>
+            <h5 class="card-title">Bot Database</h5>
+            <p class="card-description">View and manage bot records</p>
           </div>
         </a>
       </div>
-      <div class="col-md-3">
-        <a href="/qcRoute">
-          <div class="card">
-            <div class="card-body">
-              <i class="fas fa-tasks fa-5x"></i>
-              <h5 class="card-title">QualityControl Dashboard</h5>
+      
+      <div class="col-md-6 col-lg-3">
+        <a href="/qcRoute" class="dashboard-card">
+          <div class="card-body">
+            <div class="card-icon">
+              <i class="bi bi-activity"></i>
             </div>
+            <h5 class="card-title">Recent Kills</h5>
+            <p class="card-description">View recent bot kills</p>
           </div>
         </a>
       </div>
-      <div class="col-md-3">
-        <a href="/adminRoute/updateBotLevels">
-          <div class="card">
-            <div class="card-body">
-              <i class="fas fa-tasks fa-5x"></i>
-              <h5 class="card-title">Update Bot CB</h5>
+      
+      <div class="col-md-6 col-lg-3">
+        <a href="/deRoute" class="dashboard-card">
+          <div class="card-body">
+            <div class="card-icon">
+              <i class="bi bi-table"></i>
             </div>
+            <h5 class="card-title">Data Entry</h5>
+            <p class="card-description">Data entry dashboard</p>
           </div>
         </a>
       </div>
-      <div class="col-md-3">
-        <a href="/deRoute/EquipmentSets">
-          <div class="card">
-            <div class="card-body">
-              <i class="fas fa-tasks fa-5x"></i>
-              <h5 class="card-title">Equipment Sets</h5>
+      
+      <div class="col-md-6 col-lg-3">
+        <a href="/qcRoute" class="dashboard-card">
+          <div class="card-body">
+            <div class="card-icon">
+              <i class="bi bi-clipboard2-check"></i>
             </div>
+            <h5 class="card-title">Quality Control</h5>
+            <p class="card-description">Quality control dashboard</p>
           </div>
         </a>
       </div>
     </div>
   </div>
+  
+  <%- include('../partials/scripts') %>
 </body>
 </html>

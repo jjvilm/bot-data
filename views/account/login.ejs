@@ -3,12 +3,35 @@
   <head>
     <%- include('../partials/headfile') %>
     <link rel="stylesheet" href="/stylesheets/login.css" />
+    <style>
+      body {
+        background-color: var(--body-bg);
+        color: var(--text-primary);
+      }
+      .login-container {
+        background: var(--card-bg);
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .btn-login {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1.1rem;
+      }
+      .form-control, .form-floating>label {
+        color: var(--text-primary);
+      }
+      .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      }
+    </style>
   </head>
-  <body>    
-    <%- include('loginform'); %>
- 
-    <script>
-      // `<%- include("../partials/scripts.ejs"); %>`
-    </script>
+  <body class="d-flex flex-column min-vh-100">
+    <div class="flex-grow-1 d-flex align-items-center">
+      <%- include('loginform') %>
+    </div>
+    <%- include('../partials/scripts') %>
   </body>
 </html>

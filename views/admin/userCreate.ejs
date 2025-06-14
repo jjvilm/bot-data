@@ -1,42 +1,250 @@
 <!DOCTYPE html>
-<html lang="en">
-  <link rel="stylesheet" href="/stylesheets/userCreate.css">
-  <head>
-    <%- include('../partials/headfile') %>   
-  </head>
- 
-  <body>
+<html lang="en" data-bs-theme="light">
+<head>
+    <%- include('../partials/headfile') %>
+    <title>Create User | AETHERBORNE</title>
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .form-title {
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .form-label {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .form-control, .form-select {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: var(--input-bg);
+            border-color: var(--primary-color);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 0.25rem rgba(var(--primary-rgb), 0.25);
+        }
+        .btn-create {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+        }
+        .btn-create:hover {
+            background-color: var(--primary-dark);
+        }
+        .password-strength {
+            height: 4px;
+            background: var(--border-color);
+            margin-top: 0.25rem;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .strength-meter {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
     <%- include('../partials/navbar') %>
-     <div class="container">
-      <h1>Create a New User</h1>
-      <form id="user-create-form" action="/adminRoute/userCreate" method="POST">    
-        <div class="form-group">
-          <label for="username">Username:</label>
-          <input type="username" id="username" name="username" required>
+
+    <div class="container py-4 flex-grow-1">
+        <div class="form-container">
+            <h2 class="form-title">
+                <i class="bi bi-person-plus me-2"></i>Create New User
+            </h2>
+            
+            <form id="user-create-form" action="/adminRoute/userCreate" method="POST" novalidate>
+                <!-- Username Field -->
+                <div class="mb-4">
+                    <label for="username" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="username" 
+                            name="username" 
+                            required
+                            pattern="[A-Za-z0-9_]{3,20}"
+                            title="Username must be 3-20 characters long and can only contain letters, numbers, and underscores.">
+                    </div>
+                    <div class="form-text">3-20 characters, letters, numbers, and underscores only</div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-key"></i></span>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="password" 
+                            name="password" 
+                            required
+                            minlength="8"
+                            aria-describedby="passwordHelp">
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength mt-2">
+                        <div class="strength-meter" id="passwordStrength"></div>
+                    </div>
+                    <div id="passwordHelp" class="form-text">
+                        Password must be at least 8 characters long and include uppercase, lowercase, numbers, and special characters.
+                    </div>
+                </div>
+
+                <!-- Role Selection -->
+                <div class="mb-4">
+                    <label for="role" class="form-label">Role</label>
+                    <select class="form-select" id="role" name="role" required>
+                        <option value="" disabled selected>Select a role</option>
+                        <option value="DataEntry">Data Entry</option>
+                        <option value="Admin">Admin</option>
+                        <option value="QualityControl">Quality Control</option>
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="/adminRoute/userList" class="btn btn-outline-secondary me-md-2">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Users
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-create">
+                        <i class="bi bi-person-plus me-1"></i> Create User
+                    </button>
+                </div>
+            </form>
+
+            <!-- Error/Success Messages -->
+            <div id="message-container" class="mt-4"></div>
         </div>
-
-        <div class="form-group">
-          <label for="password">Password:</label>
-          <input type="password" id="password" name="password" required>
-        </div>
-
-        <div class="form-group">
-          <label for="role">Role:</label>
-          <select id="role" name="role" required>
-            <option value="" disabled selected>Select a role</option>
-            <option value="DataEntry">Data Entry</option>
-            <option value="Admin">Admin</option>
-            <option value="QualityControl">Quality Control</option>
-          </select>
-        </div>
-
-        <input type="submit" value="Create User">
-      </form>
-
-      <div id="error-message-container"></div>
     </div>
 
+    <%- include('../partials/scripts') %>
+    
     <script>
+        // Password visibility toggle
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
+
+        // Password strength meter
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthMeter = document.getElementById('passwordStrength');
+            let strength = 0;
+            
+            // Check password length
+            if (password.length >= 8) strength += 1;
+            // Check for lowercase letters
+            if (/[a-z]/.test(password)) strength += 1;
+            // Check for uppercase letters
+            if (/[A-Z]/.test(password)) strength += 1;
+            // Check for numbers
+            if (/[0-9]/.test(password)) strength += 1;
+            // Check for special characters
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            
+            // Update strength meter
+            const width = (strength / 5) * 100;
+            strengthMeter.style.width = `${width}%`;
+            
+            // Update color based on strength
+            if (strength <= 2) {
+                strengthMeter.style.backgroundColor = '#dc3545'; // Red
+            } else if (strength <= 4) {
+                strengthMeter.style.backgroundColor = '#ffc107'; // Yellow
+            } else {
+                strengthMeter.style.backgroundColor = '#198754'; // Green
+            }
+        });
+
+        // Form submission handling
+        document.getElementById('user-create-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Creating...';
+            
+            // Get form data
+            const formData = new FormData(this);
+            
+            // Send form data
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageContainer = document.getElementById('message-container');
+                messageContainer.className = 'alert';
+                
+                if (data.success) {
+                    messageContainer.classList.add('alert-success');
+                    messageContainer.innerHTML = `
+                        <i class="bi bi-check-circle me-2"></i>
+                        User created successfully! Redirecting...
+                    `;
+                    // Redirect to user list after a short delay
+                    setTimeout(() => {
+                        window.location.href = '/adminRoute/userList';
+                    }, 1500);
+                } else {
+                    messageContainer.classList.add('alert-danger');
+                    messageContainer.innerHTML = `
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        ${data.message || 'An error occurred while creating the user.'}
+                    `;
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const messageContainer = document.getElementById('message-container');
+                messageContainer.className = 'alert alert-danger';
+                messageContainer.innerHTML = `
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    An error occurred while processing your request. Please try again.
+                `;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            });
+        });
     </script>
-  </body>
+</body>
 </html>
