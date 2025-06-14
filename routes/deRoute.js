@@ -1,13 +1,24 @@
 var express = require('express');
 var router = express.Router();
 // packages used for file uploading
-const multer = require('multer');
-const upload = multer().single('csvFile'); // specify the field name of the file upload
-
 var botController = require('../controllers/botController'); 
 var equipmentController = require('../controllers/equipmentController'); 
 const authMiddleware = require('../middleware/auth');
-// var userController = require('../controllers/userController'); 
+const EventEmitter = require('events');
+
+// Create a singleton event emitter for bot hunts
+const botHuntEmitter = new EventEmitter();
+// Increase max listeners to avoid memory leak warnings
+botHuntEmitter.setMaxListeners(100);
+
+// Debug: Log when event listeners are added/removed
+botHuntEmitter.on('newListener', (event, listener) => {
+    console.log(`New listener added for event: ${event}`);
+});
+
+botHuntEmitter.on('removeListener', (event, listener) => {
+    console.log(`Listener removed for event: ${event}`);
+});
 
 // Data entry Dashboard
 router.get('/', authMiddleware.ensureAuthenticated,function (req, res, next) {
@@ -97,6 +108,121 @@ router.post('/updateEquipmentSet', authMiddleware.ensureAuthenticated, function(
    } else {
      return res.json({ success: false, message: 'Failed to update equipment set' });
    }
+});
+
+
+// Endpoint to emit new bot kill event
+router.post('/emitBotHunt', authMiddleware.ensureAuthenticated, async function(req, res, next) {
+  try {
+    const botHunt = req.body;
+    console.log('Received bot hunt data:', botHunt);
+
+    if (!botHunt || !botHunt.bot_name) {
+      console.log('Invalid bot hunt data');
+      return res.status(400).json({ error: 'Invalid bot hunt data' });
+    }
+
+    // Format the bot hunt data to match expected structure
+    const formattedBotHunt = {
+      _id: new Date().getTime().toString(), // Generate a temporary ID
+      bot_name: botHunt.bot_name,
+      combat_lv: botHunt.combat_lv || 0,
+      equipment_set_name: botHunt.equipment_set_name || '',
+      most_recent_kill: {
+        hunter_name: botHunt.hunter_name || 'Unknown',
+        world_number: botHunt.world || 'Unknown',
+        kill_date: new Date().toISOString(),
+        loot_amount: botHunt.loot_value || 0
+      }
+    };
+
+    console.log('Formatted bot hunt data:', formattedBotHunt);
+
+    // Emit the event immediately
+    botHuntEmitter.emit('newBotHunt', formattedBotHunt);
+    console.log('Event emitted');
+
+    res.status(200).json({ success: true, message: 'Event emitted successfully' });
+  } catch (error) {
+    console.error('Error emitting bot hunt:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Endpoint to get the latest bot entries
+router.get('/latestBotEntries', function(req, res, next) {
+    botController.latestBotEntries(req, res);
+});
+
+router.get("/stream", authMiddleware.ensureAuthenticated, (req, res) => {
+  console.log('New client connected to SSE stream');
+
+  // Set headers for SSE
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'X-Accel-Buffering': 'no'
+  });
+
+  // Send initial connection message
+  const connectedMsg = { type: 'connected' };
+  console.log('Sending connected message:', connectedMsg);
+  res.write(`data: ${JSON.stringify(connectedMsg)}\n\n`);
+  res.flush(); // Ensure the message is sent immediately
+
+  // Handle new bot hunt events
+  const onBotHunt = (botHunt) => {
+    try {
+      console.log('Sending bot hunt event:', botHunt);
+      res.write(`data: ${JSON.stringify(botHunt)}\n\n`);
+      res.flush(); // Ensure the message is sent immediately
+    } catch (error) {
+      console.error('Error sending bot hunt event:', error);
+    }
+  };
+
+  // Add listener for new bot hunts
+  botHuntEmitter.on('newBotHunt', onBotHunt);
+  console.log('Added event listener for newBotHunt');
+
+  // Keep the connection alive with a ping every 30 seconds
+  const pingInterval = setInterval(() => {
+    try {
+      res.write(`data: ${JSON.stringify({ type: 'ping' })}\n\n`);
+      res.flush();
+    } catch (error) {
+      console.error('Error sending ping:', error);
+      clearInterval(pingInterval);
+    }
+  }, 30000);
+
+  // Remove listener and clear interval when client disconnects
+  req.on('close', () => {
+    console.log('Client disconnected from SSE stream');
+    botHuntEmitter.removeListener('newBotHunt', onBotHunt);
+    clearInterval(pingInterval);
+  });
+
+  const sendEvent = (data) => {
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  };
+
+  // Send initial connection success
+  sendEvent({ type: 'connected' });
+
+  // Listen for new bot hunt events
+  botHuntEmitter.on('newBotHunt', sendEvent);
+
+  // Remove the listener when the client disconnects
+  req.on('close', () => {
+    botHuntEmitter.removeListener('newBotHunt', sendEvent);
+  });
+
+  // Handle client disconnection
+  req.on('end', () => {
+    botHuntEmitter.removeListener('newBotHunt', sendEvent);
+  });
 });
 
 module.exports = router;

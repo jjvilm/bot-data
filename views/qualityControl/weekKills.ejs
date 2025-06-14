@@ -2,67 +2,27 @@
 <html lang="en">
 <%- include('../partials/headfile'); %>
 <link rel="stylesheet" href="/stylesheets/botList.css" />
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bot Hunting Data</title>
-    <style>
-        .input-group-prepend .input-group-text {
-            font-size: 0.8rem;
-        }
-        .form-control {
-            font-size: 0.8rem;
-            width: 60px;
-        }
-        .filter-container {
-            display: none; /* Initially hidden */
-            position: fixed;
-            top: 120px; /* Adjusted to be below the buttons */
-            right: 10px; /* Positioned to the right */
-            z-index: 1000; /* Ensure it is above other elements */
-            background-color: white; /* Add background color */
-            padding: 10px; /* Add padding */
-            border: 1px solid #ccc; /* Add border */
-            border-radius: 5px; /* Add border radius */
-        }
-        @media (max-width: 768px) {
-            .filter-container {
-                width: 100%; /* Make it full width on smaller screens */
-                right: 0;
-                top: 120px; /* Adjust top position */
-                padding: 5px; /* Adjust padding */
-            }
-        }
-        .table th, .table td {
-            text-align: center; /* Center the contents of the table */
-        }
-        .hunter-name {
-            font-size: 0.6rem; /* Very small font size */
-            text-align: right; /* Align to the bottom-right */
-            display: block;
-            margin-top: 5px;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="/stylesheets/weekKills.css" rel="stylesheet">
 </head>
 
 <body>
     <%- include('../partials/navbar'); %>
 
-    <!-- Add your buttons here -->
-    <div class="d-flex flex-wrap justify-content-center mb-4">
-        <div class="btn-group mr-2" role="group" aria-label="Button group">
-            <a href="/deRoute/botList" class="btn btn-success" style="font-weight: bold; color: black;">All Bots</a>
-            <a href="/deRoute/topWorlds" class="btn btn-secondary" style="font-weight: bold; color: black;">World Kills</a>
-            <a href="/qcRoute/commonlyVisitedWorlds" class="btn btn-danger" style="font-weight: bold; color: black;">Top Worlds</a>
-            <a href="/deRoute/EquipmentSets" class="btn btn-dark" style="font-weight: bold; color: white;">Equipments</a>
-            <!-- Filter button -->
-            <button id="toggleFilterBtn" class="btn btn-info btn-sm">Filter</button>
+    <div class="container py-4">
+        <div class="d-flex justify-content-center">
+            <div class="btn-group" role="group" aria-label="Navigation Controls">
+                <a href="/deRoute/botList" class="btn btn-success">All Bots</a>
+                <a href="/deRoute/topWorlds" class="btn btn-secondary">World Kills</a>
+                <a href="/qcRoute/commonlyVisitedWorlds" class="btn btn-danger">Top Worlds</a>
+                <a href="/deRoute/EquipmentSets" class="btn btn-dark">Equipments</a>
+                <button id="toggleFilterBtn" class="btn btn-info">Filter</button>
+            </div>
         </div>
-    </div>
 
     <!-- Move input fields to the bottom left corner below the navbar -->
     <div class="filter-container" id="filterContainer">
@@ -84,16 +44,17 @@
     <div class="container">
         <h4 style="text-align: center;">Hunted Bots</h4>
 
-        <div class="table-responsive">
-            <table class="table table-hover" id="week-kills-table">
-                <thead>
-                    <tr>
-                        <th>Bot</th>
-                        <th>World</th>
-                        <th>Time</th>
-                        <th>Loot</th>
-                    </tr>
-                </thead>
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-hover" id="week-kills-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Bot</th>
+                            <th scope="col">World</th>
+                            <th scope="col">Time</th>
+                            <th scope="col">Loot</th>
+                        </tr>
+                    </thead>
                 <tbody id="botTableBody">
                     <!-- Placeholder for no bots message -->
                 </tbody>
@@ -131,72 +92,13 @@
                 </div>
             </div>
 
-            <%- include('../partials/weekKillsScript.ejs'); %>
+            <script src="/javascripts/weekKills.js"></script>
         </div>
         <!-- Refresh button -->
-        <div id="refreshButtonContainer" style="display: none; text-align: center; margin-top: 20px;">
+        <div id="refreshButtonContainer" style="text-align: center; margin-top: 20px;">
             <button id="refreshPageBtn" class="btn btn-success">Refresh</button>
+            <span id="connectionStatus" style="margin-left: 10px; font-weight: bold; color: #ff9800;">Connecting...</span>
         </div>
     </div>
 </body>
 </html>
-
-<script>
-    // Toggle filter container visibility
-    document.getElementById('toggleFilterBtn').addEventListener('click', function() {
-        const filterContainer = document.getElementById('filterContainer');
-        filterContainer.style.display = filterContainer.style.display === 'none' ? 'block' : 'none';
-    });
-
-    // Hide filter container when clicking outside of it
-    document.addEventListener('click', function(event) {
-        const filterContainer = document.getElementById('filterContainer');
-        const toggleFilterBtn = document.getElementById('toggleFilterBtn');
-        if (!filterContainer.contains(event.target) && !toggleFilterBtn.contains(event.target)) {
-            filterContainer.style.display = 'none';
-        }
-    });
-
-    // Filter bots when the filter button is clicked
-    document.getElementById('filterBotsBtn').addEventListener('click', function() {
-        const combatLevel = document.getElementById('combatLevelInput').value;
-        const combatRange = document.getElementById('combatRangeInput').value;
-        // Add your filtering logic here
-        // Example: filterTable(combatLevel, combatRange);
-    });
-
-    // Function to filter the table based on combat level and range
-    function filterTable(combatLevel, combatRange) {
-        const table = document.getElementById('week-kills-table');
-        const rows = table.getElementsByTagName('tr');
-        for (let i = 1; i < rows.length; i++) {
-            const cells = rows[i].getElementsByTagName('td');
-            const botCombatLevel = parseInt(cells[0].innerText);
-            if (Math.abs(botCombatLevel - combatLevel) <= combatRange) {
-                rows[i].style.display = '';
-            } else {
-                rows[i].style.display = 'none';
-            }
-        }
-    }
-
-    // Check if there are any bots to display after the DOM is fully loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        const botTableBody = document.getElementById('botTableBody');
-        const noBotsMessageContainer = document.getElementById('noBotsMessageContainer');
-        const refreshButtonContainer = document.getElementById('refreshButtonContainer');
-        const hasBots = botTableBody.children.length > 0 && botTableBody.children[0].tagName === 'TR' && botTableBody.children[0].children.length > 0;
-        if (hasBots) {
-            noBotsMessageContainer.style.display = 'none';
-            refreshButtonContainer.style.display = 'none';
-        } else {
-            noBotsMessageContainer.style.display = 'block';
-            refreshButtonContainer.style.display = 'block';
-        }
-    });
-
-    // Refresh the page when the refresh button is clicked
-    document.getElementById('refreshPageBtn').addEventListener('click', function() {
-        location.reload();
-    });
-</script>

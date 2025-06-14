@@ -4,6 +4,54 @@ document.addEventListener('DOMContentLoaded', function () {
     const rowColors = {}; // Object to store row colors by bot name
     const tableBody = document.querySelector('#week-kills-table tbody');
 
+    // Set up EventSource for real-time updates
+    let eventSource;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 5;
+    const reconnectDelay = 3000; // 3 seconds
+
+    function setupEventSource() {
+        eventSource = new EventSource('/deRoute/stream');
+
+        eventSource.onopen = function() {
+            console.log('SSE connection established');
+            reconnectAttempts = 0;
+        };
+
+        eventSource.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            console.log('Received event:', data);
+
+            if (data.type === 'connected') {
+                console.log('Successfully connected to event stream');
+                return;
+            }
+
+            // Refresh the table when new bot hunt data arrives
+            if (data.bot_name) {
+                console.log('New bot hunt received:', data);
+                fetchLatestBots();
+            }
+        };
+
+        eventSource.onerror = function(error) {
+            console.error('EventSource error:', error);
+            eventSource.close();
+
+            // Attempt to reconnect if we haven't exceeded max attempts
+            if (reconnectAttempts < maxReconnectAttempts) {
+                reconnectAttempts++;
+                console.log(`Attempting to reconnect (${reconnectAttempts}/${maxReconnectAttempts})...`);
+                setTimeout(setupEventSource, reconnectDelay);
+            } else {
+                console.error('Max reconnection attempts reached');
+            }
+        };
+    }
+
+    // Initial setup of EventSource
+    setupEventSource();
+
     // Function to set row colors
     function initializeRowColors() {
         const rows = tableBody.querySelectorAll('tr');
@@ -12,8 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const botName = row.querySelector('td:nth-child(1)')?.textContent.trim().split(' (')[0];
             const timeAgoColumnText = parseInt(row.querySelector('td:nth-child(3)')?.textContent.trim().slice(8, 12));
             const timeAgoMinColumnText = row.querySelector('td:nth-child(3)')?.textContent.trim().slice(10, 16);
-            let initialColor = 'red'; // Default color
-
+            let initialColor = 'rgba(255, 59, 48, 0.2)'; // Dark theme red
 
             if (botName === undefined) {
                 return; 
@@ -21,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             try {
                 if (timeAgoColumnText < 10 && timeAgoMinColumnText.includes("min")) {
-                    initialColor = 'green';
+                    initialColor = 'rgba(52, 199, 89, 0.2)'; // Dark theme green
                 } 
 
             } catch (error) {
@@ -35,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Add click event listener to all cells
             row.querySelectorAll('td').forEach(cell => {
                 cell.addEventListener('click', function () {
-                    const newColor = row.style.backgroundColor === 'green' ? 'red' : 'green';
+                    const newColor = row.style.backgroundColor.includes('rgba(52, 199, 89, 0.2)') ? 'rgba(255, 59, 48, 0.2)' : 'rgba(52, 199, 89, 0.2)';
                     row.style.backgroundColor = newColor;
 
                     if (botName) {
@@ -50,7 +97,11 @@ document.addEventListener('DOMContentLoaded', function () {
     async function fetchLatestBots() {
         try {
             const response = await fetch('/qcRoute/latest-bots');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const bots = await response.json();
+            console.log('Fetched latest bots:', bots);
 
             // Clear the existing table rows
             tableBody.innerHTML = '';

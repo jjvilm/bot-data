@@ -1,0 +1,193 @@
+:root {
+    --primary-bg: #1a1d21;
+    --card-bg: #242830;
+    --text-primary: #e9ecef;
+    --text-secondary: #adb5bd;
+    --border-color: #2d3238;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
+    --radius-lg: 12px;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --hover-bg: #2a2f38;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--primary-bg);
+    min-height: 100vh;
+    padding-bottom: var(--spacing-lg);
+    color: var(--text-primary);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+.btn-group {
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn-group .btn {
+    border-radius: var(--radius-lg);
+    padding: 0.625rem 1.25rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.5px;
+    margin: 0.25rem;
+    border: none;
+}
+
+.btn-group .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.filter-container {
+    display: none;
+    position: fixed;
+    bottom: var(--spacing-lg);
+    right: var(--spacing-lg);
+    z-index: 1000;
+    background-color: var(--card-bg);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    width: 300px;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+}
+
+.input-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.input-group-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    background-color: #343a40;
+    color: white;
+    border: none;
+    padding: 0.625rem 1rem;
+}
+
+.form-control {
+    font-size: 0.875rem;
+    border: 1px solid var(--border-color);
+    padding: 0.625rem;
+    width: 80px;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 3px rgba(13,110,253,0.15);
+    border-color: #0d6efd;
+}
+
+.table-container {
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    background-color: var(--card-bg);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: var(--spacing-md);
+    border-bottom: 2px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.table td {
+    padding: var(--spacing-md);
+    font-size: 0.875rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.table td a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.table td a:hover {
+    color: #0d6efd;
+    text-decoration: underline;
+}
+
+.hunter-name {
+    color: var(--text-secondary);
+    font-size: 0.8125rem;
+}
+
+.hunter-name a {
+    color: var(--text-secondary);
+}
+
+.hunter-name a:hover {
+    color: #0d6efd;
+}
+
+.table tbody tr:hover {
+    background-color: var(--hover-bg);
+}
+
+.modal-content {
+    border-radius: var(--radius-lg);
+    border: none;
+    box-shadow: var(--shadow-md);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+#refreshPageBtn {
+    margin-top: var(--spacing-lg);
+    padding: 0.75rem 2rem;
+    border-radius: var(--radius-lg);
+}
+
+@media (max-width: 768px) {
+    .filter-container {
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        padding: var(--spacing-md);
+    }
+
+    .table-container {
+        padding: var(--spacing-sm);
+    }
+
+    .table th, .table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8125rem;
+    }
+
+    .btn-group .btn {
+        flex: 1 1 auto;
+        min-width: 140px;
+        font-size: 0.8125rem;
+        padding: 0.5rem 1rem;
+    }
+}

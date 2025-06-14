@@ -1,100 +1,91 @@
 const Bot = require('../models/bot');
-const excel = require('exceljs');
-// packages used for importing data
-const csv = require('csv-parser');
-const fs = require('fs');
 const moment = require('moment'); // Import moment for date manipulation
 const { NONAME } = require('dns');
 const axios = require('axios');
 
-const PAGE_SIZE = 10;
-let currentPage = 0;
-
-// methods for importing data
-exports.importCsv = async function(req, res) {
-  // Open and parse the CSV file
-  const results = [];
-  if (req.file) {
-    fs.createReadStream(req.file.path)
-      .pipe(csv())
-      .on('data', (data) => results.push(data))
-      .on('end', async () => {
-        // Map the CSV data to Bot model fields
-        const bots = results.map((row) => {
-          return {
-            creatorId: row.creatorId,
-            creatorName: row.creatorName,
-            firstName: row.firstName,
-            lastName: row.lastName,
-            birthdate: row.birthdate,
-            zipcode: row.zipcode,
-            state: row.state,
-            phoneNumber: row.phoneNumber,
-            createDate: row.createDate,
-            insuranceType: row.insuranceType,
-            testType: row.testType,
-            doctorService: row.doctorService,
-            labName: row.labName,
-            sampleStatus: row.sampleStatus
-          };
-        });
-
-        // Save each bot to the database
-        for (let botData of bots) {
-          const bot = new Bot(botData);
-          await bot.save();
-        }
-
-        // Redirect to the bot list page
-        res.redirect('/deRoute/botList');
-      });
-  } else {
-    res.redirect('/deRoute/importCsv');
+// API endpoint to get eligible bots (combat level 0 and not banned)
+exports.getEligibleBotsApi = async function(req, res) {
+  try {
+    const eligibleBots = await Bot.find({ 
+      combat_lv: 0,
+      status: { $ne: 'BANNED' }
+    })
+    .select('_id bot_name combat_lv status alias')
+    .sort({ bot_name: 1 })
+    .lean();
+    
+    res.json(eligibleBots);
+  } catch (error) {
+    console.error('Error fetching eligible bots:', error);
+    res.status(500).json({ success: false, message: 'Error fetching eligible bots' });
   }
 };
 
-
-// Methods for exporting data
-exports.exportExcel = async function(req, res) {
-  const workbook = new excel.Workbook();
-  const worksheet = workbook.addWorksheet('Bots');
-
-  let bots = await Bot.find({});
-  worksheet.columns = [
-    { header: 'Bot Name', key: 'bot_name', width: 10 },
-    { header: 'Combat Level', key: 'combat_lv', width: 10 },
-    { header: 'Comments', key: 'comments', width: 10 },
-  ]
-  worksheet.addRows(bots);
-
-  res.setHeader(
-    'Content-Type',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  );
-  res.setHeader(
-    'Content-Disposition',
-    'attachment; filename=' + 'knownBots.xlsx',
-  );
-  return workbook.xlsx.write(res).then(function() {
-    res.status(200).end();
-  });
+// Get eligible bots for combat level update (combat_lv === 0 and status !== 'BANNED')
+exports.getEligibleBots = async function(req, res, next) {
+  try {
+    const eligibleBots = await Bot.find({ 
+      combat_lv: 0,
+      status: { $ne: 'BANNED' }
+    }).sort({ bot_name: 1 });
+    
+    // If called from a route that renders a view
+    if (res.render) {
+      res.render('admin/updateBotCombat', { 
+        eligibleBots,
+        title: 'Update Bot Combat Level'
+      });
+    } else {
+      // If called as a helper function
+      return eligibleBots;
+    }
+  } catch (error) {
+    console.error('Error fetching eligible bots:', error);
+    if (res.status) {
+      res.status(500).json({ success: false, message: 'Error fetching eligible bots' });
+    }
+    return [];
+  }
 };
 
-exports.exportCsv = async function(req, res) {
-  let bots = await Bot.find({});
+// Update bot combat level and add alias
+exports.updateBotCombatAndAlias = async function(req, res) {
+  try {
+    const { selectedBotId, searchedNameToAlias, newCombatLevel } = req.body;
+    
+    if (!selectedBotId || !searchedNameToAlias || !newCombatLevel) {
+      req.flash('error_msg', 'Missing required fields');
+      return res.redirect('/admin/update-bot-combat');
+    }
 
-  let csv = 'Bot Name, Combat Level, Comments\r\n';
-  bots.forEach((bot) => {
-    csv += bot.bot_name + ',';
-    csv += bot.combat_lv + ',';
-    csv += bot.comments + '\r\n';
-  })
+    const bot = await Bot.findById(selectedBotId);
+    if (!bot) {
+      req.flash('error_msg', 'Bot not found');
+      return res.redirect('/admin/update-bot-combat');
+    }
 
-  res.header('Content-Type', 'text/csv');
-  res.attachment('bots.csv');
-  return res.send(csv);
+    // Add the new alias if it doesn't exist
+    if (!bot.alias.includes(searchedNameToAlias)) {
+      bot.alias.push(searchedNameToAlias);
+    }
+
+    // Update combat level
+    bot.combat_lv = parseInt(newCombatLevel, 10);
+    
+    await bot.save();
+    
+    req.flash('success_msg', `Successfully updated ${bot.bot_name} - Added alias: ${searchedNameToAlias}, Set combat level: ${newCombatLevel}`);
+    res.redirect('/admin/update-bot-combat');
+  } catch (error) {
+    console.error('Error updating bot combat and alias:', error);
+    req.flash('error_msg', 'Error updating bot. Please try again.');
+    res.redirect('/admin/update-bot-combat');
+  }
 };
 
+// Constants for pagination
+const PAGE_SIZE = 10;
+let currentPage = 0;
 
 // Bot Model methods
 exports.create = async function(req, res) {
@@ -436,6 +427,34 @@ exports.getRecentKillsData = async function () {
   }
 };
 
+// Method to get recent kills data without sending a response
+exports.latestBotEntries = async function (req, res) {
+  try {
+    const recentKills = await fetchRecentKills(7, 'days');
+    console.log("Getting latest bot entries");
+    
+    // Format the kills data for the table
+    const formattedKills = recentKills.slice(0, 10).map(kill => ({
+      _id: kill._id,
+      bot_name: kill.bot_name,
+      combat_lv: kill.combat_lv || 0,
+      equipment_set_name: kill.equipment_set_name || '',
+      most_recent_kill: {
+        hunter_name: kill.hunter_name || 'Unknown',
+        world_number: kill.world || 'Unknown',
+        kill_date: kill.createdAt,
+        loot_amount: kill.loot_value || 0
+      }
+    }));
+
+    console.log('Formatted kills:', formattedKills);
+    res.json(formattedKills);
+  } catch (error) {
+    console.error('Error getting recent kills data:', error);
+    res.status(500).json({ error: 'Failed to fetch latest kills' });
+  }
+};
+
 // Used for the kills frequencies per world
 exports.getTopWorlds = async function (req, res) {
   try {
@@ -607,14 +626,19 @@ function calculateCombatLevel({ Attack, Defence, Strength, Hitpoints, Ranged, Pr
 }
 
 // Main function to get player's combat level
-async function getPlayerCombatLevel(playerName) {
-  const skills = await getPlayerSkills(playerName);
-  if (skills === 0) {
-    return 0; // Return 0 if unable to fetch skills
+exports.getPlayerCombatLevel = async function(playerName) {
+  try {
+    const skills = await getPlayerSkills(playerName);
+    if (!skills || skills === 0) {
+      return null; // Return null if unable to fetch skills
+    }
+    
+    const combatLevel = calculateCombatLevel(skills);
+    return combatLevel;
+  } catch (error) {
+    console.error('Error in getPlayerCombatLevel:', error);
+    return null;
   }
-  
-  const combatLevel = calculateCombatLevel(skills);
-  return combatLevel;
 }
 
 
@@ -717,11 +741,6 @@ exports.updateRecentKilledBotsCBLevel = async function (req, res) {
     // Render the table with bots whose combat level is 0
     res.render('../views/admin/updateBotCombat', { botsWithZeroCombatLevel});
 
-    // Send updated recent kills as a response
-    // res.status(200).json({
-    //   message: "Combat levels updated successfully",
-    //   recentKills: recentKills
-    // });
   } catch (error) {
     console.error('Error updating recent kills data:', error);
     res.status(500).json({

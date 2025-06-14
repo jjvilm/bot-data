@@ -132,3 +132,7 @@ dist
 
 # breakpoints created by replit
 .breakpoint
+
+# Docker 
+.dockerignore
+Dockerfile

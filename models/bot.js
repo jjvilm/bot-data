@@ -39,9 +39,13 @@ const BotSchema = new Schema({
     unique: true, // Each bot_name should be unique
   },
   alias: {
+    type: [String],
+    default: []
+  },
+  status: {
     type: String,
-    required: false,
-    unique: true, // Each alias should be unique
+    enum: ['ACTIVE', 'BANNED'],
+    default: 'ACTIVE'
   },
   combat_lv: {
     type: Number,

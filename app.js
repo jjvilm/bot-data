@@ -45,6 +45,12 @@ app.use(session({
   secret: 'devkey',
   resave: true,
   saveUninitialized: true,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
+    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+    httpOnly: true // Protects against XSS attacks
+  },
+  rolling: true // Reset the maxAge on every request
 }));
 
 app.use(passport.initialize());
