@@ -152,52 +152,85 @@
           </button>
         </div>
         <div class="card-body text-center">
-          <div class="equipment-grid mb-4">
-            <!-- Row 1 -->
-            <div></div>
+          <div class="equipment-builder">
+            <!-- Row 1: Head -->
+            <div class="empty-slot"></div>
             <div class="equipment-slot" onclick="findItem('head')" title="Head">
-              <img id="head-img" src="/images/Bank_filler.png" alt="Head">
+              <img id="head-img" src="/images/Bank_filler.png" alt="Head" class="img-fluid">
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                Head
+              </span>
             </div>
-            <div></div>
+            <div class="empty-slot"></div>
             
-            <!-- Row 2 -->
+            <!-- Row 2: Cape, Neck, Ammo -->
             <div class="equipment-slot" onclick="findItem('cape')" title="Cape">
-              <img id="cape-img" src="/images/Bank_filler.png" alt="Cape">
+              <img id="cape-img" src="/images/Bank_filler.png" alt="Cape" class="img-fluid">
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                Cape
+              </span>
             </div>
             <div class="equipment-slot" onclick="findItem('neck')" title="Neck">
-              <img id="neck-img" src="/images/Bank_filler.png" alt="Neck">
+              <img id="neck-img" src="/images/Bank_filler.png" alt="Neck" class="img-fluid">
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                Neck
+              </span>
             </div>
             <div class="equipment-slot" onclick="findItem('ammunition')" title="Ammunition">
-              <img id="ammunition-img" src="/images/Bank_filler.png" alt="Ammunition">
+              <img id="ammunition-img" src="/images/Bank_filler.png" alt="Ammunition" class="img-fluid">
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                Ammo
+              </span>
             </div>
             
-            <!-- Row 3 -->
+            <!-- Row 3: Weapon, Body, Shield -->
             <div class="equipment-slot" onclick="findItem('left_hand')" title="Left Hand">
-              <img id="left_hand-img" src="/images/Bank_filler.png" alt="Left Hand">
+              <img id="left_hand-img" src="/images/Bank_filler.png" alt="Left Hand" class="img-fluid">
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                Weapon
+              </span>
             </div>
-            <div class="equipment-slot" onclick="findItem('torso')" title="Torso">
-              <img id="torso-img" src="/images/Bank_filler.png" alt="Torso">
+            <div class="equipment-slot" onclick="findItem('torso')" title="Body">
+              <img id="torso-img" src="/images/Bank_filler.png" alt="Body" class="img-fluid">
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                Body
+              </span>
             </div>
             <div class="equipment-slot" onclick="findItem('right_hand')" title="Right Hand">
-              <img id="right_hand-img" src="/images/Bank_filler.png" alt="Right Hand">
+              <img id="right_hand-img" src="/images/Bank_filler.png" alt="Shield" class="img-fluid">
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                Shield
+              </span>
             </div>
             
-            <!-- Row 4 -->
-            <div></div>
+            <!-- Row 4: Legs -->
+            <div class="empty-slot"></div>
             <div class="equipment-slot" onclick="findItem('legs')" title="Legs">
-              <img id="legs-img" src="/images/Bank_filler.png" alt="Legs">
+              <img id="legs-img" src="/images/Bank_filler.png" alt="Legs" class="img-fluid">
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                Legs
+              </span>
             </div>
-            <div></div>
+            <div class="empty-slot"></div>
             
-            <!-- Row 5 -->
-            <div class="equipment-slot" onclick="findItem('hands')" title="Hands">
-              <img id="hands-img" src="/images/Bank_filler.png" alt="Hands">
+            <!-- Row 5: Gloves, Boots, Ring -->
+            <div class="equipment-slot" onclick="findItem('hands')" title="Gloves">
+              <img id="hands-img" src="/images/Bank_filler.png" alt="Gloves" class="img-fluid">
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                Gloves
+              </span>
             </div>
-            <div class="equipment-slot" onclick="findItem('feet')" title="Feet">
-              <img id="feet-img" src="/images/Bank_filler.png" alt="Feet">
+            <div class="equipment-slot" onclick="findItem('feet')" title="Boots">
+              <img id="feet-img" src="/images/Bank_filler.png" alt="Boots" class="img-fluid">
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                Boots
+              </span>
             </div>
-            <div class="equipment-slot" onclick="findItem('jewelry')" title="Jewelry">
-              <img id="jewelry-img" src="/images/Bank_filler.png" alt="Jewelry">
+            <div class="equipment-slot" onclick="findItem('jewelry')" title="Ring">
+              <img id="jewelry-img" src="/images/Bank_filler.png" alt="Ring" class="img-fluid">
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                Ring
+              </span>
             </div>
           </div>
           
@@ -305,7 +338,9 @@
 <!-- Include scripts partial which contains Bootstrap JS and other common scripts -->
 <%- include('../partials/scripts') %>
 
+
 <!-- Page-specific scripts -->
+<script src="/javascripts/equipmentSetManager.js"></script>
 <script>
 // Initialize tooltips
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

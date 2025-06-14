@@ -26,13 +26,15 @@ exports.createEquipmentSet= async function(req, res) {
     }
   };
   exports.getEquipmentSets = async function(req, res) {
+    console.log('Fetching all equipment sets');
     try {
       const EquipmentSets = await Equipment.find({});
+      console.log(`Found ${EquipmentSets.length} equipment sets`);
       res.json(EquipmentSets);
     } catch (err) {
-      console.log(err);
+      console.error('Error fetching equipment sets:', err);
+      res.status(500).json({ error: 'Failed to fetch equipment sets', details: err.message });
     }
-    
   };
 
 exports.getEquipmentSetByName = async function(req, res) {
