@@ -382,7 +382,7 @@ function createEquipmentSetElement(set) {
     const cardBody = document.createElement('div');
     cardBody.className = 'card-body p-2';
     
-    // Create header row with flex layout
+    // Create header row with just the set name
     const headerRow = document.createElement('div');
     headerRow.className = 'd-flex justify-content-between align-items-center mb-2 p-1';
     headerRow.style.minHeight = '32px'; // Ensure consistent height
@@ -391,44 +391,9 @@ function createEquipmentSetElement(set) {
     setName.className = 'card-title mb-0';
     setName.textContent = set.set_name || 'Unnamed Set';
     
-    // Add edit and delete buttons
-    // Create button container with flex layout
-    const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'd-flex gap-1';
-    
-    // Create edit button
-    const editBtn = document.createElement('button');
-    editBtn.className = 'btn btn-sm btn-outline-primary p-1';
-    editBtn.style.width = '24px';
-    editBtn.style.height = '24px';
-    editBtn.style.display = 'flex';
-    editBtn.style.alignItems = 'center';
-    editBtn.style.justifyContent = 'center';
-    editBtn.innerHTML = '<i class="bi bi-pencil" style="font-size: 0.75rem;"></i>';
-    editBtn.title = 'Edit';
-    editBtn.onclick = (e) => { e.stopPropagation(); editEquipmentSet(set); };
-    
-    // Create delete button
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'btn btn-sm btn-outline-danger p-1';
-    deleteBtn.style.width = '24px';
-    deleteBtn.style.height = '24px';
-    deleteBtn.style.display = 'flex';
-    deleteBtn.style.alignItems = 'center';
-    deleteBtn.style.justifyContent = 'center';
-    deleteBtn.innerHTML = '<i class="bi bi-trash" style="font-size: 0.75rem;"></i>';
-    deleteBtn.title = 'Delete';
-    deleteBtn.onclick = (e) => { e.stopPropagation(); deleteEquipmentSet(set._id); };
-    
-    // Add buttons to container
-    buttonContainer.appendChild(editBtn);
-    buttonContainer.appendChild(deleteBtn);
-    
-    // Add elements to header row
+    // Add set name to header row
     headerRow.appendChild(setName);
-    headerRow.appendChild(buttonContainer);
     
-    // Create slots grid
     const slotsGrid = document.createElement('div');
     slotsGrid.className = 'equipment-set-slots';
     
@@ -494,22 +459,52 @@ function createEquipmentSetElement(set) {
         slotsGrid.appendChild(slotItem);
     });
     
-    // Note: Buttons are already added to buttonContainer and headerRow above
-    // No need to append them again here
-    
-    // Create footer with load button
+    // Create footer with buttons
     const footer = document.createElement('div');
-    footer.className = 'card-footer bg-transparent border-top-0';
+    footer.className = 'card-footer bg-transparent border-top-0 px-1 py-1 d-flex flex-column gap-1';
     
+    // Create load button (full width)
     const loadButton = document.createElement('button');
-    loadButton.className = 'load-set-btn w-100';
-    loadButton.innerHTML = '<i class="bi bi-arrow-left-circle"></i> Load to Builder';
+    loadButton.className = 'btn btn-primary w-100 py-0';
+    loadButton.style.fontSize = '0.7rem';
+    loadButton.style.lineHeight = '1.2';
+    loadButton.innerHTML = '<i class="bi bi-arrow-left-circle" style="margin-right: 0.1rem; font-size: 0.8em; position: relative; top: -0.05em;"></i>Load to Builder';
     loadButton.onclick = (e) => {
         e.stopPropagation();
         loadSetToBuilder(set);
     };
     
+    // Create button container for action buttons (edit/delete)
+    const actionButtons = document.createElement('div');
+    actionButtons.className = 'd-flex w-100 gap-1';
+    
+    // Create edit button (half width)
+    const editBtn = document.createElement('button');
+    editBtn.className = 'btn btn-outline-primary btn-sm flex-fill py-0';
+    editBtn.style.fontSize = '0.65rem';
+    editBtn.style.lineHeight = '1.1';
+    editBtn.style.padding = '0.15rem 0.3rem';
+    editBtn.innerHTML = '<i class="bi bi-pencil" style="margin-right: 0.05rem; font-size: 0.8em; position: relative; top: -0.05em;"></i>Edit';
+    editBtn.title = 'Edit';
+    editBtn.onclick = (e) => { e.stopPropagation(); editEquipmentSet(set); };
+    
+    // Create delete button (half width)
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-outline-danger btn-sm flex-fill py-0';
+    deleteBtn.style.fontSize = '0.65rem';
+    deleteBtn.style.lineHeight = '1.1';
+    deleteBtn.style.padding = '0.15rem 0.3rem';
+    deleteBtn.innerHTML = '<i class="bi bi-trash" style="margin-right: 0.05rem; font-size: 0.8em; position: relative; top: -0.05em;"></i>Delete';
+    deleteBtn.title = 'Delete';
+    deleteBtn.onclick = (e) => { e.stopPropagation(); deleteEquipmentSet(set._id); };
+    
+    // Add buttons to action container
+    actionButtons.appendChild(editBtn);
+    actionButtons.appendChild(deleteBtn);
+    
+    // Add elements to footer
     footer.appendChild(loadButton);
+    footer.appendChild(actionButtons);
     
     // Add elements to card body
     cardBody.appendChild(headerRow);
