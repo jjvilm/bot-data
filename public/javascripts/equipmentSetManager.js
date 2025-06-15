@@ -153,6 +153,8 @@ function clearOldCaches() {
 
 // Function to clear all equipment slots
 window.clearAllSlots = function() {
+    
+    
     console.log('clearAllSlots function called');
     
     // Define all equipment slots
@@ -168,25 +170,15 @@ window.clearAllSlots = function() {
         
         console.log(`Processing slot: ${slot}`, { imgElement, inputElement });
         
-        // Reset the image to default
+        // Reset the image source to default
         if (imgElement) {
-            console.log(`Before clear - src: ${imgElement.src}, alt: ${imgElement.alt}`);
-            
-            // Set the source to the default image directly
             imgElement.src = '/images/Bank_filler.png';
-            imgElement.alt = 'Empty Slot';
-            
-            // Reset any visual states
             imgElement.style.opacity = '1';
             imgElement.style.filter = 'none';
-            imgElement.style.border = '';
+            console.log(`Reset image for slot: ${slot}`);
             
-            // Clear data attributes
+            // Remove any stored item name
             imgElement.removeAttribute('data-item-name');
-            imgElement.removeAttribute('data-item-url');
-            
-            console.log(`After clear - src: ${imgElement.src}, alt: ${imgElement.alt}`);
-            console.log(`Cleared slot: ${slot}`);
         } else {
             console.warn(`Image element not found for slot: ${slot}`);
         }
@@ -207,9 +199,102 @@ window.clearAllSlots = function() {
     document.body.offsetHeight;
 };
 
+// Function to handle slot left clicks
+async function handleSlotLeftClick(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    
+    const slot = event.currentTarget;
+    const slotName = slot.getAttribute('data-slot');
+    const imgElement = document.getElementById(`${slotName}-img`);
+    
+    const itemName = prompt(`Enter item name for ${slotName.replace('_', ' ')}:`);
+    if (!itemName || !itemName.trim()) return;
+    
+    // Format the item name (capitalize first letter, replace spaces with underscores)
+    const formattedName = formatItemName(itemName);
+    const wikiImageUrl = `https://oldschool.runescape.wiki/images/${formattedName}.png`;
+    const cacheKey = `equip-${formattedName}`;
+    
+    console.log(`Looking up item: ${formattedName}`);
+    
+    // Check local storage first
+    const cachedImage = getCachedImage(cacheKey);
+    if (cachedImage) {
+        console.log('Found in cache');
+        imgElement.src = cachedImage;
+        imgElement.setAttribute('data-item-name', formattedName);
+        showToast(`Set ${slotName} to ${formattedName.replace(/_/g, ' ')}`, 'success');
+        return;
+    }
+    
+    // If not in cache, try to load from OSRS Wiki
+    showToast(`Fetching image for ${formattedName}...`, 'info');
+    
+    try {
+        // Check if image exists on wiki
+        const imageExists = await checkImageExists(wikiImageUrl);
+        if (imageExists) {
+            // Cache the image for future use
+            await cacheImage(cacheKey, wikiImageUrl);
+            
+            // Update the image source
+            imgElement.src = wikiImageUrl;
+            imgElement.setAttribute('data-item-name', formattedName);
+            showToast(`Set ${slotName} to ${formattedName.replace(/_/g, ' ')}`, 'success');
+        } else {
+            throw new Error('Image not found on wiki');
+        }
+    } catch (error) {
+        console.error('Error loading image:', error);
+        showToast(`Could not find image for: ${formattedName.replace(/_/g, ' ')}`, 'warning');
+    }
+}
+
+// Function to handle slot right clicks
+function handleSlotRightClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const slot = event.currentTarget;
+    const slotName = slot.getAttribute('data-slot');
+    const imgElement = document.getElementById(`${slotName}-img`);
+    
+    imgElement.src = '/images/Bank_filler.png';
+    imgElement.removeAttribute('data-item-name');
+    showToast(`Reset ${slotName} to default`, 'info');
+    
+    return false;
+}
+
+// Initialize equipment builder slots
+function initEquipmentBuilder() {
+    const slots = document.querySelectorAll('.equipment-slot');
+    slots.forEach(slot => {
+        // Clear any existing event listeners by cloning the element
+        const newSlot = slot.cloneNode(true);
+        slot.parentNode.replaceChild(newSlot, slot);
+        
+        // Add new event listeners
+        newSlot.addEventListener('click', handleSlotLeftClick);
+        newSlot.addEventListener('contextmenu', handleSlotRightClick);
+    });
+    
+    // Fix for Clear All button
+    const clearButton = document.querySelector('[onclick*="clearAllSlots"]');
+    if (clearButton) {
+        const newButton = clearButton.cloneNode(true);
+        clearButton.parentNode.replaceChild(newButton, clearButton);
+        newButton.onclick = clearAllSlots;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Clear old caches on load
     clearOldCaches();
+    
+    // Initialize equipment builder
+    initEquipmentBuilder();
     
     // Load equipment sets when the page loads
     loadEquipmentSets();
