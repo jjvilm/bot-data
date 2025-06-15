@@ -3,6 +3,34 @@ const moment = require('moment'); // Import moment for date manipulation
 const { NONAME } = require('dns');
 const axios = require('axios');
 
+// Search bots by name or alias
+exports.searchBots = async function(req, res) {
+  try {
+    const searchTerm = req.query.q || '';
+    
+    if (!searchTerm || searchTerm.length < 2) {
+      return res.json([]);
+    }
+    
+    const regex = new RegExp(searchTerm, 'i');
+    
+    const bots = await Bot.find({
+      $or: [
+        { bot_name: { $regex: regex } },
+        { alias: { $regex: regex } }
+      ]
+    })
+    .select('_id bot_name alias combat_lv status')
+    .limit(10)
+    .lean();
+    
+    res.json(bots);
+  } catch (error) {
+    console.error('Error searching bots:', error);
+    res.status(500).json({ success: false, message: 'Error searching bots' });
+  }
+};
+
 // API endpoint to get eligible bots (combat level 0 and not banned)
 exports.getEligibleBotsApi = async function(req, res) {
   try {
