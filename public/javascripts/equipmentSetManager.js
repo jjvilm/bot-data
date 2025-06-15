@@ -417,6 +417,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (setSelect) {
         setSelect.addEventListener('change', updateApplyButtonState);
     }
+    
+    // Handle apply button click
+    const applyButton = document.getElementById('apply-button');
+    if (applyButton) {
+        applyButton.addEventListener('click', applyEquipmentSetToBot);
+    }
 });
 
 // Function to load equipment sets from the server
@@ -460,13 +466,21 @@ async function loadEquipmentSets() {
     }
 }
 
-// Function to render equipment sets in the UI
+// Function to render equipment sets in the UI and populate the dropdown
 function renderEquipmentSets(equipmentSets) {
     const setsContainer = document.getElementById('equipment-sets-container');
+    const setSelect = document.getElementById('set-select');
+    
     if (!setsContainer) return;
     
-    // Clear existing content
+    // Clear existing content in both container and dropdown
     setsContainer.innerHTML = '';
+    if (setSelect) {
+        // Keep the first "Select a set..." option and remove the rest
+        while (setSelect.options.length > 1) {
+            setSelect.remove(1);
+        }
+    }
     
     if (equipmentSets.length === 0) {
         setsContainer.innerHTML = '<p class="text-muted">No equipment sets found.</p>';
@@ -477,13 +491,26 @@ function renderEquipmentSets(equipmentSets) {
     const row = document.createElement('div');
     row.className = 'equipment-grid';
     
-    // Add each equipment set to the grid
+    // Add each equipment set to the grid and dropdown
     equipmentSets.forEach(set => {
         const setElement = createEquipmentSetElement(set);
         row.appendChild(setElement);
+        
+        // Add to dropdown if it exists
+        if (setSelect) {
+            const option = document.createElement('option');
+            option.value = set._id;
+            option.textContent = set.name;
+            setSelect.appendChild(option);
+        }
     });
     
     setsContainer.appendChild(row);
+    
+    // Enable the set select if it was disabled and we have sets
+    if (setSelect && equipmentSets.length > 0) {
+        setSelect.disabled = false;
+    }
 }
 
 // Function to create an equipment set element
@@ -961,6 +988,65 @@ function startEditingSetName(set, nameElement, container, editNameBtn) {
     container.insertBefore(saveBtn, container.firstChild.nextSibling);
     input.focus();
     input.select();
+}
+
+// Function to apply an equipment set to a bot
+async function applyEquipmentSetToBot() {
+    const botSelect = document.getElementById('bot-select');
+    const setSelect = document.getElementById('set-select');
+    const applyButton = document.getElementById('apply-button');
+    
+    if (!botSelect || !setSelect || !applyButton) return;
+    
+    const botId = botSelect.value;
+    const setId = setSelect.value;
+    
+    if (!botId || !setId) {
+        showToast('Please select both a bot and an equipment set', 'error');
+        return;
+    }
+    
+    try {
+        // Disable the button to prevent multiple clicks
+        applyButton.disabled = true;
+        applyButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Applying...';
+        
+        const response = await fetch('/deRoute/applyEquipmentSetToBot', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                botId,
+                equipmentSetId: setId
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to apply equipment set to bot');
+        }
+        
+        const result = await response.json();
+        showToast(`Successfully applied equipment set to ${result.botName || 'bot'}`, 'success');
+        
+        // Reset the form
+        document.getElementById('bot-search').value = '';
+        botSelect.value = '';
+        setSelect.value = '';
+        setSelect.disabled = true;
+        applyButton.disabled = true;
+        
+    } catch (error) {
+        console.error('Error applying equipment set to bot:', error);
+        showToast(error.message || 'An error occurred while applying the equipment set', 'error');
+    } finally {
+        // Re-enable the button and reset its text
+        if (applyButton) {
+            applyButton.disabled = !(botSelect.value && setSelect.value);
+            applyButton.innerHTML = '<i class="bi bi-save"></i> Apply';
+        }
+    }
 }
 
 // Function to update set name via API
