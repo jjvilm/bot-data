@@ -484,7 +484,7 @@ function createEquipmentSetElement(set) {
     editBtn.style.fontSize = '0.65rem';
     editBtn.style.lineHeight = '1.1';
     editBtn.style.padding = '0.15rem 0.3rem';
-    editBtn.innerHTML = '<i class="bi bi-pencil" style="margin-right: 0.05rem; font-size: 0.8em; position: relative; top: -0.05em;"></i>Edit';
+    editBtn.innerHTML = '<i class="bi bi-pencil" style="margin-right: 0.02rem; font-size: 0.8em; position: relative; top: -0.05em;"></i>Edit';
     editBtn.title = 'Edit';
     editBtn.onclick = (e) => { e.stopPropagation(); editEquipmentSet(set); };
     
