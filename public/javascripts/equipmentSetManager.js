@@ -497,10 +497,10 @@ function renderEquipmentSets(equipmentSets) {
         row.appendChild(setElement);
         
         // Add to dropdown if it exists
-        if (setSelect) {
+        if (setSelect && set.set_name) {
             const option = document.createElement('option');
             option.value = set._id;
-            option.textContent = set.name;
+            option.textContent = set.set_name || `Unnamed Set (${set._id.substring(0, 6)}...)`;
             setSelect.appendChild(option);
         }
     });
@@ -995,11 +995,13 @@ async function applyEquipmentSetToBot() {
     const botSelect = document.getElementById('bot-select');
     const setSelect = document.getElementById('set-select');
     const applyButton = document.getElementById('apply-button');
+    const botSearch = document.getElementById('bot-search');
     
-    if (!botSelect || !setSelect || !applyButton) return;
+    if (!botSelect || !setSelect || !applyButton || !botSearch) return;
     
     const botId = botSelect.value;
     const setId = setSelect.value;
+    const botName = botSearch.value.split(' - ')[0]; // Extract just the bot name from the display text
     
     if (!botId || !setId) {
         showToast('Please select both a bot and an equipment set', 'error');
@@ -1011,7 +1013,7 @@ async function applyEquipmentSetToBot() {
         applyButton.disabled = true;
         applyButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Applying...';
         
-        const response = await fetch('/deRoute/applyEquipmentSetToBot', {
+        const response = await fetch('/api/apply-equipment-set', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1022,16 +1024,18 @@ async function applyEquipmentSetToBot() {
             })
         });
         
+        const result = await response.json();
+        
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to apply equipment set to bot');
+            throw new Error(result.message || 'Failed to apply equipment set to bot');
         }
         
-        const result = await response.json();
-        showToast(`Successfully applied equipment set to ${result.botName || 'bot'}`, 'success');
+        // Show success message with the bot name and equipment set name
+        const successMessage = `Successfully applied "${result.equipmentSetName}" to ${botName || 'bot'}`;
+        showToast(successMessage, 'success');
         
         // Reset the form
-        document.getElementById('bot-search').value = '';
+        botSearch.value = '';
         botSelect.value = '';
         setSelect.value = '';
         setSelect.disabled = true;
@@ -1041,9 +1045,11 @@ async function applyEquipmentSetToBot() {
         console.error('Error applying equipment set to bot:', error);
         showToast(error.message || 'An error occurred while applying the equipment set', 'error');
     } finally {
-        // Re-enable the button and reset its text
+        // Re-enable the button and reset its text if it still exists
         if (applyButton) {
-            applyButton.disabled = !(botSelect.value && setSelect.value);
+            const currentBotSelect = document.getElementById('bot-select');
+            const currentSetSelect = document.getElementById('set-select');
+            applyButton.disabled = !(currentBotSelect?.value && currentSetSelect?.value);
             applyButton.innerHTML = '<i class="bi bi-save"></i> Apply';
         }
     }
