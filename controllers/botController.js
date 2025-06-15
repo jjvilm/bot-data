@@ -789,8 +789,65 @@ exports.fetchPlayerCombatLevel = async function (req, res) {
 };
 
 
+// Function to apply an equipment set to a bot
+exports.applyEquipmentSetToBot = async function(req, res) {
+    try {
+        const { botId, equipmentSetId } = req.body;
+        
+        if (!botId || !equipmentSetId) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Both botId and equipmentSetId are required' 
+            });
+        }
+        
+        // Find the bot and update its equipment_set_id
+        const updatedBot = await Bot.findByIdAndUpdate(
+            botId,
+            { 
+                $set: { 
+                    equipment_set_id: equipmentSetId 
+                } 
+            },
+            { new: true }
+        );
+        
+        if (!updatedBot) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Bot not found' 
+            });
+        }
+        
+        // Find the equipment set to get its name
+        const EquipmentSet = require('../models/equipmentSet');
+        const equipmentSet = await EquipmentSet.findById(equipmentSetId);
+        
+        if (equipmentSet) {
+            // Update the equipment_set_name for backward compatibility
+            updatedBot.equipment_set_name = equipmentSet.name;
+            await updatedBot.save();
+        }
+        
+        res.json({ 
+            success: true, 
+            message: 'Equipment set applied successfully',
+            botName: updatedBot.bot_name,
+            equipmentSetName: equipmentSet ? equipmentSet.name : 'Unknown Set'
+        });
+        
+    } catch (error) {
+        console.error('Error applying equipment set to bot:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Failed to apply equipment set',
+            error: error.message 
+        });
+    }
+};
+
 // Function to update recent killed bots' combat levels. it is called by pressing button from adming dashboard
-exports.updateRecentKilledBotsCBLevel = async function (req, res) {
+exports.updateRecentKilledBotsCBLevel = async function(req, res) {
   try {
     const recentKills = await fetchRecentKills(); // Assuming this fetches a list of recent kills
     const botsWithZeroCombatLevel = [];

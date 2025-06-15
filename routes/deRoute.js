@@ -50,6 +50,11 @@ router.get('/api/search-bots', authMiddleware.ensureAuthenticated, function(req,
   botController.searchBots(req, res);
 });
 
+// API endpoint to apply an equipment set to a bot
+router.post('/api/apply-equipment-set', authMiddleware.ensureAuthenticated, function(req, res, next) {
+  botController.applyEquipmentSetToBot(req, res);
+});
+
 // Used to create a bot and added to the database
 router.get('/botCreate',authMiddleware.ensureAuthenticated, function (req, res, next) {
   res.render('../views/dataEntry/botCreate');

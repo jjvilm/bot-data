@@ -48,6 +48,11 @@ const BotSchema = new Schema({
     enum: ['ACTIVE', 'BANNED'],
     default: 'ACTIVE'
   },
+  equipment_set_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'EquipmentSet',
+    default: null
+  },
   combat_lv: {
     type: Number,
     default: 0,
