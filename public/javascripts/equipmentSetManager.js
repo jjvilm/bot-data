@@ -525,11 +525,18 @@ function filterEquipmentSets() {
     const setItems = document.querySelectorAll('.equipment-set-card');
     
     setItems.forEach(item => {
-        const setName = item.querySelector('.equipment-set-name').textContent.toLowerCase();
-        if (setName.includes(searchTerm)) {
-            item.style.display = 'flex';
+        const nameElement = item.querySelector('.card-title');
+        if (nameElement) {
+            const setName = nameElement.textContent.toLowerCase();
+            if (setName.includes(searchTerm)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
         } else {
-            item.style.display = 'none';
+            // If no name element is found, show the item to prevent hiding everything
+            console.warn('Equipment set name element not found in card:', item);
+            item.style.display = 'flex';
         }
     });
 }
