@@ -340,12 +340,45 @@ async function searchBots(searchTerm) {
                 
                 // Add click handler to select the bot
                 botElement.addEventListener('click', () => {
-                    document.getElementById('bot-search').value = displayText;
-                    document.getElementById('bot-select').value = bot._id;
+                    const botSearch = document.getElementById('bot-search');
+                    const botSelect = document.getElementById('bot-select');
+                    const setSelect = document.getElementById('set-select');
+                    
+                    // Update the search input with the selected bot's display text
+                    botSearch.value = displayText;
+                    
+                    // Clear any existing options
+                    while (botSelect.options.length > 0) {
+                        botSelect.remove(0);
+                    }
+                    
+                    // Create and add the selected bot as an option
+                    const option = document.createElement('option');
+                    option.value = bot._id;
+                    option.text = displayText;
+                    option.selected = true;
+                    botSelect.add(option);
+                    
+                    // Force a change event to ensure the value is set
+                    const event = new Event('change');
+                    botSelect.dispatchEvent(event);
+                    
+                    // Log the selection for debugging
+                    // console.log('Bot selected:', { 
+                    //     displayText, 
+                    //     botId: bot._id,
+                    //     botSelectValue: botSelect.value,
+                    //     options: Array.from(botSelect.options).map(opt => ({
+                    //         value: opt.value,
+                    //         text: opt.text,
+                    //         selected: opt.selected
+                    //     }))
+                    // });
+                    
+                    // Hide the results dropdown
                     resultsContainer.style.display = 'none';
                     
                     // Enable the set select if it was disabled
-                    const setSelect = document.getElementById('set-select');
                     if (setSelect && setSelect.disabled) {
                         setSelect.disabled = false;
                     }
@@ -373,6 +406,11 @@ function updateApplyButtonState() {
     
     if (botSelect && setSelect && applyButton) {
         applyButton.disabled = !(botSelect.value && setSelect.value);
+        // console.log('Apply button state updated:', {
+        //     disabled: applyButton.disabled,
+        //     botSelectValue: botSelect.value,
+        //     setSelectValue: setSelect.value
+        // });
     }
 }
 
@@ -418,10 +456,24 @@ document.addEventListener('DOMContentLoaded', function() {
         setSelect.addEventListener('change', updateApplyButtonState);
     }
     
-    // Handle apply button click
+    // Add event listener for the apply button
     const applyButton = document.getElementById('apply-button');
+    
     if (applyButton) {
-        applyButton.addEventListener('click', applyEquipmentSetToBot);
+        applyButton.addEventListener('click', function(e) {
+            // console.log('Apply button clicked!', e);
+            e.preventDefault();
+            e.stopPropagation();
+            applyEquipmentSetToBot();
+        });
+        
+        // Make sure the button is visible and clickable
+        applyButton.style.pointerEvents = 'auto';
+        applyButton.style.position = 'relative';
+        applyButton.style.zIndex = '1000';
+        // console.log('Apply button event listener added');
+    } else {
+        console.error('Apply button not found in DOM');
     }
 });
 
@@ -429,12 +481,12 @@ document.addEventListener('DOMContentLoaded', function() {
 async function loadEquipmentSets() {
     const container = document.getElementById('equipment-sets-container');
     if (!container) {
-        console.error('Could not find equipment-sets-container element');
+        // console.error('Could not find equipment-sets-container element');
         return;
     }
 
     try {
-        console.log('Fetching equipment sets from server...');
+        // console.log('Fetching equipment sets from server...');
         const response = await fetch('/deRoute/getEquipmentSets');
         
         if (!response.ok) {
@@ -444,7 +496,7 @@ async function loadEquipmentSets() {
         }
         
         const equipmentSets = await response.json();
-        console.log('Received equipment sets:', equipmentSets);
+        // console.log('Received equipment sets:', equipmentSets);
         
         if (!Array.isArray(equipmentSets)) {
             throw new Error('Invalid response format: expected an array of equipment sets');
@@ -906,7 +958,7 @@ function selectEquipmentSet(set) {
     
     // Here you can add logic to show the selected set's details
     // For example, you might want to highlight it or show more details
-    console.log('Selected set:', set);
+    // console.log('Selected set:', set);
 }
 
 // Function to handle deleting an equipment set
@@ -992,19 +1044,67 @@ function startEditingSetName(set, nameElement, container, editNameBtn) {
 
 // Function to apply an equipment set to a bot
 async function applyEquipmentSetToBot() {
+    // console.log('applyEquipmentSetToBot called');
+    
     const botSelect = document.getElementById('bot-select');
     const setSelect = document.getElementById('set-select');
     const applyButton = document.getElementById('apply-button');
     const botSearch = document.getElementById('bot-search');
     
-    if (!botSelect || !setSelect || !applyButton || !botSearch) return;
+    // console.log('Elements:', { 
+    //     botSelect: botSelect ? {
+    //         exists: true,
+    //         value: botSelect.value,
+    //         options: Array.from(botSelect.options).map(opt => ({
+    //             value: opt.value,
+    //             text: opt.text,
+    //             selected: opt.selected
+    //         }))
+    //     } : false, 
+    //     setSelect: setSelect ? {
+    //         exists: true,
+    //         value: setSelect.value,
+    //         options: Array.from(setSelect.options).map(opt => ({
+    //             value: opt.value,
+    //             text: opt.text,
+    //             selected: opt.selected
+    //         }))
+    //     } : false,
+    //     applyButton: !!applyButton,
+    //     botSearch: botSearch ? {
+    //         exists: true,
+    //         value: botSearch.value
+    //     } : false
+    // });
     
+    if (!botSelect || !setSelect || !applyButton || !botSearch) {
+        console.error('Missing required elements');
+        return;
+    }
+    
+    // Get the bot ID from the hidden select element
     const botId = botSelect.value;
     const setId = setSelect.value;
-    const botName = botSearch.value.split(' - ')[0]; // Extract just the bot name from the display text
+    // Extract just the bot name from the display text (remove level and other info)
+    const botName = botSearch.value.split(' (')[0].trim();
+    
+    // console.log('Values:', { 
+    //     botId, 
+    //     setId, 
+    //     botName,
+    //     botSearchValue: botSearch.value,
+    //     currentTime: new Date().toISOString()
+    // });
     
     if (!botId || !setId) {
-        showToast('Please select both a bot and an equipment set', 'error');
+        const errorMsg = !botId ? 'No bot selected' : 'No equipment set selected';
+        console.error('Validation failed:', errorMsg, { 
+            hasBotId: !!botId, 
+            hasSetId: !!setId,
+            botSelectValue: botSelect.value,
+            setSelectValue: setSelect.value
+        });
+        showToast(`Please select both a bot and an equipment set (${errorMsg})`, 'error');
         return;
     }
     
@@ -1013,44 +1113,56 @@ async function applyEquipmentSetToBot() {
         applyButton.disabled = true;
         applyButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Applying...';
         
-        const response = await fetch('/api/apply-equipment-set', {
+        const requestBody = {
+            botId: botId,
+            equipmentSetId: setId
+        };
+        
+        // console.log('Sending request to /deRoute/api/apply-equipment-set with:', requestBody);
+        
+        const response = await fetch('/deRoute/api/apply-equipment-set', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                botId,
-                equipmentSetId: setId
-            })
+            body: JSON.stringify(requestBody),
+            credentials: 'same-origin' // Ensure cookies are sent with the request
         });
         
-        const result = await response.json();
+        // console.log('Response status:', response.status);
         
-        if (!response.ok) {
-            throw new Error(result.message || 'Failed to apply equipment set to bot');
+        let responseData;
+        try {
+            responseData = await response.json();
+            // console.log('Response data:', responseData);
+        } catch (error) {
+            console.error('Error parsing JSON response:', error);
+            throw new Error('Invalid response from server');
         }
         
-        // Show success message with the bot name and equipment set name
-        const successMessage = `Successfully applied "${result.equipmentSetName}" to ${botName || 'bot'}`;
-        showToast(successMessage, 'success');
+        if (!response.ok) {
+            console.error('Server error:', responseData);
+            throw new Error(responseData.message || 'Failed to apply equipment set');
+        }
+        
+        // Show success message
+        // console.log(`Equipment set applied to ${botName} successfully!`);
+        showToast(`Successfully applied equipment set to ${botName}`, 'success');
         
         // Reset the form
-        botSearch.value = '';
-        botSelect.value = '';
-        setSelect.value = '';
-        setSelect.disabled = true;
-        applyButton.disabled = true;
-        
+        document.getElementById('bot-search').value = '';
+        document.getElementById('bot-select').value = '';
+        document.getElementById('set-select').value = '';
+        document.getElementById('apply-button').disabled = true;
+        updateApplyButtonState();
     } catch (error) {
-        console.error('Error applying equipment set to bot:', error);
-        showToast(error.message || 'An error occurred while applying the equipment set', 'error');
+        console.error('Error applying equipment set:', error);
+        showToast(`Error: ${error.message}`, 'error');
     } finally {
-        // Re-enable the button and reset its text if it still exists
+        // Re-enable the apply button
         if (applyButton) {
-            const currentBotSelect = document.getElementById('bot-select');
-            const currentSetSelect = document.getElementById('set-select');
-            applyButton.disabled = !(currentBotSelect?.value && currentSetSelect?.value);
-            applyButton.innerHTML = '<i class="bi bi-save"></i> Apply';
+            applyButton.disabled = false;
+            applyButton.innerHTML = '<i class="bi bi-check-circle me-1"></i> Apply';
         }
     }
 }

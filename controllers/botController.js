@@ -791,50 +791,69 @@ exports.fetchPlayerCombatLevel = async function (req, res) {
 
 // Function to apply an equipment set to a bot
 exports.applyEquipmentSetToBot = async function(req, res) {
+    console.log('[applyEquipmentSetToBot] Request received:', req.body);
+    
     try {
         const { botId, equipmentSetId } = req.body;
         
+        console.log('[applyEquipmentSetToBot] Parsed values:', { botId, equipmentSetId });
+        
         if (!botId || !equipmentSetId) {
+            const errorMsg = `Missing required parameters: ${!botId ? 'botId' : ''} ${!equipmentSetId ? 'equipmentSetId' : ''}`.trim();
+            console.error('[applyEquipmentSetToBot] Validation error:', errorMsg);
             return res.status(400).json({ 
                 success: false, 
-                message: 'Both botId and equipmentSetId are required' 
+                message: `Both botId and equipmentSetId are required. ${errorMsg}`
             });
         }
         
-        // Find the bot and update its equipment_set_id
+        console.log('[applyEquipmentSetToBot] Attempting to update bot with equipment set');
+        
+        // Check if the equipment set exists
+        const Equipment = require('../models/equipment');
+        const equipmentSet = await Equipment.findById(equipmentSetId);
+        
+        if (!equipmentSet) {
+            console.error(`[applyEquipmentSetToBot] Equipment set not found with ID: ${equipmentSetId}`);
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Equipment set not found' 
+            });
+        }
+        
+        // Update the bot with the equipment set ID and name
+        const updateData = { 
+            equipment_set_id: equipmentSetId,
+            equipment_set_name: equipmentSet.set_name
+        };
+        
+        console.log('[applyEquipmentSetToBot] Update data:', updateData);
+        
         const updatedBot = await Bot.findByIdAndUpdate(
             botId,
-            { 
-                $set: { 
-                    equipment_set_id: equipmentSetId 
-                } 
-            },
-            { new: true }
+            { $set: updateData },
+            { new: true, runValidators: true }
         );
         
+        console.log('[applyEquipmentSetToBot] Update result:', updatedBot ? 'Success' : 'Bot not found');
+        
         if (!updatedBot) {
+            console.error(`[applyEquipmentSetToBot] Bot not found with ID: ${botId}`);
             return res.status(404).json({ 
                 success: false, 
                 message: 'Bot not found' 
             });
         }
         
-        // Find the equipment set to get its name
-        const EquipmentSet = require('../models/equipmentSet');
-        const equipmentSet = await EquipmentSet.findById(equipmentSetId);
-        
-        if (equipmentSet) {
-            // Update the equipment_set_name for backward compatibility
-            updatedBot.equipment_set_name = equipmentSet.name;
-            await updatedBot.save();
-        }
-        
-        res.json({ 
+        const responseData = { 
             success: true, 
             message: 'Equipment set applied successfully',
             botName: updatedBot.bot_name,
-            equipmentSetName: equipmentSet ? equipmentSet.name : 'Unknown Set'
-        });
+            equipmentSetName: equipmentSet.set_name || 'Unnamed Set'
+        };
+        
+        console.log('[applyEquipmentSetToBot] Sending success response:', responseData);
+        res.status(200).json(responseData);
         
     } catch (error) {
         console.error('Error applying equipment set to bot:', error);

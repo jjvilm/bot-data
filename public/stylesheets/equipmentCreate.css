@@ -519,6 +519,30 @@ body.light-mode {
   margin-left: auto;
 }
 
+/* Apply Button Styles */
+#apply-button {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#apply-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+#apply-button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure the button container doesn't have any stacking context issues */
+.col-md-2.d-flex.align-items-end {
+  position: relative;
+  z-index: 1;
+}
+
 /* Button styles for equipment set cards */
 /* Edit button next to set name */
 .equipment-set-name-edit {
