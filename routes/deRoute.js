@@ -45,6 +45,11 @@ router.get('/topWorlds',authMiddleware.ensureAuthenticated, function (req, res, 
   botController.getTopWorlds(req, res);
 });
 
+// API endpoint to search bots by name or alias
+router.get('/api/search-bots', authMiddleware.ensureAuthenticated, function(req, res, next) {
+  botController.searchBots(req, res);
+});
+
 // Used to create a bot and added to the database
 router.get('/botCreate',authMiddleware.ensureAuthenticated, function (req, res, next) {
   res.render('../views/dataEntry/botCreate');

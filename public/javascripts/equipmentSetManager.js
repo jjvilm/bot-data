@@ -289,6 +289,93 @@ function initEquipmentBuilder() {
     }
 }
 
+// Debounce function to limit how often a function is called
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}
+
+// Function to handle bot search
+async function searchBots(searchTerm) {
+    const resultsContainer = document.getElementById('bot-search-results');
+    
+    if (!searchTerm || searchTerm.length < 2) {
+        resultsContainer.style.display = 'none';
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/deRoute/api/search-bots?q=${encodeURIComponent(searchTerm)}`);
+        const bots = await response.json();
+        
+        if (!Array.isArray(bots)) {
+            console.error('Invalid response format from server');
+            return;
+        }
+        
+        // Clear previous results
+        resultsContainer.innerHTML = '';
+        
+        if (bots.length === 0) {
+            const noResults = document.createElement('div');
+            noResults.className = 'p-2 text-muted';
+            noResults.textContent = 'No bots found';
+            resultsContainer.appendChild(noResults);
+        } else {
+            bots.forEach(bot => {
+                const botElement = document.createElement('div');
+                botElement.className = 'p-2 border-bottom hover-bg-light cursor-pointer';
+                botElement.style.cursor = 'pointer';
+                
+                // Display bot name and alias if available
+                const displayText = bot.alias 
+                    ? `${bot.bot_name} (${bot.alias}) - Lvl ${bot.combat_lv || '?'}`
+                    : `${bot.bot_name} - Lvl ${bot.combat_lv || '?'}`;
+                
+                botElement.textContent = displayText;
+                
+                // Add click handler to select the bot
+                botElement.addEventListener('click', () => {
+                    document.getElementById('bot-search').value = displayText;
+                    document.getElementById('bot-select').value = bot._id;
+                    resultsContainer.style.display = 'none';
+                    
+                    // Enable the set select if it was disabled
+                    const setSelect = document.getElementById('set-select');
+                    if (setSelect && setSelect.disabled) {
+                        setSelect.disabled = false;
+                    }
+                    
+                    // Enable the apply button if both bot and set are selected
+                    updateApplyButtonState();
+                });
+                
+                resultsContainer.appendChild(botElement);
+            });
+        }
+        
+        resultsContainer.style.display = 'block';
+    } catch (error) {
+        console.error('Error searching bots:', error);
+        resultsContainer.style.display = 'none';
+    }
+}
+
+// Function to update the apply button state
+function updateApplyButtonState() {
+    const botSelect = document.getElementById('bot-select');
+    const setSelect = document.getElementById('set-select');
+    const applyButton = document.getElementById('apply-button');
+    
+    if (botSelect && setSelect && applyButton) {
+        applyButton.disabled = !(botSelect.value && setSelect.value);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Clear old caches on load
     clearOldCaches();
@@ -299,10 +386,36 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load equipment sets when the page loads
     loadEquipmentSets();
     
-    // Add event listeners for search functionality
+    // Add event listeners for equipment set search
     const setSearch = document.getElementById('set-search');
     if (setSearch) {
         setSearch.addEventListener('input', filterEquipmentSets);
+    }
+    
+    // Add event listeners for bot search
+    const botSearch = document.getElementById('bot-search');
+    const botSearchResults = document.getElementById('bot-search-results');
+    
+    if (botSearch) {
+        // Debounce the search to avoid excessive API calls
+        const debouncedSearch = debounce((e) => {
+            searchBots(e.target.value);
+        }, 300);
+        
+        botSearch.addEventListener('input', debouncedSearch);
+        
+        // Hide results when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target !== botSearch && e.target !== botSearchResults) {
+                botSearchResults.style.display = 'none';
+            }
+        });
+    }
+    
+    // Update apply button state when set is selected
+    const setSelect = document.getElementById('set-select');
+    if (setSelect) {
+        setSelect.addEventListener('change', updateApplyButtonState);
     }
 });
 
