@@ -113,6 +113,11 @@ router.put('/updateEquipmentSet/:setId', authMiddleware.ensureAuthenticated, fun
   equipmentController.updateEquipmentSet(req, res);
 });
 
+// delete equipment set
+router.delete('/deleteEquipmentSet/:setId', authMiddleware.ensureAuthenticated, function(req, res, next) {
+  equipmentController.deleteEquipmentSet(req, res);
+});
+
 
 // Endpoint to emit new bot kill event
 router.post('/emitBotHunt', authMiddleware.ensureAuthenticated, async function(req, res, next) {

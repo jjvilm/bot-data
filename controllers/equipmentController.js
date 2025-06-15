@@ -141,11 +141,28 @@ exports.updateEquipmentSetName = async function(req, res) {
 };
 exports.deleteEquipmentSet = async function(req, res) {
   try {
-    await Equipment.findOneAndDelete({ _id: req.body._id });  // Get _id from params
-    res.status(200).send('Equipment set deleted successfully.');
+    const { setId } = req.params;
+    if (!setId) {
+      return res.status(400).json({ success: false, message: 'Equipment set ID is required' });
+    }
+    
+    const result = await Equipment.findByIdAndDelete(setId);
+    if (!result) {
+      return res.status(404).json({ success: false, message: 'Equipment set not found' });
+    }
+    
+    res.status(200).json({ 
+      success: true, 
+      message: 'Equipment set deleted successfully',
+      data: result 
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Error deleting equipment set.');
+    console.error('Error deleting equipment set:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error deleting equipment set',
+      error: error.message 
+    });
   }
 };
   
