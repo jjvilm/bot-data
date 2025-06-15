@@ -151,6 +151,62 @@ function clearOldCaches() {
     });
 }
 
+// Function to clear all equipment slots
+window.clearAllSlots = function() {
+    console.log('clearAllSlots function called');
+    
+    // Define all equipment slots
+    const slots = [
+        'head', 'cape', 'neck', 'ammunition', 'torso', 
+        'left_hand', 'right_hand', 'legs', 'hands', 'feet', 'jewelry'
+    ];
+    
+    // Process each slot
+    slots.forEach(slot => {
+        const imgElement = document.getElementById(`${slot}-img`);
+        const inputElement = document.getElementById(slot);
+        
+        console.log(`Processing slot: ${slot}`, { imgElement, inputElement });
+        
+        // Reset the image to default
+        if (imgElement) {
+            console.log(`Before clear - src: ${imgElement.src}, alt: ${imgElement.alt}`);
+            
+            // Set the source to the default image directly
+            imgElement.src = '/images/Bank_filler.png';
+            imgElement.alt = 'Empty Slot';
+            
+            // Reset any visual states
+            imgElement.style.opacity = '1';
+            imgElement.style.filter = 'none';
+            imgElement.style.border = '';
+            
+            // Clear data attributes
+            imgElement.removeAttribute('data-item-name');
+            imgElement.removeAttribute('data-item-url');
+            
+            console.log(`After clear - src: ${imgElement.src}, alt: ${imgElement.alt}`);
+            console.log(`Cleared slot: ${slot}`);
+        } else {
+            console.warn(`Image element not found for slot: ${slot}`);
+        }
+        
+        // Clear the corresponding input field
+        if (inputElement) {
+            inputElement.value = '';
+            console.log(`Cleared input for slot: ${slot}`);
+        } else {
+            console.warn(`Input element not found for slot: ${slot}`);
+        }
+    });
+    
+    showToast('All equipment slots have been cleared', 'success');
+    console.log('clearAllSlots function completed');
+    
+    // Force a reflow to ensure the DOM updates
+    document.body.offsetHeight;
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     // Clear old caches on load
     clearOldCaches();

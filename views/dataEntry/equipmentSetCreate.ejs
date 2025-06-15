@@ -421,6 +421,7 @@
 <!-- Page-specific scripts -->
 <script src="/javascripts/equipmentSetManager.js"></script>
 <script>
+
 // Initialize tooltips
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -459,17 +460,6 @@ if (setSearch) {
 function openCreateModal() {
   const modal = new bootstrap.Modal(document.getElementById('createSetModal'));
   modal.show();
-}
-
-// Function to clear all equipment slots
-function clearAllSlots() {
-  if (confirm('Are you sure you want to clear all equipment slots?')) {
-    const slots = ['head', 'cape', 'neck', 'ammunition', 'torso', 'left_hand', 'right_hand', 'legs', 'hands', 'feet', 'jewelry'];
-    slots.forEach(slot => {
-      document.getElementById(`${slot}-img`).src = '/images/Bank_filler.png';
-      // You might want to clear the associated data as well
-    });
-  }
 }
 
 // Helper function to extract item name from URL
@@ -778,6 +768,7 @@ async function cacheImage(key, url) {
         throw error;
     }
 }
+
 </script>
 
 <!-- Toast Container -->
