@@ -262,9 +262,15 @@
         <div class="card-body">
           <div class="row g-3 align-items-center">
             <div class="col-md-4">
-              <label for="bot-select" class="form-label">Select Bot</label>
-              <select id="bot-select" class="form-select">
-                <option value="" disabled selected>Choose a bot...</option>
+              <label for="bot-search" class="form-label">Search Bot by Name/Alias</label>
+              <div class="position-relative">
+                <input type="text" id="bot-search" class="form-control" placeholder="Type to search bots...">
+                <div id="bot-search-results" class="position-absolute w-100 bg-white border rounded-bottom shadow-sm" style="z-index: 1000; max-height: 200px; overflow-y: auto; display: none;">
+                  <!-- Search results will be populated here -->
+                </div>
+              </div>
+              <select id="bot-select" class="form-select mt-2" style="display: none;">
+                <option value="" disabled selected>Select a bot from search...</option>
               </select>
             </div>
             <div class="col-md-6">
