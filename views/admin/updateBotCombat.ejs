@@ -109,7 +109,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="updateAliasForm" method="POST" action="/adminRoute/get_player_combat_level">
+                    <form id="updateAliasForm">
                         <input type="hidden" id="botId" name="id">
                         <div class="mb-3">
                             <label for="alias" class="form-label">Alias</label>
@@ -177,18 +177,46 @@
         // Fetch bot list from server
         async function fetchBotList(source) {
             const endpoint = BOT_SOURCES[source];
-            if (!endpoint) return [];
+            if (!endpoint) {
+                console.error('No endpoint defined for source:', source);
+                return [];
+            }
             
             try {
-                const response = await fetch(endpoint);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                console.log('Fetching bots from:', endpoint);
+                const response = await fetch(endpoint, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'same-origin' // Include cookies for authentication
+                });
+                
+                // First check if the response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Expected JSON but got:', text.substring(0, 200)); // Log first 200 chars of non-JSON response
+                    throw new Error(`Expected JSON response but got ${contentType}`);
                 }
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
+                console.log('Received bot data:', data);
+                
                 // Ensure we have an array of bots
                 return Array.isArray(data) ? data : [];
             } catch (error) {
-                console.error('Error fetching bot list:', error);
+                console.error('Error in fetchBotList:', {
+                    source,
+                    endpoint,
+                    error: error.message,
+                    stack: error.stack
+                });
                 throw error;
             }
         }
@@ -247,9 +275,7 @@
                         <td><span class="badge ${statusBadge}">${status}</span></td>
                         <td>${combatLevel}</td>
                         <td>
-                            <button type="button" class="btn btn-primary btn-sm update-alias-btn" 
-                                data-toggle="modal" data-target="#aliasModal"
-                                data-id="${botId}" data-alias="${aliases}">
+                            <button type="button" class="btn btn-primary btn-sm update-alias-btn" data-bs-toggle="modal" data-bs-target="#aliasModal" data-id="${botId}" data-alias="${aliases}">
                                 Update Alias
                             </button>
                         </td>
@@ -324,6 +350,9 @@
         
         // Initialize the page
         $(document).ready(function() {
+            // Initialize bot source selector
+            const $botSource = $('#botSource');
+            
             // Automatically load eligible bots
             loadBots('eligible');
             
@@ -371,20 +400,58 @@
         $('#updateAliasForm').on('submit', function(event) {
             event.preventDefault(); // Prevent default form submission
             const form = $(this);
-            const alias = form.find('#alias').val();
+            const alias = form.find('#alias').val().trim();
             const botId = form.find('#botId').val();
-    
-            $.post(form.attr('action'), { alias: alias, id: botId })
-                .done(function(data) {
-                    const combatLevel = data.combatLevel;
-                    $('tr[data-bot-id="' + botId + '"] .combat-level').text(combatLevel);
-                    $('#aliasModal').modal('hide');
-                    $('.modal-backdrop').remove();
-                })
-                .fail(function(xhr) {
-                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'Unknown error occurred';
+            
+            if (!alias) {
+                alert('Please enter an alias');
+                return;
+            }
+            
+            // Show loading state
+            const $submitBtn = form.find('button[type="submit"]');
+            const originalBtnText = $submitBtn.html();
+            $submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...');
+            
+            // Make the API call
+            $.ajax({
+                url: '/adminRoute/update-alias-and-fetch-combat',
+                method: 'POST',
+                data: { 
+                    botId: botId, 
+                    alias: alias 
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Update the table row with the new data
+                        const $row = $('tr[data-bot-id="' + botId + '"]');
+                        $row.find('td:nth-child(2)').text(alias); // Update alias column
+                        $row.find('td:nth-child(4)').text(response.combatLevel || response.combat_lv || 'N/A'); // Update combat level column
+                        
+                        // Close the modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('aliasModal'));
+                        if (modal) {
+                            modal.hide();
+                        }
+                        
+                        // Show success message
+                        alert('Bot updated successfully!');
+                    } else {
+                        alert(response.message || 'Failed to update bot');
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = 'An error occurred while updating the bot';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
                     alert('Error: ' + errorMessage);
-                });
+                },
+                complete: function() {
+                    // Restore button state
+                    $submitBtn.prop('disabled', false).html(originalBtnText);
+                }
+            });
         });
     
         // Handle form submission for BANNED action

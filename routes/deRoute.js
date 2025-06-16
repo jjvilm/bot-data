@@ -130,7 +130,7 @@ router.delete('/deleteEquipmentSet/:setId', authMiddleware.ensureAuthenticated, 
 
 
 // Endpoint to emit new bot kill event
-router.post('/emitBotHunt', authMiddleware.ensureAuthenticated, async function(req, res, next) {
+router.post('/emitBotHunt', async function(req, res, next) {
   try {
     const botHunt = req.body;
     console.log('Received bot hunt data:', botHunt);
@@ -183,43 +183,29 @@ router.get("/stream", authMiddleware.ensureAuthenticated, (req, res) => {
   res.setHeader('X-Accel-Buffering', 'no');
   res.flushHeaders();
 
-  // Send initial connection message
-  const connectedMsg = { type: 'connected' };
-  console.log('Sending connected message:', connectedMsg);
-  res.write(`data: ${JSON.stringify(connectedMsg)}\n\n`);
-  
-  // Handle new bot hunt events
-  const onBotHunt = (botHunt) => {
+  // Function to send events to the client
+  const sendEvent = (data) => {
     try {
       if (!res.writableEnded) {
-        console.log('Sending bot hunt event:', botHunt);
-        res.write(`data: ${JSON.stringify(botHunt)}\n\n`);
+        res.write(`data: ${JSON.stringify(data)}\n\n`);
       }
     } catch (error) {
-      console.error('Error sending bot hunt event:', error);
+      console.error('Error sending event:', error);
       cleanup();
     }
   };
 
-  // Keep the connection alive with a ping every 30 seconds
-  const pingInterval = setInterval(() => {
-    try {
-      if (!res.writableEnded) {
-        res.write(`data: ${JSON.stringify({ type: 'ping' })}\n\n`);
-      } else {
-        clearInterval(pingInterval);
-      }
-    } catch (error) {
-      console.error('Error sending ping:', error);
-      clearInterval(pingInterval);
-    }
-  }, 30000);
+  // Handle new bot hunt events
+  const onBotHunt = (botHunt) => {
+    console.log('Sending bot hunt event:', botHunt);
+    sendEvent(botHunt);
+  };
 
-  // Cleanup function
+  // Cleanup function to remove event listeners and close connection
   const cleanup = () => {
     console.log('Cleaning up SSE connection');
-    clearInterval(pingInterval);
     botHuntEmitter.off('newBotHunt', onBotHunt);
+    clearInterval(pingInterval);
     if (!res.writableEnded) {
       res.end();
     }
@@ -229,37 +215,38 @@ router.get("/stream", authMiddleware.ensureAuthenticated, (req, res) => {
   botHuntEmitter.on('newBotHunt', onBotHunt);
   console.log('Added event listener for newBotHunt');
 
-  // Handle client disconnect
+  // Keep the connection alive with a ping every 30 seconds
+  const pingInterval = setInterval(() => {
+    try {
+      if (!res.writableEnded) {
+        sendEvent({ type: 'ping' });
+      } else {
+        clearInterval(pingInterval);
+      }
+    } catch (error) {
+      console.error('Error sending ping:', error);
+      cleanup();
+    }
+  }, 30000);
+
+  // Handle client disconnect and errors
   req.on('close', () => {
     console.log('Client disconnected from SSE stream');
     cleanup();
   });
 
-  // Handle errors
+  req.on('end', () => {
+    console.log('SSE connection ended');
+    cleanup();
+  });
+
   req.on('error', (error) => {
     console.error('SSE connection error:', error);
     cleanup();
   });
 
-  const sendEvent = (data) => {
-    res.write(`data: ${JSON.stringify(data)}\n\n`);
-  };
-
   // Send initial connection success
   sendEvent({ type: 'connected' });
-
-  // Listen for new bot hunt events
-  botHuntEmitter.on('newBotHunt', sendEvent);
-
-  // Remove the listener when the client disconnects
-  req.on('close', () => {
-    botHuntEmitter.removeListener('newBotHunt', sendEvent);
-  });
-
-  // Handle client disconnection
-  req.on('end', () => {
-    botHuntEmitter.removeListener('newBotHunt', sendEvent);
-  });
 });
 
 module.exports = router;
