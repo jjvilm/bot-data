@@ -19,6 +19,8 @@ var qcRouter = require('./routes/qcRoute');
 
 var app = express();
 
+app.use(cors()); // Enable CORS for all routes
+
 // database connection
 const mongoose = require('mongoose');
 // Set strictQuery to false to prepare for the Mongoose 7 change
