@@ -14,11 +14,16 @@
   <h1>Bot Database</h1>
 
   <!-- Search form -->
-  <div class="input-group mb-3">
-    <input type="text" id="searchInput" class="form-control" placeholder="Search for a bot" aria-label="Search for a bot" aria-describedby="searchButton">
-    <div class="input-group-append">
-      <button class="btn btn-outline-secondary" type="button" id="searchButton">Search</button>
+  <div class="search-container mb-3">
+    <div class="input-group">
+      <input type="text" id="searchInput" class="form-control" placeholder="Search for a bot..." aria-label="Search for a bot" autocomplete="off">
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" id="searchButton">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
     </div>
+    <div id="searchResults" class="search-results"></div>
   </div>
 
   <!-- Table for displaying bots -->
@@ -56,30 +61,144 @@
 </div>
 
     <%- include('../partials/scripts'); %>
-      <script type="text/javascript">
-        document.getElementById('searchButton').addEventListener('click', function() {
-          const searchQuery = document.getElementById('searchInput').value;
-          if (searchQuery) {
-            fetch(`/deRoute/getBotNameHunts?name=${searchQuery}`)
-              .then(response => {
-                if (response.status === 204) {
-                  document.getElementById('searchInput').value = '';
-                } else {
-                  window.location.href = `/deRoute/getBotNameHunts?name=${searchQuery}`;
-                }
-              })
-              .catch(error => console.error('Error:', error));
+    <style>
+      .search-container {
+        position: relative;
+        max-width: 500px;
+        margin: 0 auto 20px;
+      }
+      .search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 0 0 4px 4px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        max-height: 300px;
+        overflow-y: auto;
+        display: none;
+      }
+      .search-result-item {
+        padding: 10px 15px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .search-result-item:hover {
+        background-color: #f8f9fa;
+      }
+      .search-result-item:last-child {
+        border-bottom: none;
+      }
+      .combat-level {
+        background-color: #6c757d;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 0.8em;
+      }
+      .no-results {
+        padding: 10px 15px;
+        color: #6c757d;
+        font-style: italic;
+      }
+    </style>
+    <script type="text/javascript">
+      let searchTimeout;
+      const searchInput = document.getElementById('searchInput');
+      const searchResults = document.getElementById('searchResults');
+
+      // Function to perform the search
+      async function performSearch(query) {
+        if (query.length < 2) {
+          searchResults.style.display = 'none';
+          return;
+        }
+
+        try {
+          const response = await fetch(`/deRoute/api/search-bots?q=${encodeURIComponent(query)}`);
+          const bots = await response.json();
+          
+          // Clear previous results
+          searchResults.innerHTML = '';
+          
+          if (bots.length === 0) {
+            const noResults = document.createElement('div');
+            noResults.className = 'no-results';
+            noResults.textContent = 'No bots found';
+            searchResults.appendChild(noResults);
+          } else {
+            bots.forEach(bot => {
+              const resultItem = document.createElement('div');
+              resultItem.className = 'search-result-item';
+              resultItem.innerHTML = `
+                <span>${bot.bot_name} ${bot.alias ? `(${bot.alias})` : ''}</span>
+                <span class="combat-level">${bot.combat_lv} Combat</span>
+              `;
+              resultItem.addEventListener('click', () => {
+                window.location.href = `/deRoute/botKills?id=${bot._id}`;
+              });
+              searchResults.appendChild(resultItem);
+            });
           }
-        });
+          
+          searchResults.style.display = 'block';
+        } catch (error) {
+          console.error('Search error:', error);
+        }
+      }
 
-        document.getElementById('nextButton').addEventListener('click', function() {
-          window.location.href = '/deRoute/botList?next=true';
-        });
+      // Event listeners
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.trim();
+        clearTimeout(searchTimeout);
+        
+        if (query.length >= 2) {
+          searchTimeout = setTimeout(() => performSearch(query), 300);
+        } else {
+          searchResults.style.display = 'none';
+        }
+      });
 
-        document.getElementById('backButton').addEventListener('click', function() {
-          window.location.href = '/deRoute/botList?next=false';
-        });
-      </script>
+      // Hide results when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+          searchResults.style.display = 'none';
+        }
+      });
+
+      // Navigate to bot page on search button click
+      document.getElementById('searchButton').addEventListener('click', () => {
+        const query = searchInput.value.trim();
+        if (query) {
+          window.location.href = `/deRoute/getBotNameHunts?name=${encodeURIComponent(query)}`;
+        }
+      });
+
+      // Allow pressing Enter to search
+      searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const query = searchInput.value.trim();
+          if (query) {
+            window.location.href = `/deRoute/getBotNameHunts?name=${encodeURIComponent(query)}`;
+          }
+        }
+      });
+
+      // Pagination buttons
+      document.getElementById('nextButton').addEventListener('click', function() {
+        window.location.href = '/deRoute/botList?next=true';
+      });
+
+      document.getElementById('backButton').addEventListener('click', function() {
+        window.location.href = '/deRoute/botList?next=false';
+      });
+    </script>
       
   </body>
 </html>
